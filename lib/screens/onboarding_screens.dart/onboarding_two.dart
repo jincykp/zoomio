@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/screens/onboarding_screens.dart/onboarding_two.dart';
+import 'package:zoomer/screens/onboarding_screens.dart/onboarding_three.dart';
 import 'package:zoomer/styles/appstyles.dart';
 
-class OnboardingScreenOne extends StatefulWidget {
-  const OnboardingScreenOne({super.key});
+class OnboardingScreenTwo extends StatelessWidget {
+  const OnboardingScreenTwo({super.key});
 
-  @override
-  State<OnboardingScreenOne> createState() => _OnboardingScreenOneState();
-}
-
-class _OnboardingScreenOneState extends State<OnboardingScreenOne> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -19,20 +14,20 @@ class _OnboardingScreenOneState extends State<OnboardingScreenOne> {
         child: Padding(
           padding: EdgeInsets.all(screenWidth * 0.05),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Image.asset(
-                "assets/Anywhere you are.png",
+                "assets/At anytime.png",
                 height: screenWidth * 0.5,
               ),
               Text(
-                'Any Where You Are',
+                'At Any Time',
                 style:
                     Textstyles.titleText.copyWith(fontSize: screenWidth * 0.05),
               ),
               Text(
-                'Get a ride at your doorstep, anytime, anywhere. Fast, reliable, and always at your service!.',
+                "Book your ride whenever you need it, day or night. We're always here to take you where you want to go!",
                 style:
                     Textstyles.bodytext.copyWith(fontSize: screenWidth * 0.04),
                 textAlign: TextAlign.center,
@@ -46,7 +41,7 @@ class _OnboardingScreenOneState extends State<OnboardingScreenOne> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  const OnboardingScreenTwo()));
+                                  const OnboardingScreenThree()));
                     },
                     icon: Icon(
                       Icons.arrow_forward,

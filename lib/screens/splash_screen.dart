@@ -18,13 +18,17 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Color.fromARGB(255, 219, 168, 0),
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 219, 168, 0),
       body: Center(
           child: Text(
         "zoomeR",
         style: TextStyle(
-            fontSize: 35, fontFamily: "FamilyGuy", color: Colors.black),
+            fontSize: screenWidth * 0.1,
+            fontFamily: "FamilyGuy",
+            color: Colors.black),
       )),
     );
   }
