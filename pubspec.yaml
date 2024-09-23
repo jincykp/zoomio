@@ -65,6 +65,8 @@ flutter:
     - assets/At anytime.png
     - assets/Frame 1.png
     - assets/Welcome Screen.png
+    - assets/Location.png
+    - assets/Gmail.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

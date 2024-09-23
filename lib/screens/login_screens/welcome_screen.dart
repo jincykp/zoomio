@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:zoomer/screens/login_screens/sign_up_screen.dart';
 import 'package:zoomer/styles/appstyles.dart';
 
-class CreateAccountScreen extends StatelessWidget {
-  const CreateAccountScreen({super.key});
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +59,6 @@ class CreateAccountScreen extends StatelessWidget {
                           fontSize: screenWidth * 0.03),
                     )),
               ),
-              // const SizedBox(
-              //   height: 10,
-              // ),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

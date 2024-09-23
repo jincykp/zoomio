@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/screens/login_screens/welcome_screen.dart';
+import 'package:zoomer/screens/login_screens/mapenable_screen.dart';
 import 'package:zoomer/styles/appstyles.dart';
 
 class OnboardingScreenThree extends StatelessWidget {
@@ -40,7 +40,7 @@ class OnboardingScreenThree extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const CreateAccountScreen()));
+                            builder: (context) => const MapenableScreen()));
                   },
                   child: const Text(
                     "Go",

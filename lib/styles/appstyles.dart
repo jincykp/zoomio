@@ -9,10 +9,18 @@ class ThemeColors {
 class Textstyles {
   static const TextStyle titleText = TextStyle(
       fontSize: 24, fontWeight: FontWeight.bold, color: ThemeColors.textColor);
+
+  static const TextStyle titleTextSmall = TextStyle(
+      fontSize: 20, fontWeight: FontWeight.w400, color: ThemeColors.textColor);
+
   static const TextStyle bodytext = TextStyle(
     fontSize: 16,
     color: ThemeColors.textColor,
   );
+
   static const TextStyle buttonText =
       TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.w600);
+
+  static const TextStyle smallTexts =
+      TextStyle(fontSize: 12, color: Colors.white);
 }
