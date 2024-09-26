@@ -38,12 +38,12 @@ class MapenableScreen extends StatelessWidget {
                 Column(
                   children: [
                     CustomButtons(
-                        text: "Create an account",
+                        text: "Use my location",
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const SignUpScreen()));
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => const SignUpScreen()));
                         },
                         backgroundColor: ThemeColors.primaryColor,
                         textColor: ThemeColors.textColor,

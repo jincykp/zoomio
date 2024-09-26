@@ -22,5 +22,7 @@ class Textstyles {
       TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.w600);
 
   static const TextStyle smallTexts =
-      TextStyle(fontSize: 12, color: Colors.white);
+      TextStyle(fontSize: 10, color: Colors.white);
+  static const TextStyle spclTexts =
+      TextStyle(fontSize: 12, color: Color.fromARGB(255, 238, 100, 90));
 }

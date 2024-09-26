@@ -1,35 +1,57 @@
-import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-class CustomPassword extends StatelessWidget {
+class CustomPasswordTextFormFields extends StatefulWidget {
   final String label;
-  final bool icConfirmPassword;
-  final TextEditingController controller;
+  final bool isConfirmPassword;
+  TextEditingController controller;
+  final List<TextInputFormatter>? inputFormatters;
   final FormFieldValidator<String>? validator;
-  const CustomPassword(
-      {super.key,
-      required this.label,
-      required this.controller,
-      this.icConfirmPassword = false,
-      this.validator});
+  CustomPasswordTextFormFields({
+    super.key,
+    required this.label,
+    required this.controller,
+    required this.validator,
+    this.inputFormatters,
+    this.isConfirmPassword = false,
+  });
+
+  @override
+  State<CustomPasswordTextFormFields> createState() =>
+      _CustomPasswordTextFormFieldsState();
+}
+
+class _CustomPasswordTextFormFieldsState
+    extends State<CustomPasswordTextFormFields> {
+  bool obscureText = false;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controller,
-      obscureText: true,
-      decoration:
-          InputDecoration(labelText: label, border: OutlineInputBorder()),
+      controller: widget.controller,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+          suffixIcon: IconButton(
+              icon: Icon(obscureText ? Icons.visibility_off : Icons.visibility),
+              onPressed: () {
+                setState(() {
+                  obscureText = !obscureText;
+                });
+              }),
+          labelText: widget.label,
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(19)),
+          )),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter your $label ';
+          return 'Please enter your ${widget.label} ';
         }
-        if (icConfirmPassword && value != controller.text) {
+        if (widget.isConfirmPassword && value != widget.controller.text) {
           return "Password do not match";
         }
-        return validator?.call(value);
+        return widget.validator?.call(value);
       },
+      inputFormatters: widget.inputFormatters,
     );
   }
 }

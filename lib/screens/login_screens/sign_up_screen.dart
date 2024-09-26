@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:zoomer/custom_widgets/custom_buttons.dart';
+import 'package:zoomer/custom_widgets/custom_password.dart';
 import 'package:zoomer/custom_widgets/textformformfields.dart';
+import 'package:zoomer/screens/login_screens/sign_in_screen.dart';
+import 'package:zoomer/screens/otp_verification/phn_verification.dart';
 import 'package:zoomer/styles/appstyles.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -16,7 +19,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final emailController = TextEditingController();
   final phnController = TextEditingController();
   final genderController = TextEditingController();
-  List<String> genderItems = ["Male", "Female", "Others"];
+  final passWordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  // List<String> genderItems = ["Male", "Female", "Others"];
   bool? isChecked = false;
 
   @override
@@ -38,20 +43,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Textstyles.bodytext.copyWith(fontSize: screenWidth * 0.05),
               ),
               SizedBox(height: screenHeight * 0.02),
+              // Textformformfields(
+              //   controller: nameController,
+              //   hintText: 'Name',
+              //   validator: (value) {
+              //     if (value == null || value.isEmpty) {
+              //       return 'Please enter your name';
+              //     } else if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+              //       return 'Name can only contain letters';
+              //     }
+              //     return null;
+              //   },
+              // ),
+              SizedBox(height: screenHeight * 0.012),
               Textformformfields(
-                controller: nameController,
-                hintText: 'Name',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your name';
-                  } else if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-                    return 'Name can only contain letters';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: screenHeight * 0.01),
-              Textformformfields(
+                label: "Email",
                 controller: emailController,
                 hintText: 'Email',
                 validator: (value) {
@@ -67,8 +73,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
-              SizedBox(height: screenHeight * 0.01),
+              SizedBox(height: screenHeight * 0.012),
               Textformformfields(
+                label: "Mobile number",
                 keyBoardType: TextInputType.phone,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
@@ -85,33 +92,69 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
-              SizedBox(height: screenHeight * 0.01),
-              Textformformfields(
-                readOnly: true,
-                controller: genderController,
-                hintText: 'Gender',
-                suffixIcon: PopupMenuButton<String>(
-                    icon: const Icon(Icons.arrow_drop_down),
-                    onSelected: (String value) {
-                      setState(() {
-                        genderController.text = value;
-                      });
-                    },
-                    itemBuilder: (BuildContext context) {
-                      return genderItems.map((String items) {
-                        return PopupMenuItem<String>(
-                          value: items,
-                          child: Text(items),
-                        );
-                      }).toList();
-                    }),
+              SizedBox(height: screenHeight * 0.012),
+              CustomPasswordTextFormFields(
+                label: "Password",
+                controller: passWordController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your gender';
+                    return 'Please enter your password';
+                  } else if (value.contains(' ')) {
+                    return 'Password cannot contain whitespace';
                   }
-                  return null;
+                  return null; // Password is valid
                 },
+                inputFormatters: [
+                  FilteringTextInputFormatter.deny(
+                      RegExp(r'\s')), // Deny whitespace
+                ],
               ),
+
+              SizedBox(height: screenHeight * 0.012),
+              CustomPasswordTextFormFields(
+                label: "Confirm password",
+                controller: confirmPasswordController,
+                isConfirmPassword: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  } else if (value.contains(' ')) {
+                    return 'Password cannot contain whitespace';
+                  }
+                  return null; // Password is valid
+                },
+                inputFormatters: [
+                  FilteringTextInputFormatter.deny(
+                      RegExp(r'\s')), // Deny whitespace
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.012),
+              // Textformformfields(
+              //   readOnly: true,
+              //   controller: genderController,
+              //   hintText: 'Gender',
+              //   suffixIcon: PopupMenuButton<String>(
+              //       icon: const Icon(Icons.arrow_drop_down),
+              //       onSelected: (String value) {
+              //         setState(() {
+              //           genderController.text = value;
+              //         });
+              //       },
+              //       itemBuilder: (BuildContext context) {
+              //         return genderItems.map((String items) {
+              //           return PopupMenuItem<String>(
+              //             value: items,
+              //             child: Text(items),
+              //           );
+              //         }).toList();
+              //       }),
+              //   validator: (value) {
+              //     if (value == null || value.isEmpty) {
+              //       return 'Please enter your gender';
+              //     }
+              //     return null;
+              //   },
+              // ),
               SizedBox(height: screenHeight * 0.01),
               Row(
                 children: [
@@ -132,7 +175,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               SizedBox(height: screenHeight * 0.02),
               CustomButtons(
                   text: "Sign up",
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const OtpVerificationScreen()));
+                  },
                   backgroundColor: ThemeColors.primaryColor,
                   textColor: ThemeColors.textColor,
                   screenWidth: screenWidth,
@@ -171,11 +220,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ],
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                // crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text('Already have an account?'),
                   TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignInScreen()));
+                      },
                       child: const Text(
                         "Sign In",
                         style: TextStyle(color: ThemeColors.primaryColor),

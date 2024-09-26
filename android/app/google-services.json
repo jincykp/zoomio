@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "340355405116",
+    "project_id": "zoomer-af32a",
+    "storage_bucket": "zoomer-af32a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:340355405116:android:16a07f2657195703e77a39",
+        "android_client_info": {
+          "package_name": "com.example.zoomer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyFRPuJ_avN1K9nPyoGI2k00ppOp6eqII"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

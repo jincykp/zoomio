@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zoomer/screens/login_screens/sign_in_screen.dart';
 import 'package:zoomer/screens/login_screens/sign_up_screen.dart';
 import 'package:zoomer/styles/appstyles.dart';
 
@@ -62,7 +63,12 @@ class WelcomeScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SignInScreen()));
+                    },
                     style: ElevatedButton.styleFrom(
                         side: const BorderSide(
                             color: ThemeColors.primaryColor, width: 1),

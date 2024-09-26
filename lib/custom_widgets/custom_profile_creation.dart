@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class Textformformfields extends StatelessWidget {
+class CustomprofileTextFormFields extends StatelessWidget {
   TextEditingController controller;
   String hintText;
-  String label;
   String? Function(String?)? validator;
   Widget? prefixIcon;
   Widget? suffixIcon;
   final bool readOnly;
   final TextInputType? keyBoardType;
   final List<TextInputFormatter>? inputFormatters;
-  Textformformfields(
+  CustomprofileTextFormFields(
       {super.key,
-      required this.label,
       required this.controller,
       this.validator,
       required this.hintText,
@@ -30,12 +28,9 @@ class Textformformfields extends StatelessWidget {
       autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: controller,
       decoration: InputDecoration(
-        border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(19)),
-        ),
+        border: const OutlineInputBorder(),
         hintText: hintText,
         prefixIcon: prefixIcon,
-        labelText: label,
         suffixIcon: suffixIcon,
       ),
       readOnly: readOnly,
