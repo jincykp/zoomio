@@ -4,6 +4,7 @@ class ThemeColors {
   static const Color primaryColor = Color.fromARGB(255, 219, 168, 0);
   static const Color textColor = Colors.white;
   static const Color titleColor = Colors.black;
+  static const Color alertColor = Colors.red;
 }
 
 class Textstyles {
@@ -16,6 +17,10 @@ class Textstyles {
   static const TextStyle bodytext = TextStyle(
     fontSize: 16,
     color: ThemeColors.textColor,
+  );
+  static const TextStyle warningText = TextStyle(
+    fontSize: 12,
+    color: Color.fromARGB(255, 216, 30, 30),
   );
 
   static const TextStyle buttonText =

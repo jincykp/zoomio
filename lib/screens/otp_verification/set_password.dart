@@ -39,7 +39,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 height: screenHeight * 0.01,
               ),
               CustomPasswordTextFormFields(
-                label: "Password",
+                hintText: "password",
                 controller: passWordController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -54,7 +54,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 height: screenHeight * 0.02,
               ),
               CustomPasswordTextFormFields(
-                label: "Confirm password",
+                hintText: "confirm password",
                 controller: confirmPasswordController,
                 isConfirmPassword: true,
                 validator: (value) {

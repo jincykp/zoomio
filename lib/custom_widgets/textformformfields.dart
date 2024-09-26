@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 class Textformformfields extends StatelessWidget {
   TextEditingController controller;
   String hintText;
-  String label;
+
   String? Function(String?)? validator;
   Widget? prefixIcon;
   Widget? suffixIcon;
@@ -13,7 +13,6 @@ class Textformformfields extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   Textformformfields(
       {super.key,
-      required this.label,
       required this.controller,
       this.validator,
       required this.hintText,
@@ -35,7 +34,6 @@ class Textformformfields extends StatelessWidget {
         ),
         hintText: hintText,
         prefixIcon: prefixIcon,
-        labelText: label,
         suffixIcon: suffixIcon,
       ),
       readOnly: readOnly,

@@ -33,7 +33,7 @@ class SetNewPasswordScreen extends StatelessWidget {
                 ),
                 SizedBox(height: screenHeight * 0.06),
                 CustomPasswordTextFormFields(
-                  label: "Password",
+                  hintText: "password",
                   controller: passWordController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -46,7 +46,7 @@ class SetNewPasswordScreen extends StatelessWidget {
                 ),
                 SizedBox(height: screenHeight * 0.02),
                 CustomPasswordTextFormFields(
-                  label: "Confirm password",
+                  hintText: "confirmpassword",
                   controller: confirmPasswordController,
                   isConfirmPassword: true,
                   validator: (value) {
