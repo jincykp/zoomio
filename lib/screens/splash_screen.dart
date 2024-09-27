@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> gotoLogin() async {
     await Future.delayed(const Duration(seconds: 7));
     // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (context) => const OnboardingScreenOne()));
   }
 }

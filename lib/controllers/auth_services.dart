@@ -68,11 +68,19 @@ class AuthServices {
 
         // Sign in to Firebase with the Google credentials
         await auth.signInWithCredential(credential);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()));
       }
     } catch (e) {
       log("Google Sign-In failed: $e");
+    }
+  }
+
+  Future<void> sendEailVerificationLink() async {
+    try {
+      await auth.currentUser?.sendEmailVerification();
+    } catch (e) {
+      print(e.toString());
     }
   }
 }

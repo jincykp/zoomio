@@ -24,101 +24,100 @@ class _ClickOtpScreenState extends State<ClickOtpScreen> {
           child: Column(
             children: [
               const Text(
-                "Forgot Password",
-                style: Textstyles.titleText,
+                "Enter email to send you a password reset email",
+                style: Textstyles.titleTextSmall,
               ),
-              const Text("Code has been send to *******76"),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    height: 68,
-                    width: 64,
-                    child: TextFormField(
-                      onChanged: (value) {
-                        if (value.length == 1) {
-                          FocusScope.of(context).nextFocus();
-                        }
-                      },
-                      style: Theme.of(context).textTheme.titleLarge,
-                      keyboardType: TextInputType.number,
-                      textAlign: TextAlign.center,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(1),
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 68,
-                    width: 64,
-                    child: TextField(
-                      onChanged: (value) {
-                        if (value.length == 1) {
-                          FocusScope.of(context).nextFocus();
-                        }
-                      },
-                      style: Theme.of(context).textTheme.titleLarge,
-                      keyboardType: TextInputType.number,
-                      textAlign: TextAlign.center,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(1),
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 68,
-                    width: 64,
-                    child: TextField(
-                      onChanged: (value) {
-                        if (value.length == 1) {
-                          FocusScope.of(context).nextFocus();
-                        }
-                      },
-                      style: Theme.of(context).textTheme.titleLarge,
-                      keyboardType: TextInputType.number,
-                      textAlign: TextAlign.center,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(1),
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 68,
-                    width: 64,
-                    child: TextField(
-                      onChanged: (value) {
-                        if (value.length == 1) {
-                          FocusScope.of(context).nextFocus();
-                        }
-                      },
-                      style: Theme.of(context).textTheme.titleLarge,
-                      keyboardType: TextInputType.number,
-                      textAlign: TextAlign.center,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(1),
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  const Text(
-                    "Didn't receive code?",
-                    style: Textstyles.smallTexts,
-                  ),
-                  TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        "Resend again",
-                        style: Textstyles.spclTexts,
-                      ))
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     SizedBox(
+              //       height: 68,
+              //       width: 64,
+              //       child: TextFormField(
+              //         onChanged: (value) {
+              //           if (value.length == 1) {
+              //             FocusScope.of(context).nextFocus();
+              //           }
+              //         },
+              //         style: Theme.of(context).textTheme.titleLarge,
+              //         keyboardType: TextInputType.number,
+              //         textAlign: TextAlign.center,
+              //         inputFormatters: [
+              //           LengthLimitingTextInputFormatter(1),
+              //           FilteringTextInputFormatter.digitsOnly
+              //         ],
+              //       ),
+              //     ),
+              //     SizedBox(
+              //       height: 68,
+              //       width: 64,
+              //       child: TextField(
+              //         onChanged: (value) {
+              //           if (value.length == 1) {
+              //             FocusScope.of(context).nextFocus();
+              //           }
+              //         },
+              //         style: Theme.of(context).textTheme.titleLarge,
+              //         keyboardType: TextInputType.number,
+              //         textAlign: TextAlign.center,
+              //         inputFormatters: [
+              //           LengthLimitingTextInputFormatter(1),
+              //           FilteringTextInputFormatter.digitsOnly
+              //         ],
+              //       ),
+              //     ),
+              //     SizedBox(
+              //       height: 68,
+              //       width: 64,
+              //       child: TextField(
+              //         onChanged: (value) {
+              //           if (value.length == 1) {
+              //             FocusScope.of(context).nextFocus();
+              //           }
+              //         },
+              //         style: Theme.of(context).textTheme.titleLarge,
+              //         keyboardType: TextInputType.number,
+              //         textAlign: TextAlign.center,
+              //         inputFormatters: [
+              //           LengthLimitingTextInputFormatter(1),
+              //           FilteringTextInputFormatter.digitsOnly
+              //         ],
+              //       ),
+              //     ),
+              //     SizedBox(
+              //       height: 68,
+              //       width: 64,
+              //       child: TextField(
+              //         onChanged: (value) {
+              //           if (value.length == 1) {
+              //             FocusScope.of(context).nextFocus();
+              //           }
+              //         },
+              //         style: Theme.of(context).textTheme.titleLarge,
+              //         keyboardType: TextInputType.number,
+              //         textAlign: TextAlign.center,
+              //         inputFormatters: [
+              //           LengthLimitingTextInputFormatter(1),
+              //           FilteringTextInputFormatter.digitsOnly
+              //         ],
+              //       ),
+              //     )
+              //   ],
+              // ),
+              // Row(
+              //   children: [
+              //     const Text(
+              //       "Didn't receive code?",
+              //       style: Textstyles.smallTexts,
+              //     ),
+              //     TextButton(
+              //         onPressed: () {},
+              //         child: const Text(
+              //           "Resend again",
+              //           style: Textstyles.spclTexts,
+              //         ))
+              //   ],
+              // ),
               CustomButtons(
                   text: "Verify",
                   onPressed: () {

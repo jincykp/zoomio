@@ -23,7 +23,6 @@ class _ProfileCreationScreenState extends State<ProfileCreationScreen> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: AppBar(),
       body: Padding(
         padding: EdgeInsets.all(screenWidth * 0.05),
         child: SingleChildScrollView(

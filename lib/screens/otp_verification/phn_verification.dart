@@ -1,13 +1,37 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:zoomer/controllers/auth_services.dart';
 import 'package:zoomer/custom_widgets/custom_buttons.dart';
-import 'package:zoomer/screens/forgot_password/set_new_password.dart';
+import 'package:zoomer/screens/home_screen.dart';
 import 'package:zoomer/screens/otp_verification/profile_creation.dart';
-import 'package:zoomer/screens/otp_verification/set_password.dart';
 import 'package:zoomer/styles/appstyles.dart';
 
-class OtpVerificationScreen extends StatelessWidget {
+class OtpVerificationScreen extends StatefulWidget {
   const OtpVerificationScreen({super.key});
+
+  @override
+  State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
+}
+
+class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
+  final auth = AuthServices();
+  late Timer timer;
+  @override
+  void initState() {
+    auth.sendEailVerificationLink();
+    timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      FirebaseAuth.instance.currentUser?.reload();
+      if (FirebaseAuth.instance.currentUser!.emailVerified == true) {
+        timer.cancel();
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()));
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +139,9 @@ class OtpVerificationScreen extends StatelessWidget {
                     style: Textstyles.smallTexts,
                   ),
                   TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        auth.sendEailVerificationLink();
+                      },
                       child: const Text(
                         "Resend again",
                         style: Textstyles.spclTexts,
