@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zoomer/screens/home_screen.dart';
 import 'package:zoomer/screens/onboarding_screens.dart/onboarding_one.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -42,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> gotoLogin() async {
     await Future.delayed(const Duration(seconds: 7));
     // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) => const OnboardingScreenOne()));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const HomeScreen()));
   }
 }
