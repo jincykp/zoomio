@@ -34,28 +34,6 @@ class AuthServices {
     return null;
   }
 
-  Future<String?> getUserPhoneNumber(String email) async {
-    try {
-      // Query the Firestore collection where user data is stored
-      QuerySnapshot snapshot = await _firestore
-          .collection(
-              'users') // Adjust the collection name as per your Firestore structure
-          .where('email', isEqualTo: email) // Find user by email
-          .get();
-
-      if (snapshot.docs.isNotEmpty) {
-        // If user exists, get the phone number from the first document
-        DocumentSnapshot userDoc = snapshot.docs.first;
-        return userDoc[
-            'phoneNumber']; // Adjust the field name as per your Firestore structure
-      }
-    } catch (e) {
-      log("Error fetching phone number: $e");
-      return null; // Handle error and return null if fetching fails
-    }
-    return null; // Return null if user not found
-  }
-
   // Sign out
   Future<void> signout() async {
     try {
@@ -96,18 +74,12 @@ class AuthServices {
         // Get user email
         String email = googleUser.email;
 
-        // Fetch phone number from the database using the user's email
-        String? phoneNumber =
-            await getUserPhoneNumber(email); // Corrected method call
-
-        // Navigate to HomePage and pass the email and phone number
+        // Navigate to HomePage and pass the email
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => HomePage(
-              email: email,
-              phoneNumber: phoneNumber ??
-                  'Phone number not found', // Handle case where phone number is not found
+              email: email, // Now only passing email
             ),
           ),
         );
@@ -116,6 +88,8 @@ class AuthServices {
       log("Google Sign-In failed: $e");
     }
   }
+
+  // Fetch phone number from the database using the user's email
 
   Future<void> sendEmailVerificationLink() async {
     try {

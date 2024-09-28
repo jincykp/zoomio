@@ -1,7 +1,4 @@
 // lib/screens/sign_up_screen.dart
-import 'package:flutter_signin_button/button_list.dart';
-import 'package:flutter_signin_button/button_view.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,8 +8,6 @@ import 'package:zoomer/custom_widgets/custom_password.dart';
 import 'package:zoomer/custom_widgets/textformformfields.dart';
 import 'package:zoomer/screens/home_page.dart';
 import 'package:zoomer/screens/login_screens/sign_in_screen.dart';
-import 'package:zoomer/screens/otp_verification/phn_verification.dart';
-import 'package:zoomer/screens/otp_verification/profile_creation.dart';
 import 'package:zoomer/styles/appstyles.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -216,8 +211,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => HomePage(
-                email: emailController.text, phoneNumber: phnController.text)));
+            builder: (context) => HomePage(email: emailController.text)));
   }
 
   Future<void> signUp() async {

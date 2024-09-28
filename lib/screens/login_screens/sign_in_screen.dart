@@ -42,7 +42,7 @@ class _SignInScreenState extends State<SignInScreen> {
               SizedBox(height: screenHeight * 0.02),
               Textformformfields(
                 controller: emailController,
-                hintText: 'Email or Phone Number',
+                hintText: 'Enter your email',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your email address';
@@ -63,14 +63,16 @@ class _SignInScreenState extends State<SignInScreen> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your password';
+                  } else if (value.length < 6) {
+                    return 'Password must be at least 6 characters';
                   } else if (value.contains(' ')) {
                     return 'Password cannot contain whitespace';
                   }
-                  return null; // Password is valid
+                  return null;
                 },
                 inputFormatters: [
-                  FilteringTextInputFormatter.deny(
-                      RegExp(r'\s')), // Deny whitespace
+                  FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                  LengthLimitingTextInputFormatter(6)
                 ],
               ),
               Row(
@@ -162,16 +164,6 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  // goToHome(BuildContext context) {
-  //   Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //           builder: (context) => HomePage(
-  //                 email: emailController.text,
-  //                 phoneNumber: phoneNumber,
-  //               )));
-  // }
-
   logIn() async {
     // Check if the email and password fields are not empty
     if (emailController.text.isEmpty || passWordController.text.isEmpty) {
@@ -195,19 +187,21 @@ class _SignInScreenState extends State<SignInScreen> {
 
       // Check if login was successful
       if (user != null) {
-        String? phoneNumber =
-            await auth.getUserPhoneNumber(emailController.text);
         log("User Logged In: ${user.email}");
         Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => HomePage(
-                    email: emailController.text, phoneNumber: phoneNumber)));
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(
+              email: emailController.text,
+            ),
+          ),
+        );
       } else {
         log("Login failed: User is null");
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Colors.red, // Change this to your desired color
+            backgroundColor: ThemeColors.alertColor,
+            // Change this to your desired color
             content: Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: 16.0, vertical: 8.0), // Adjust padding as needed
@@ -221,7 +215,8 @@ class _SignInScreenState extends State<SignInScreen> {
       log("Error during login: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text("An error occurred during login: ${e.toString()}")),
+          content: Text("An error occurred during login: ${e.toString()}"),
+        ),
       );
     }
   }

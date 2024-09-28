@@ -4,13 +4,13 @@ import 'package:zoomer/controllers/auth_services.dart';
 import 'package:zoomer/screens/bottom_screens/notifications.dart';
 import 'package:zoomer/screens/bottom_screens/rental_screen.dart';
 import 'package:zoomer/screens/login_screens/sign_in_screen.dart';
+import 'package:zoomer/screens/profile/profile_adding_screen.dart';
 import 'package:zoomer/styles/appstyles.dart';
 import 'package:zoomer/screens/bottom_screens/home_screen.dart'; // Make sure to import your HomePage
 
 class HomePage extends StatefulWidget {
   final String? email;
-  final String? phoneNumber;
-  const HomePage({super.key, this.email, this.phoneNumber});
+  const HomePage({super.key, this.email});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -64,24 +64,30 @@ class _HomePageState extends State<HomePage> {
           child: ListView(
             padding: EdgeInsets.zero, // This removes any default padding.
             children: [
-              UserAccountsDrawerHeader(
-                decoration:
-                    const BoxDecoration(color: ThemeColors.primaryColor),
-                accountName: Padding(
-                  padding: const EdgeInsets.only(top: 17.0),
-                  child: Text(widget.phoneNumber ?? ""),
-                ),
-                accountEmail: Text(widget.email ?? ""),
-                currentAccountPicture: const CircleAvatar(
-                  radius: 33,
-                  backgroundImage:
-                      AssetImage('assets/person.png'), // Default image
+              GestureDetector(
+                onTap: () {},
+                child: UserAccountsDrawerHeader(
+                  decoration:
+                      const BoxDecoration(color: ThemeColors.primaryColor),
+                  accountName: const Padding(
+                    padding: EdgeInsets.only(top: 17.0),
+                    //child: Text(widget.phoneNumber ?? ""),
+                  ),
+                  accountEmail: Text(widget.email ?? ""),
+                  currentAccountPicture: const CircleAvatar(
+                    radius: 33,
+                    backgroundImage:
+                        AssetImage('assets/person.png'), // Default image
+                  ),
                 ),
               ),
               ListTile(
                 leading: const Icon(Icons.person),
                 title: const Text("Edit Profile"),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const Profile()));
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.history),
