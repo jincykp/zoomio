@@ -3,13 +3,13 @@ import 'package:zoomer/custom_widgets/custom_buttons.dart';
 import 'package:zoomer/custom_widgets/custom_profile_creation.dart';
 import 'package:zoomer/styles/appstyles.dart';
 
-class Profile extends StatefulWidget {
-  const Profile({super.key});
+class AddProfileDetails extends StatefulWidget {
+  const AddProfileDetails({super.key});
   @override
-  State<Profile> createState() => _ProfileState();
+  State<AddProfileDetails> createState() => _AddProfileDetailsState();
 }
 
-class _ProfileState extends State<Profile> {
+class _AddProfileDetailsState extends State<AddProfileDetails> {
   @override
   Widget build(BuildContext context) {
     final nameControllers = TextEditingController();

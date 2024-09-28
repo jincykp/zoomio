@@ -66,6 +66,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 SizedBox(height: screenHeight * 0.012),
                 Textformformfields(
+                  controller: nameController,
+                  hintText: 'Name',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your name';
+                    } else if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+                      return 'Name can only contain letters';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: screenHeight * 0.012),
+                Textformformfields(
                   keyBoardType: TextInputType.phone,
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
@@ -207,11 +220,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  void goToHomeScreen(BuildContext context) {
+  void goToHomeScreen(BuildContext context, String displayName) {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => HomePage(email: emailController.text)));
+            builder: (context) => HomePage(
+                  email: emailController.text,
+                  displayName: displayName,
+                )));
   }
 
   Future<void> signUp() async {
@@ -238,7 +254,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       if (user != null) {
         log("User created successfully");
-        goToHomeScreen(context);
+        goToHomeScreen(context, nameController.text);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

@@ -71,15 +71,17 @@ class AuthServices {
         // Sign in to Firebase with the Google credentials
         await auth.signInWithCredential(credential);
 
-        // Get user email
+        // Get user details
         String email = googleUser.email;
+        String? displayName = googleUser.displayName; // Get the user's name
 
-        // Navigate to HomePage and pass the email
+        // Navigate to HomePage and pass the email and displayName
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => HomePage(
-              email: email, // Now only passing email
+              email: email, // Pass email
+              displayName: displayName, // Pass display name if available
             ),
           ),
         );

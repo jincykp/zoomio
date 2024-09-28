@@ -1,50 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
-        // Allows scrolling for content
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              child: Container(
+                decoration: BoxDecoration(
+                  color:
+                      const Color.fromARGB(255, 66, 60, 60), // Outer box color
+                  borderRadius: BorderRadius.circular(19),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(
+                      15.0), // Padding inside the outer box
+                  child: Container(
+                    decoration: BoxDecoration(
+                      // color: const Color.fromARGB(
+                      //     255, 228, 226, 226), // Inner box color
+                      borderRadius: BorderRadius.circular(
+                          15), // Slightly smaller radius for inner box
+                      boxShadow: const [
+                        BoxShadow(
+                          //color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 5,
+                          offset: Offset(0, 3), // Shadow position
+                        ),
+                      ],
+                    ),
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: "Where would you go?",
+                        hintStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          size: 25,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
 
-        );
-  }
-}
-
-// Service Card Widget
-class ServiceCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
-
-  const ServiceCard({
-    Key? key,
-    required this.icon,
-    required this.title,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Card(
-        elevation: 5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: SizedBox(
-          width: 150,
-          height: 100,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 40),
-              const SizedBox(height: 10),
-              Text(title, style: TextStyle(fontSize: 18)),
-            ],
-          ),
+                          // Removes border line from TextFormField
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

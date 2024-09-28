@@ -3,14 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:zoomer/controllers/auth_services.dart';
 import 'package:zoomer/screens/bottom_screens/notifications.dart';
 import 'package:zoomer/screens/bottom_screens/rental_screen.dart';
+import 'package:zoomer/screens/complaints/complaints.dart';
+import 'package:zoomer/screens/history/history.dart';
 import 'package:zoomer/screens/login_screens/sign_in_screen.dart';
+import 'package:zoomer/screens/otp_verification/profile_view.dart';
 import 'package:zoomer/screens/profile/profile_adding_screen.dart';
+import 'package:zoomer/screens/profile/profile_screen.dart';
 import 'package:zoomer/styles/appstyles.dart';
-import 'package:zoomer/screens/bottom_screens/home_screen.dart'; // Make sure to import your HomePage
+import 'package:zoomer/screens/bottom_screens/home_screen.dart'; // Import your HomeScreen
 
 class HomePage extends StatefulWidget {
   final String? email;
-  const HomePage({super.key, this.email});
+  final String? displayName;
+  const HomePage({super.key, this.email, this.displayName});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -23,10 +28,13 @@ class _HomePageState extends State<HomePage> {
   // GlobalKey for controlling the Scaffold
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  // Removed the image variable and image picking function
+  // File? _image; // Variable to hold the picked image
+
   final List<Widget> _pages = [
     const HomeScreen(), // Home Page
     const RentalScreen(), // Rentals Page
-    const NotificationsScreen(), // Notifications Pag
+    const NotificationsScreen(), // Notifications Page
   ];
 
   @override
@@ -65,17 +73,21 @@ class _HomePageState extends State<HomePage> {
             padding: EdgeInsets.zero, // This removes any default padding.
             children: [
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ProfileCard()));
+                },
                 child: UserAccountsDrawerHeader(
                   decoration:
                       const BoxDecoration(color: ThemeColors.primaryColor),
-                  accountName: const Padding(
-                    padding: EdgeInsets.only(top: 17.0),
-                    //child: Text(widget.phoneNumber ?? ""),
+                  accountName: Padding(
+                    padding: const EdgeInsets.only(top: 17.0),
+                    child: Text(widget.displayName ?? ""),
                   ),
                   accountEmail: Text(widget.email ?? ""),
                   currentAccountPicture: const CircleAvatar(
-                    radius: 33,
                     backgroundImage:
                         AssetImage('assets/person.png'), // Default image
                   ),
@@ -85,14 +97,21 @@ class _HomePageState extends State<HomePage> {
                 leading: const Icon(Icons.person),
                 title: const Text("Edit Profile"),
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const Profile()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AddProfileDetails()));
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.history),
                 title: const Text("History"),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const HistoryScreen()));
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.dark_mode),
@@ -102,7 +121,12 @@ class _HomePageState extends State<HomePage> {
               ListTile(
                 leading: const Icon(Icons.warning_amber_outlined),
                 title: const Text("Complain"),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ComplaintScreen()));
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.info_outline),
@@ -123,11 +147,39 @@ class _HomePageState extends State<HomePage> {
                 leading: const Icon(Icons.logout),
                 title: const Text("Logout"),
                 onTap: () async {
-                  await auth.signout(); // Call the signout method
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SignInScreen()));
+                  // Show a confirmation dialog
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text(
+                          "Logout Confirmation",
+                          style: Textstyles.buttonText,
+                        ),
+                        content: const Text("Are you sure you want to logout?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("Cancel"),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                              await auth.signout();
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const SignInScreen()),
+                              );
+                            },
+                            child: const Text("Logout"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
               ),
             ],
