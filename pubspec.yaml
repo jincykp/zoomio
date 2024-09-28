@@ -45,6 +45,7 @@ dependencies:
   flutter_signin_button: ^2.0.0
   curved_navigation_bar: ^1.0.0
   fan_side_drawer: ^1.0.2
+  image_picker: ^1.0.7
   
 
 dev_dependencies:
@@ -79,6 +80,7 @@ flutter:
     - assets/Gmail.png
     - assets/phnmsg.png
     - assets/gimage.png
+    - assets/person.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

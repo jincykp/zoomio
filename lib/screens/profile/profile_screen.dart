@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:zoomer/custom_widgets/custom_buttons.dart';
 import 'package:zoomer/custom_widgets/custom_profile_creation.dart';
-import 'package:zoomer/screens/home_screen.dart';
-import 'package:zoomer/screens/login_screens/welcome_screen.dart';
+import 'package:zoomer/screens/home_page.dart';
 import 'package:zoomer/styles/appstyles.dart';
 
-class ProfileCreationScreen extends StatefulWidget {
-  const ProfileCreationScreen({super.key});
+class Profile extends StatefulWidget {
+  const Profile({super.key});
   @override
-  State<ProfileCreationScreen> createState() => _ProfileCreationScreenState();
+  State<Profile> createState() => _ProfileState();
 }
 
-class _ProfileCreationScreenState extends State<ProfileCreationScreen> {
+class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     final nameControllers = TextEditingController();
-    final emailControllers = TextEditingController();
+
     final cityControllers = TextEditingController();
     final streetControllers = TextEditingController();
     final districtControllers = TextEditingController();
@@ -24,7 +23,7 @@ class _ProfileCreationScreenState extends State<ProfileCreationScreen> {
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
-        padding: EdgeInsets.all(screenWidth * 0.05),
+        padding: EdgeInsets.all(screenWidth * 0.09),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -53,7 +52,7 @@ class _ProfileCreationScreenState extends State<ProfileCreationScreen> {
               ),
               CustomprofileTextFormFields(
                 controller: nameControllers,
-                hintText: "Name",
+                hintText: "Namess",
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your name';
@@ -66,21 +65,6 @@ class _ProfileCreationScreenState extends State<ProfileCreationScreen> {
               SizedBox(
                 height: screenHeight * 0.02,
               ),
-              CustomprofileTextFormFields(
-                  controller: emailControllers,
-                  hintText: "Email",
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email address';
-                    }
-                    final bool isValid =
-                        RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                            .hasMatch(value);
-                    if (!isValid) {
-                      return 'Enter a valid email address';
-                    }
-                    return null;
-                  }),
               SizedBox(
                 height: screenHeight * 0.02,
               ),
@@ -126,10 +110,10 @@ class _ProfileCreationScreenState extends State<ProfileCreationScreen> {
                 child: CustomButtons(
                     text: "Save",
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const HomeScreen()));
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => const HomePage()));
                     },
                     backgroundColor: ThemeColors.primaryColor,
                     textColor: ThemeColors.textColor,

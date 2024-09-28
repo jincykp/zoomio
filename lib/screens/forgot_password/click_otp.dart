@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:zoomer/controllers/auth_services.dart';
 import 'package:zoomer/custom_widgets/custom_buttons.dart';
+import 'package:zoomer/custom_widgets/textformformfields.dart';
 import 'package:zoomer/screens/otp_verification/set_password.dart';
 import 'package:zoomer/styles/appstyles.dart';
 
@@ -12,6 +13,8 @@ class ClickOtpScreen extends StatefulWidget {
 }
 
 class _ClickOtpScreenState extends State<ClickOtpScreen> {
+  final auth = AuthServices();
+  final emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -26,6 +29,14 @@ class _ClickOtpScreenState extends State<ClickOtpScreen> {
               const Text(
                 "Enter email to send you a password reset email",
                 style: Textstyles.titleTextSmall,
+              ),
+              SizedBox(
+                height: screenWidth * 0.1,
+              ),
+              Textformformfields(
+                  controller: emailController, hintText: "Enter your Email"),
+              SizedBox(
+                height: screenWidth * 0.1,
               ),
               // Row(
               //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -118,13 +129,21 @@ class _ClickOtpScreenState extends State<ClickOtpScreen> {
               //         ))
               //   ],
               // ),
+
               CustomButtons(
-                  text: "Verify",
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const SetPasswordScreen()));
+                  text: "Send Email",
+                  onPressed: () async {
+                    await auth.resetPassword(emailController.text);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'An email for password reset has been sent to your email.',
+                          style: Textstyles.smallTexts,
+                        ),
+                        backgroundColor: ThemeColors.titleColor,
+                      ),
+                    );
+                    Navigator.pop(context);
                   },
                   backgroundColor: ThemeColors.primaryColor,
                   textColor: ThemeColors.textColor,

@@ -4,8 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:zoomer/controllers/auth_services.dart';
 import 'package:zoomer/custom_widgets/custom_buttons.dart';
 import 'package:zoomer/custom_widgets/textformformfields.dart';
-import 'package:zoomer/screens/forgot_password/forget_selection.dart';
-import 'package:zoomer/screens/home_screen.dart';
+import 'package:zoomer/screens/forgot_password/click_otp.dart';
+import 'package:zoomer/screens/home_page.dart';
+import 'package:zoomer/screens/login_screens/sign_up_screen.dart';
 import 'package:zoomer/styles/appstyles.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -80,8 +81,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const ForgetPasswordScreen()));
+                                builder: (context) => const ClickOtpScreen()));
                       },
                       child: const Text(
                         "Forget Password?",
@@ -143,7 +143,12 @@ class _SignInScreenState extends State<SignInScreen> {
                 children: [
                   const Text("Don't have an account?"),
                   TextButton(
-                      onPressed: logIn,
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignUpScreen()));
+                      },
                       child: const Text(
                         "Sign up",
                         style: TextStyle(color: ThemeColors.primaryColor),
@@ -157,10 +162,15 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  goToHome(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-  }
+  // goToHome(BuildContext context) {
+  //   Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //           builder: (context) => HomePage(
+  //                 email: emailController.text,
+  //                 phoneNumber: phoneNumber,
+  //               )));
+  // }
 
   logIn() async {
     // Check if the email and password fields are not empty
@@ -185,8 +195,14 @@ class _SignInScreenState extends State<SignInScreen> {
 
       // Check if login was successful
       if (user != null) {
+        String? phoneNumber =
+            await auth.getUserPhoneNumber(emailController.text);
         log("User Logged In: ${user.email}");
-        goToHome(context);
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => HomePage(
+                    email: emailController.text, phoneNumber: phoneNumber)));
       } else {
         log("Login failed: User is null");
         ScaffoldMessenger.of(context).showSnackBar(

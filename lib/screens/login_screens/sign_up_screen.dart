@@ -9,8 +9,10 @@ import 'package:zoomer/controllers/auth_services.dart';
 import 'package:zoomer/custom_widgets/custom_buttons.dart';
 import 'package:zoomer/custom_widgets/custom_password.dart';
 import 'package:zoomer/custom_widgets/textformformfields.dart';
+import 'package:zoomer/screens/home_page.dart';
 import 'package:zoomer/screens/login_screens/sign_in_screen.dart';
 import 'package:zoomer/screens/otp_verification/phn_verification.dart';
+import 'package:zoomer/screens/otp_verification/profile_creation.dart';
 import 'package:zoomer/styles/appstyles.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -210,9 +212,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  void goToOtpVerificationScreen(BuildContext context) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const OtpVerificationScreen()));
+  void goToHomeScreen(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HomePage(
+                email: emailController.text, phoneNumber: phnController.text)));
   }
 
   Future<void> signUp() async {
@@ -239,7 +244,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       if (user != null) {
         log("User created successfully");
-        goToOtpVerificationScreen(context);
+        goToHomeScreen(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

@@ -1,10 +1,12 @@
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:zoomer/screens/home_screen.dart';
+import 'package:zoomer/screens/home_page.dart';
 
 class AuthServices {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn(); // Initialized GoogleSignIn
   final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -30,6 +32,28 @@ class AuthServices {
       log("Something went wrong: $e");
     }
     return null;
+  }
+
+  Future<String?> getUserPhoneNumber(String email) async {
+    try {
+      // Query the Firestore collection where user data is stored
+      QuerySnapshot snapshot = await _firestore
+          .collection(
+              'users') // Adjust the collection name as per your Firestore structure
+          .where('email', isEqualTo: email) // Find user by email
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        // If user exists, get the phone number from the first document
+        DocumentSnapshot userDoc = snapshot.docs.first;
+        return userDoc[
+            'phoneNumber']; // Adjust the field name as per your Firestore structure
+      }
+    } catch (e) {
+      log("Error fetching phone number: $e");
+      return null; // Handle error and return null if fetching fails
+    }
+    return null; // Return null if user not found
   }
 
   // Sign out
@@ -68,19 +92,36 @@ class AuthServices {
 
         // Sign in to Firebase with the Google credentials
         await auth.signInWithCredential(credential);
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()));
+
+        // Get user email
+        String email = googleUser.email;
+
+        // Fetch phone number from the database using the user's email
+        String? phoneNumber =
+            await getUserPhoneNumber(email); // Corrected method call
+
+        // Navigate to HomePage and pass the email and phone number
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(
+              email: email,
+              phoneNumber: phoneNumber ??
+                  'Phone number not found', // Handle case where phone number is not found
+            ),
+          ),
+        );
       }
     } catch (e) {
       log("Google Sign-In failed: $e");
     }
   }
 
-  Future<void> sendEailVerificationLink() async {
+  Future<void> sendEmailVerificationLink() async {
     try {
       await auth.currentUser?.sendEmailVerification();
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
     }
   }
 }
