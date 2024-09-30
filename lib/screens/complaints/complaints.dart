@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:zoomer/custom_widgets/custom_buttons.dart';
+import 'package:zoomer/styles/appstyles.dart';
 
 class ComplaintScreen extends StatelessWidget {
   const ComplaintScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Complaint"),
@@ -28,7 +32,14 @@ class ComplaintScreen extends StatelessWidget {
                   border: OutlineInputBorder(),
                 ),
               ),
-            )
+            ),
+            CustomButtons(
+                text: "Submit",
+                onPressed: () {},
+                backgroundColor: ThemeColors.primaryColor,
+                textColor: ThemeColors.textColor,
+                screenWidth: screenWidth * 0.02,
+                screenHeight: screenHeight * 0.02)
           ],
         ),
       ),

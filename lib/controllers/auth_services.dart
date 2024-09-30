@@ -91,8 +91,6 @@ class AuthServices {
     }
   }
 
-  // Fetch phone number from the database using the user's email
-
   Future<void> sendEmailVerificationLink() async {
     try {
       await auth.currentUser?.sendEmailVerification();
