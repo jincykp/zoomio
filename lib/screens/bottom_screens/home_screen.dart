@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zoomer/styles/appstyles.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -50,10 +51,14 @@ class HomeScreen extends StatelessWidget {
                           size: 25,
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(15),
+                            ),
+                            borderSide:
+                                BorderSide(color: ThemeColors.primaryColor)
 
-                          // Removes border line from TextFormField
-                        ),
+                            // Removes border line from TextFormField
+                            ),
                       ),
                     ),
                   ),

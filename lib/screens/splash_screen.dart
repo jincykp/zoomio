@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/screens/home_page.dart';
 import 'package:zoomer/screens/onboarding_screens.dart/onboarding_one.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -25,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: const Color.fromARGB(255, 219, 168, 0),
       body: Center(
           child: Text(
-        "zoomeR",
+        "zoomio",
         style: TextStyle(
             fontSize: screenWidth * 0.1,
             fontFamily: "FamilyGuy",

@@ -1,13 +1,11 @@
-// lib/screens/sign_up_screen.dart
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:zoomer/controllers/auth_services.dart';
 import 'package:zoomer/custom_widgets/custom_buttons.dart';
 import 'package:zoomer/custom_widgets/custom_password.dart';
 import 'package:zoomer/custom_widgets/textformformfields.dart';
-import 'package:zoomer/screens/home_page.dart';
 import 'package:zoomer/screens/login_screens/sign_in_screen.dart';
+import 'package:zoomer/screens/profile/profile_adding_screen.dart';
 import 'package:zoomer/styles/appstyles.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -20,10 +18,7 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final formKey = GlobalKey<FormState>();
   final AuthServices auth = AuthServices();
-  final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController phnController = TextEditingController();
-  final TextEditingController genderController = TextEditingController();
   final TextEditingController passWordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
@@ -48,6 +43,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: Textstyles.bodytext
                         .copyWith(fontSize: screenWidth * 0.05)),
                 SizedBox(height: screenHeight * 0.02),
+                // Email field
                 Textformformfields(
                   controller: emailController,
                   hintText: 'Email',
@@ -65,37 +61,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   },
                 ),
                 SizedBox(height: screenHeight * 0.012),
-                Textformformfields(
-                  controller: nameController,
-                  hintText: 'Name',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your name';
-                    } else if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-                      return 'Name can only contain letters';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: screenHeight * 0.012),
-                Textformformfields(
-                  keyBoardType: TextInputType.phone,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(10)
-                  ],
-                  controller: phnController,
-                  hintText: 'Your mobile number',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your mobile number';
-                    } else if (value.length != 10) {
-                      return 'Contact number must be 10 digits';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: screenHeight * 0.012),
+
+                // Password field
                 CustomPasswordTextFormFields(
                   hintText: "password",
                   controller: passWordController,
@@ -115,6 +82,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                 ),
                 SizedBox(height: screenHeight * 0.012),
+
+                // Confirm Password field
                 CustomPasswordTextFormFields(
                   hintText: "confirm password",
                   controller: confirmPasswordController,
@@ -122,10 +91,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your password';
-                    } else if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    } else if (value.contains(' ')) {
-                      return 'Password cannot contain whitespace';
+                    } else if (value != passWordController.text) {
+                      return 'Passwords do not match';
                     }
                     return null;
                   },
@@ -135,6 +102,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                 ),
                 SizedBox(height: screenHeight * 0.01),
+
+                // Checkbox for Terms of Service
                 Row(
                   children: [
                     Checkbox(
@@ -153,14 +122,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                 ),
                 SizedBox(height: screenHeight * 0.02),
+
+                // Sign Up button
                 CustomButtons(
                   text: "Sign up",
-                  onPressed: signUp,
+                  onPressed: () {
+                    if (formKey.currentState!.validate() && isChecked == true) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AddProfileDetails()));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'You must agree to the Terms of Service and Privacy Policy to proceed.',
+                            style: Textstyles.smallTexts,
+                          ),
+                          backgroundColor: ThemeColors.titleColor,
+                        ),
+                      );
+                    }
+                    // showDialog(
+                    //   context: context,
+                    //   barrierDismissible: false,
+                    //   builder: (context) =>
+                    //       const Center(child: CircularProgressIndicator()),
+                    // );
+                  },
                   backgroundColor: ThemeColors.primaryColor,
                   textColor: ThemeColors.textColor,
                   screenWidth: screenWidth,
                   screenHeight: screenHeight,
                 ),
+
+                // Divider or "or" section
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -172,6 +168,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const Expanded(child: Divider()),
                   ],
                 ),
+
+                // Google Sign-In button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -195,6 +193,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     )
                   ],
                 ),
+
+                // Already have an account? Sign In link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -218,51 +218,5 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
     );
-  }
-
-  void goToHomeScreen(BuildContext context, String displayName) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => HomePage(
-                  email: emailController.text,
-                  displayName: displayName,
-                )));
-  }
-
-  Future<void> signUp() async {
-    if (formKey.currentState!.validate()) {
-      if (isChecked != true) {
-        // If the checkbox is not checked, show a SnackBar
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'You must agree to the Terms of Service and Privacy Policy to proceed.',
-              style: Textstyles.smallTexts,
-            ),
-            backgroundColor: ThemeColors.titleColor,
-          ),
-        );
-        return; // Exit the method early
-      }
-
-      // Proceed with sign-up if checkbox is checked
-      final user = await auth.createAccountWithEmail(
-        emailController.text,
-        passWordController.text,
-      );
-
-      if (user != null) {
-        log("User created successfully");
-        goToHomeScreen(context, nameController.text);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to create account. Please try again.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
   }
 }

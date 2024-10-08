@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 class Textformformfields extends StatelessWidget {
   TextEditingController controller;
   String hintText;
-
   String? Function(String?)? validator;
   Widget? prefixIcon;
   Widget? suffixIcon;

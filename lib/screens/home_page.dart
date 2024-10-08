@@ -6,9 +6,8 @@ import 'package:zoomer/screens/bottom_screens/rental_screen.dart';
 import 'package:zoomer/screens/complaints/complaints.dart';
 import 'package:zoomer/screens/history/history.dart';
 import 'package:zoomer/screens/login_screens/sign_in_screen.dart';
-import 'package:zoomer/screens/otp_verification/profile_view.dart';
+import 'package:zoomer/screens/otp_verification/profilecard.dart';
 import 'package:zoomer/screens/profile/profile_adding_screen.dart';
-import 'package:zoomer/screens/profile/profile_screen.dart';
 import 'package:zoomer/styles/appstyles.dart';
 import 'package:zoomer/screens/bottom_screens/home_screen.dart'; // Import your HomeScreen
 
@@ -75,9 +74,12 @@ class _HomePageState extends State<HomePage> {
               GestureDetector(
                 onTap: () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ProfileCard()));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const ProfileCard(documentId: 'your_document_id'),
+                    ),
+                  );
                 },
                 child: UserAccountsDrawerHeader(
                   decoration:

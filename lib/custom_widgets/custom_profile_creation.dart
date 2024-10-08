@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 class CustomprofileTextFormFields extends StatelessWidget {
   TextEditingController controller;
   String hintText;
+  String? labelText;
   String? Function(String?)? validator;
   Widget? prefixIcon;
   Widget? suffixIcon;
@@ -15,6 +16,7 @@ class CustomprofileTextFormFields extends StatelessWidget {
       required this.controller,
       this.validator,
       required this.hintText,
+      this.labelText,
       this.prefixIcon,
       this.inputFormatters,
       this.suffixIcon,
@@ -30,6 +32,7 @@ class CustomprofileTextFormFields extends StatelessWidget {
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         hintText: hintText,
+        labelText: labelText,
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
       ),
