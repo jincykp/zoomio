@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:zoomer/controllers/auth_services.dart';
-import 'package:zoomer/custom_widgets/custom_buttons.dart';
-import 'package:zoomer/custom_widgets/custom_password.dart';
-import 'package:zoomer/custom_widgets/textformformfields.dart';
-import 'package:zoomer/screens/login_screens/sign_in_screen.dart';
-import 'package:zoomer/screens/profile/profile_adding_screen.dart';
-import 'package:zoomer/styles/appstyles.dart';
+import 'package:zoomer/views/custom_widgets/custom_buttons.dart';
+import 'package:zoomer/views/custom_widgets/custom_password.dart';
+import 'package:zoomer/views/custom_widgets/textformformfields.dart';
+import 'package:zoomer/views/home_page.dart';
+import 'package:zoomer/views/login_screens/sign_in_screen.dart';
+import 'package:zoomer/views/profile/profile_adding_screen.dart';
+import 'package:zoomer/views/styles/appstyles.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -131,7 +132,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const AddProfileDetails()));
+                              builder: (context) => const HomePage()));
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

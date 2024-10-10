@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/custom_widgets/custom_buttons.dart';
-import 'package:zoomer/screens/login_screens/sign_up_screen.dart';
-import 'package:zoomer/screens/login_screens/welcome_screen.dart';
-import 'package:zoomer/styles/appstyles.dart';
+import 'package:zoomer/views/custom_widgets/custom_buttons.dart';
+import 'package:zoomer/views/login_screens/sign_up_screen.dart';
+import 'package:zoomer/views/login_screens/welcome_screen.dart';
+import 'package:zoomer/views/styles/appstyles.dart';
 
 class MapenableScreen extends StatelessWidget {
   const MapenableScreen({super.key});

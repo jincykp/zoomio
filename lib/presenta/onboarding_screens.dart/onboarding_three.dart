@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/screens/onboarding_screens.dart/onboarding_three.dart';
-import 'package:zoomer/styles/appstyles.dart';
+import 'package:zoomer/views/login_screens/mapenable_screen.dart';
+import 'package:zoomer/views/styles/appstyles.dart';
 
-class OnboardingScreenTwo extends StatelessWidget {
-  const OnboardingScreenTwo({super.key});
+class OnboardingScreenThree extends StatelessWidget {
+  const OnboardingScreenThree({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,16 +22,16 @@ class OnboardingScreenTwo extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height:
-                          constraints.maxHeight * 0.4, // Adjust based on height
+                      height: constraints.maxHeight *
+                          0.4, // Adjust image height based on available space
                       child: Image.asset(
-                        "assets/At anytime.png",
+                        "assets/Frame 1.png",
                         fit: BoxFit.contain,
                       ),
                     ),
                     SizedBox(height: constraints.maxHeight * 0.05), // Spacing
                     Text(
-                      'At Any Time',
+                      'Book Your Ride',
                       style: Textstyles.titleText.copyWith(
                         fontSize: screenWidth * 0.05,
                       ),
@@ -39,7 +39,7 @@ class OnboardingScreenTwo extends StatelessWidget {
                     ),
                     SizedBox(height: constraints.maxHeight * 0.02), // Spacing
                     Text(
-                      "Book your ride whenever you need it, day or night. We're always here to take you where you want to go!",
+                      'Choose your ride with just a few taps. Enjoy a smooth and personalized booking experience tailored to you!',
                       style: Textstyles.bodytext.copyWith(
                         fontSize: screenWidth * 0.04,
                       ),
@@ -48,25 +48,26 @@ class OnboardingScreenTwo extends StatelessWidget {
                     SizedBox(height: constraints.maxHeight * 0.1), // Spacing
                     Container(
                       decoration: const BoxDecoration(
-                          color: ThemeColors.primaryColor,
-                          shape: BoxShape.circle),
-                      child: IconButton(
+                        color: ThemeColors.primaryColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: TextButton(
                         onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  const OnboardingScreenThree(),
+                              builder: (context) => const MapenableScreen(),
                             ),
                           );
                         },
-                        icon: Icon(
-                          Icons.arrow_forward,
-                          color: ThemeColors.titleColor,
-                          size: screenWidth * 0.07,
+                        child: const Text(
+                          "Go",
+                          style: TextStyle(
+                            color: ThemeColors.titleColor,
+                          ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),

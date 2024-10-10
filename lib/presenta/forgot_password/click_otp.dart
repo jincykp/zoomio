@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:zoomer/controllers/auth_services.dart';
-import 'package:zoomer/custom_widgets/custom_buttons.dart';
-import 'package:zoomer/custom_widgets/textformformfields.dart';
-import 'package:zoomer/screens/otp_verification/set_password.dart';
-import 'package:zoomer/styles/appstyles.dart';
+import 'package:zoomer/views/custom_widgets/custom_buttons.dart';
+import 'package:zoomer/views/custom_widgets/textformformfields.dart';
+import 'package:zoomer/views/otp_verification/set_password.dart';
+import 'package:zoomer/views/styles/appstyles.dart';
 
 class ClickOtpScreen extends StatefulWidget {
   const ClickOtpScreen({super.key});

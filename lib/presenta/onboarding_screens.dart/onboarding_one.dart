@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/screens/onboarding_screens.dart/onboarding_two.dart';
-import 'package:zoomer/styles/appstyles.dart';
+import 'package:zoomer/views/onboarding_screens.dart/onboarding_two.dart';
+import 'package:zoomer/views/styles/appstyles.dart';
 
 class OnboardingScreenOne extends StatefulWidget {
   const OnboardingScreenOne({super.key});

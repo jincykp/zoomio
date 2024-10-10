@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/screens/login_screens/sign_in_screen.dart';
-import 'package:zoomer/screens/login_screens/sign_up_screen.dart';
-import 'package:zoomer/styles/appstyles.dart';
+import 'package:zoomer/views/login_screens/sign_in_screen.dart';
+import 'package:zoomer/views/login_screens/sign_up_screen.dart';
+import 'package:zoomer/views/styles/appstyles.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});

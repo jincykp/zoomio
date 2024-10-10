@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/custom_widgets/custom_buttons.dart';
-import 'package:zoomer/styles/appstyles.dart';
+import 'package:zoomer/views/custom_widgets/custom_buttons.dart';
+import 'package:zoomer/views/styles/appstyles.dart';
 
 class ComplaintScreen extends StatelessWidget {
   const ComplaintScreen({super.key});

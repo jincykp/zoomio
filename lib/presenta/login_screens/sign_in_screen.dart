@@ -2,12 +2,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:zoomer/controllers/auth_services.dart';
-import 'package:zoomer/custom_widgets/custom_buttons.dart';
-import 'package:zoomer/custom_widgets/textformformfields.dart';
-import 'package:zoomer/screens/forgot_password/click_otp.dart';
-import 'package:zoomer/screens/home_page.dart';
-import 'package:zoomer/screens/login_screens/sign_up_screen.dart';
-import 'package:zoomer/styles/appstyles.dart';
+import 'package:zoomer/views/custom_widgets/custom_buttons.dart';
+import 'package:zoomer/views/custom_widgets/custom_password.dart';
+import 'package:zoomer/views/custom_widgets/textformformfields.dart';
+import 'package:zoomer/views/forgot_password/click_otp.dart';
+import 'package:zoomer/views/home_page.dart';
+import 'package:zoomer/views/login_screens/sign_up_screen.dart';
+import 'package:zoomer/views/styles/appstyles.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -57,9 +58,9 @@ class _SignInScreenState extends State<SignInScreen> {
                 },
               ),
               SizedBox(height: screenHeight * 0.01),
-              Textformformfields(
+              CustomPasswordTextFormFields(
+                hintText: "Enter your password",
                 controller: passWordController,
-                hintText: 'Enter your password',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your password';

@@ -13,4 +13,13 @@ class DatabaseMethod {
       throw e;
     }
   }
+
+  //create user profile
+  Future createUserProfile({required Map<String, dynamic> data}) async {
+    await FirebaseFirestore.instance.collection("user_details").add(data);
+  }
+  // edit user profile
+  // Future updateUserProfile({required String.docId,required Map<String,dynamic>data})async{
+  //   await FirebaseFirestore.instance.collection("user_profile").doc(docId).update(data);
+  //   }
 }

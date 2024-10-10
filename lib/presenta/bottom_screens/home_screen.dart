@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:zoomer/styles/appstyles.dart';
+import 'package:zoomer/views/styles/appstyles.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

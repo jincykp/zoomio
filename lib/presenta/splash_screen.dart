@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/screens/onboarding_screens.dart/onboarding_one.dart';
+import 'package:zoomer/views/onboarding_screens.dart/onboarding_one.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
