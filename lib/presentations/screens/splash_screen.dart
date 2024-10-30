@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/presentations/screens/onboarding_screens.dart/onboarding_one.dart';
+import 'package:zoomer/presentations/screens/onboarding_screens.dart/onboarding_state.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -42,6 +42,6 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(seconds: 7));
     // ignore: use_build_context_synchronously
     Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) => const OnboardingScreenOne()));
+        MaterialPageRoute(builder: (context) => const OnboardingView()));
   }
 }

@@ -29,7 +29,7 @@ class _OnboardingScreenOneState extends State<OnboardingScreenOne> {
                     SizedBox(
                       height: constraints.maxHeight * 0.4,
                       child: Image.asset(
-                        "assets/images/Anywhere you are.png",
+                        "assets/Anywhere you are.png",
                         fit: BoxFit.contain,
                       ),
                     ),
