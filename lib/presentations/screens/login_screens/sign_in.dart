@@ -1,13 +1,13 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:zoomer/controllers/auth_services.dart';
-import 'package:zoomer/presentations/screens/custom_widgets/custom_buttons.dart';
-import 'package:zoomer/presentations/screens/custom_widgets/custom_password.dart';
-import 'package:zoomer/presentations/screens/custom_widgets/textformformfields.dart';
-import 'package:zoomer/presentations/screens/forgot_password/click_otp.dart';
-import 'package:zoomer/presentations/screens/home_page.dart';
-import 'package:zoomer/presentations/screens/login_screens/sign_up_screen.dart';
+import 'package:zoomer/controllers/authservices.dart';
+import 'package:zoomer/presentations/home_page.dart';
+import 'package:zoomer/presentations/screens/custom_widgets/cus_password.dart';
+import 'package:zoomer/presentations/screens/custom_widgets/custom_butt.dart';
+import 'package:zoomer/presentations/screens/custom_widgets/textform.dart';
+import 'package:zoomer/presentations/screens/forgot_pw.dart/click_otp.dart';
+import 'package:zoomer/presentations/screens/login_screens/signup.dart';
 import 'package:zoomer/presentations/screens/styles/appstyles.dart';
 
 class SignInScreen extends StatefulWidget {

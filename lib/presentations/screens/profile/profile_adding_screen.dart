@@ -4,10 +4,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:random_string/random_string.dart';
-import 'package:zoomer/db_services/database.dart';
-import 'package:zoomer/presentations/screens/custom_widgets/custom_buttons.dart';
-import 'package:zoomer/presentations/screens/custom_widgets/custom_profile_creation.dart';
-import 'package:zoomer/presentations/screens/home_page.dart';
+import 'package:zoomer/model/database_methods.dart';
+import 'package:zoomer/presentations/home_page.dart';
+import 'package:zoomer/presentations/screens/custom_widgets/cus_pro.dart';
+import 'package:zoomer/presentations/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/presentations/screens/styles/appstyles.dart';
 
 class AddProfileDetails extends StatefulWidget {

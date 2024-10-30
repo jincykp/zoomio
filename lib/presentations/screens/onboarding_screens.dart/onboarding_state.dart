@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:zoomer/presentations/screens/custom_widgets/onboarding_info.dart';
-import 'package:zoomer/presentations/screens/login_screens/mapenable_screen.dart';
-import 'package:zoomer/presentations/screens/onboarding_screens.dart/onboarding_two.dart';
+import 'package:zoomer/presentations/screens/login_screens/map_enable.dart';
 import 'package:zoomer/presentations/screens/styles/appstyles.dart';
 
 class OnboardingView extends StatefulWidget {
@@ -79,7 +78,6 @@ class _OnboardingViewState extends State<OnboardingView> {
                             curve: Curves.easeIn,
                           );
                         } else {
-                       
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -88,24 +86,6 @@ class _OnboardingViewState extends State<OnboardingView> {
                         }
                       },
                       icon: Icons.arrow_forward)
-                  // Container(
-                  //   decoration: const BoxDecoration(
-                  //       color: ThemeColors.primaryColor,
-                  //       shape: BoxShape.circle),
-                  //   child: IconButton(
-                  //       onPressed: () {
-                  //         Navigator.push(
-                  //             context,
-                  //             MaterialPageRoute(
-                  //                 builder: (context) =>
-                  //                     const OnboardingScreenTwo()));
-                  //       },
-                  //       icon: Icon(
-                  //         Icons.arrow_forward,
-                  //         color: ThemeColors.titleColor,
-                  //         size: screenWidth * 0.07,
-                  //       )),
-                  // ),
                 ]),
           );
         },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/presentations/screens/custom_widgets/custom_buttons.dart';
-import 'package:zoomer/presentations/screens/login_screens/welcome_screen.dart';
+import 'package:zoomer/presentations/screens/custom_widgets/custom_butt.dart';
+import 'package:zoomer/presentations/screens/login_screens/welcome.dart';
+
 import 'package:zoomer/presentations/screens/styles/appstyles.dart';
 
 class MapenableScreen extends StatelessWidget {
@@ -24,7 +25,7 @@ class MapenableScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Image.asset(
-                  "assets/Location.png",
+                  "assets/images/Location.png",
                   width: screenWidth * 0.2,
                 ),
                 const Text("Enable your location",

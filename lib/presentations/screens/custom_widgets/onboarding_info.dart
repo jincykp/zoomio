@@ -19,7 +19,7 @@ class OnboardingItems {
         title: "Any Where You Are",
         description:
             'Get a ride at your doorstep, anytime, anywhere. Fast, reliable, and always at your service!.',
-        image: "assets/Anywhere you are.png"),
+        image: "assets/images/Anywhere you are.png"),
     OnBoardingInfo(
         title: 'At Any Time',
         description:

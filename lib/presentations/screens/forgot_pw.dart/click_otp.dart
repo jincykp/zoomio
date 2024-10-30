@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/controllers/auth_services.dart';
-import 'package:zoomer/presentations/screens/custom_widgets/custom_buttons.dart';
-import 'package:zoomer/presentations/screens/custom_widgets/textformformfields.dart';
+import 'package:zoomer/controllers/authservices.dart';
+import 'package:zoomer/presentations/screens/custom_widgets/custom_butt.dart';
+import 'package:zoomer/presentations/screens/custom_widgets/textform.dart';
+
 import 'package:zoomer/presentations/screens/styles/appstyles.dart';
 
 class ClickOtpScreen extends StatefulWidget {
