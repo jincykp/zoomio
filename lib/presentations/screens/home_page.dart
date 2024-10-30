@@ -1,15 +1,15 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:zoomer/controllers/auth_services.dart';
-import 'package:zoomer/views/bottom_screens/notifications.dart';
-import 'package:zoomer/views/bottom_screens/rental_screen.dart';
-import 'package:zoomer/views/complaints/complaints.dart';
-import 'package:zoomer/views/history/history.dart';
-import 'package:zoomer/views/login_screens/sign_in_screen.dart';
-import 'package:zoomer/views/otp_verification/profilecard.dart';
-import 'package:zoomer/views/profile/profile_adding_screen.dart';
-import 'package:zoomer/views/styles/appstyles.dart';
-import 'package:zoomer/views/bottom_screens/home_screen.dart'; // Import your HomeScreen
+import 'package:zoomer/presentations/screens/bottom_screens/home_screen.dart';
+import 'package:zoomer/presentations/screens/bottom_screens/notifications.dart';
+import 'package:zoomer/presentations/screens/bottom_screens/rental_screen.dart';
+import 'package:zoomer/presentations/screens/complaints/complaints.dart';
+import 'package:zoomer/presentations/screens/history/history.dart';
+import 'package:zoomer/presentations/screens/login_screens/sign_in_screen.dart';
+import 'package:zoomer/presentations/screens/otp_verification/profilecard.dart';
+import 'package:zoomer/presentations/screens/profile/profile_adding_screen.dart';
+import 'package:zoomer/presentations/screens/styles/appstyles.dart';
 
 class HomePage extends StatefulWidget {
   final String? email;
@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                   accountEmail: Text(widget.email ?? ""),
                   currentAccountPicture: const CircleAvatar(
                     backgroundImage:
-                        AssetImage('assets/person.png'), // Default image
+                        AssetImage('assets/images/person.png'), // Default image
                   ),
                 ),
               ),

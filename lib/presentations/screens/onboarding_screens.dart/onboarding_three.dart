@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/views/login_screens/mapenable_screen.dart';
-import 'package:zoomer/views/styles/appstyles.dart';
+import 'package:zoomer/presentations/screens/login_screens/mapenable_screen.dart';
+import 'package:zoomer/presentations/screens/styles/appstyles.dart';
 
 class OnboardingScreenThree extends StatelessWidget {
   const OnboardingScreenThree({super.key});
@@ -25,7 +25,7 @@ class OnboardingScreenThree extends StatelessWidget {
                       height: constraints.maxHeight *
                           0.4, // Adjust image height based on available space
                       child: Image.asset(
-                        "assets/Frame 1.png",
+                        "assets/images/Frame 1.png",
                         fit: BoxFit.contain,
                       ),
                     ),

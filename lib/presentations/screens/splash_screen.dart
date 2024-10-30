@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/views/onboarding_screens.dart/onboarding_one.dart';
+import 'package:zoomer/presentations/screens/onboarding_screens.dart/onboarding_one.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,7 +12,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     gotoLogin();
-    // TODO: implement initState
     super.initState();
   }
 

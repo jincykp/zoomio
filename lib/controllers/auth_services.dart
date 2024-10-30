@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:zoomer/views/home_page.dart';
+import 'package:zoomer/presentations/screens/home_page.dart';
 
 class AuthServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -80,9 +80,8 @@ class AuthServices {
           context,
           MaterialPageRoute(
             builder: (context) => HomePage(
-              email: email, // Pass email
-              displayName: displayName, // Pass display name if available
-            ),
+                // Pass display name if available
+                ),
           ),
         );
       }

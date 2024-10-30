@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:zoomer/controllers/auth_services.dart';
-import 'package:zoomer/views/custom_widgets/custom_buttons.dart';
-import 'package:zoomer/views/custom_widgets/custom_password.dart';
-import 'package:zoomer/views/custom_widgets/textformformfields.dart';
-import 'package:zoomer/views/home_page.dart';
-import 'package:zoomer/views/login_screens/sign_in_screen.dart';
-import 'package:zoomer/views/profile/profile_adding_screen.dart';
-import 'package:zoomer/views/styles/appstyles.dart';
+import 'package:zoomer/presentations/screens/custom_widgets/custom_buttons.dart';
+import 'package:zoomer/presentations/screens/custom_widgets/custom_password.dart';
+import 'package:zoomer/presentations/screens/custom_widgets/textformformfields.dart';
+import 'package:zoomer/presentations/screens/home_page.dart';
+import 'package:zoomer/presentations/screens/login_screens/sign_in_screen.dart';
+import 'package:zoomer/presentations/screens/styles/appstyles.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);

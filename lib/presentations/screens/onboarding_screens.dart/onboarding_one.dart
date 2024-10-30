@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/views/onboarding_screens.dart/onboarding_two.dart';
-import 'package:zoomer/views/styles/appstyles.dart';
+import 'package:zoomer/presentations/screens/onboarding_screens.dart/onboarding_two.dart';
+import 'package:zoomer/presentations/screens/styles/appstyles.dart';
 
 class OnboardingScreenOne extends StatefulWidget {
   const OnboardingScreenOne({super.key});
@@ -29,7 +29,7 @@ class _OnboardingScreenOneState extends State<OnboardingScreenOne> {
                     SizedBox(
                       height: constraints.maxHeight * 0.4,
                       child: Image.asset(
-                        "assets/Anywhere you are.png",
+                        "assets/images/Anywhere you are.png",
                         fit: BoxFit.contain,
                       ),
                     ),
