@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/presentations/screens/custom_widgets/custom_butt.dart';
-import 'package:zoomer/presentations/screens/login_screens/welcome.dart';
+import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
+import 'package:zoomer/views/screens/login_screens/welcome.dart';
 
-import 'package:zoomer/presentations/screens/styles/appstyles.dart';
+import 'package:zoomer/views/screens/styles/appstyles.dart';
 
 class MapenableScreen extends StatelessWidget {
   const MapenableScreen({super.key});
@@ -28,12 +28,14 @@ class MapenableScreen extends StatelessWidget {
                   "assets/images/Location.png",
                   width: screenWidth * 0.2,
                 ),
-                const Text("Enable your location",
-                    style: Textstyles.titleTextSmall),
+                const Text(
+                  "Enable your location",
+                  // style: Textstyles.titleTextSmall,
+                ),
                 const Text(
                   "Choose your location to start find the request around you",
                   textAlign: TextAlign.center,
-                  style: Textstyles.smallTexts,
+                  //style: Textstyles.smallTexts,
                 ),
                 Column(
                   children: [
@@ -66,14 +68,14 @@ class MapenableScreen extends StatelessWidget {
                               side: const BorderSide(
                                   color: ThemeColors.primaryColor, width: 1),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
+                                borderRadius: BorderRadius.circular(20),
                               ),
                               padding: EdgeInsets.symmetric(
                                   vertical: screenHeight * 0.02)),
                           child: Text(
                             "Skip for now",
                             style: TextStyle(
-                                color: ThemeColors.textColor,
+                                //color: ThemeColors.textColor,
                                 fontSize: screenWidth * 0.03),
                           )),
                     ),

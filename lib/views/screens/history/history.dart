@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:buttons_tabbar/buttons_tabbar.dart';
-import 'package:zoomer/presentations/screens/history/cancelled.dart';
-import 'package:zoomer/presentations/screens/history/completed.dart';
-import 'package:zoomer/presentations/screens/history/upcoming.dart';
-import 'package:zoomer/presentations/screens/styles/appstyles.dart';
+import 'package:zoomer/views/screens/history/cancelled.dart';
+import 'package:zoomer/views/screens/history/completed.dart';
+import 'package:zoomer/views/screens/history/upcoming.dart';
+import 'package:zoomer/views/screens/styles/appstyles.dart';
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});

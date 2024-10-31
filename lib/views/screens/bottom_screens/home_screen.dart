@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/presentations/screens/styles/appstyles.dart';
+import 'package:zoomer/views/screens/styles/appstyles.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:zoomer/presentations/screens/custom_widgets/onboarding_info.dart';
-import 'package:zoomer/presentations/screens/login_screens/map_enable.dart';
-import 'package:zoomer/presentations/screens/styles/appstyles.dart';
+import 'package:zoomer/views/screens/custom_widgets/onboarding_info.dart';
+import 'package:zoomer/views/screens/login_screens/map_enable.dart';
+import 'package:zoomer/views/screens/styles/appstyles.dart';
 
 class OnboardingView extends StatefulWidget {
   const OnboardingView({super.key});
@@ -52,9 +52,9 @@ class _OnboardingViewState extends State<OnboardingView> {
                     height: screenHeight * 0.05,
                   ),
                   Text(
-                    controller.items[index].title,
-                    style: Textstyles.titleText
-                        .copyWith(fontSize: screenWidth * 0.05),
+                    controller.items[index].title, style: Textstyles.gText,
+                    // style: Textstyles.titleText
+                    //     .copyWith(fontSize: screenWidth * 0.05),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(
@@ -62,8 +62,9 @@ class _OnboardingViewState extends State<OnboardingView> {
                   ),
                   Text(
                     controller.items[index].description,
-                    style: Textstyles.bodytext
-                        .copyWith(fontSize: screenWidth * 0.04),
+                    style: Textstyles.gTextdescription,
+                    // style: Textstyles.bodytext
+                    //     .copyWith(fontSize: screenWidth * 0.04),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(

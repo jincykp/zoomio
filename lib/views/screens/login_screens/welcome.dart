@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/presentations/screens/login_screens/sign_in.dart';
+import 'package:zoomer/views/screens/login_screens/sign_in.dart';
 
-import 'package:zoomer/presentations/screens/login_screens/signup.dart';
-import 'package:zoomer/presentations/screens/styles/appstyles.dart';
+import 'package:zoomer/views/screens/login_screens/signup.dart';
+import 'package:zoomer/views/screens/styles/appstyles.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -53,7 +53,7 @@ class WelcomeScreen extends StatelessWidget {
                         padding:
                             EdgeInsets.symmetric(vertical: screenHeight * 0.02),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5))),
+                            borderRadius: BorderRadius.circular(20))),
                     child: Text(
                       "Create an account",
                       style: TextStyle(
@@ -74,7 +74,7 @@ class WelcomeScreen extends StatelessWidget {
                         side: const BorderSide(
                             color: ThemeColors.primaryColor, width: 1),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         padding: EdgeInsets.symmetric(
                             vertical: screenHeight * 0.02)),

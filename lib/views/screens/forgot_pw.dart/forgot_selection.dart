@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/presentations/screens/custom_widgets/custom_butt.dart';
+import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 
-import 'package:zoomer/presentations/screens/forgot_pw.dart/click_otp.dart';
-import 'package:zoomer/presentations/screens/styles/appstyles.dart';
+import 'package:zoomer/views/screens/forgot_pw.dart/click_otp.dart';
+import 'package:zoomer/views/screens/styles/appstyles.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});
