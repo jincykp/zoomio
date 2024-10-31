@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'zoomio_userSide',
-      theme: ThemeData.dark(),
+      // theme: ThemeData.dark(),
       home: const SplashScreen(),
     );
   }

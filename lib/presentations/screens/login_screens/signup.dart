@@ -186,7 +186,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Image.asset(
-                          "assets/gimage.png",
+                          "assets/images/gimage.png",
                           fit: BoxFit.cover,
                         ),
                       ),

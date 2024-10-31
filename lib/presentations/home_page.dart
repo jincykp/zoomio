@@ -27,13 +27,11 @@ class _HomePageState extends State<HomePage> {
   // GlobalKey for controlling the Scaffold
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  // Removed the image variable and image picking function
-  // File? _image; // Variable to hold the picked image
-
   final List<Widget> _pages = [
     const HomeScreen(), // Home Page
     const RentalScreen(), // Rentals Page
     const NotificationsScreen(), // Notifications Page
+    const SizedBox(), // Placeholder for the last item (to keep the index in sync)
   ];
 
   @override
@@ -51,16 +49,16 @@ class _HomePageState extends State<HomePage> {
         ],
         backgroundColor: ThemeColors.primaryColor,
         color: ThemeColors.titleColor,
-        onTap: (index) {
-          setState(() {
-            if (index == 3) {
-              // If the profile icon is tapped, open the drawer instead of changing the page
-              _scaffoldKey.currentState?.openEndDrawer();
-            } else {
-              _currentIndex = index; // Change the current page for other icons
-            }
-          });
-        },
+        // onTap: (index) {
+        //   setState(() {
+        //     if (index == 3) {
+        //       // Open the drawer when the profile icon is tapped
+        //       _scaffoldKey.currentState?.openEndDrawer();
+        //     } else {
+        //       _currentIndex = index; // Change the current page for other icons
+        //     }
+        //   });
+        // },
       ),
       endDrawer: ClipRRect(
         borderRadius: const BorderRadius.only(
