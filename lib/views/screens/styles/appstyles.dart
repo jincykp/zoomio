@@ -34,4 +34,8 @@ class Textstyles {
       TextStyle(fontFamily: "FamilyGuy", fontSize: 16);
   static const TextStyle gTextdescription = TextStyle(
       fontFamily: "Rowdies", fontWeight: FontWeight.bold, fontSize: 13);
+  static const TextStyle uniqueTitiles =
+      TextStyle(fontFamily: "Itim", fontWeight: FontWeight.bold, fontSize: 22);
+  static const TextStyle signText = TextStyle(
+      fontFamily: "Rowdies", fontWeight: FontWeight.bold, fontSize: 18);
 }

@@ -1,7 +1,8 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:zoomer/controllers/authservices.dart';
+
+import 'package:zoomer/services/auth_services.dart';
 import 'package:zoomer/views/home_page.dart';
 import 'package:zoomer/views/screens/custom_widgets/cus_password.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
@@ -35,10 +36,9 @@ class _SignInScreenState extends State<SignInScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text(
+              const Text(
                 "Sign In",
-                style:
-                    Textstyles.bodytext.copyWith(fontSize: screenWidth * 0.05),
+                style: Textstyles.signText,
               ),
               SizedBox(height: screenHeight * 0.02),
               Textformformfields(
@@ -192,7 +192,7 @@ class _SignInScreenState extends State<SignInScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(),
+            builder: (context) => const HomePage(),
           ),
         );
       } else {

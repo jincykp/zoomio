@@ -24,15 +24,10 @@ class WelcomeScreen extends StatelessWidget {
                 "assets/images/Welcomescreen.png",
                 height: screenHeight * 0.4,
               ),
-              Text(
-                'Welcome',
-                style:
-                    Textstyles.titleText.copyWith(fontSize: screenWidth * 0.06),
-              ),
-              Text(
-                'Have a better sharing experience',
-                style:
-                    Textstyles.bodytext.copyWith(fontSize: screenWidth * 0.03),
+              const Text('Welcome', style: Textstyles.uniqueTitiles),
+              const Text(
+                'Have a better sharing experience...',
+                style: Textstyles.gTextdescription,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(
@@ -48,7 +43,7 @@ class WelcomeScreen extends StatelessWidget {
                               builder: (context) => const SignUpScreen()));
                     },
                     style: ElevatedButton.styleFrom(
-                        side: BorderSide(width: screenWidth * 0.005),
+                        // side: BorderSide(width: screenWidth * 0.005),
                         backgroundColor: ThemeColors.primaryColor,
                         padding:
                             EdgeInsets.symmetric(vertical: screenHeight * 0.02),

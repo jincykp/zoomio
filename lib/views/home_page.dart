@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:zoomer/controllers/authservices.dart';
-import 'package:zoomer/views/screens/bottom_screens/all_trips.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoomer/controllers/state/theme.dart';
+import 'package:zoomer/services/auth_services.dart';
+import 'package:zoomer/services/userservices.dart';
 import 'package:zoomer/views/screens/bottom_screens/home_screen.dart';
 import 'package:zoomer/views/screens/bottom_screens/notification.dart';
 import 'package:zoomer/views/screens/bottom_screens/rental.dart';
@@ -10,12 +14,11 @@ import 'package:zoomer/views/screens/login_screens/sign_in.dart';
 import 'package:zoomer/views/screens/profile/profile_adding_screen.dart';
 import 'package:zoomer/views/screens/profile/profilecard.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
-import 'package:google_nav_bar/google_nav_bar.dart'; // Import GoogleNavBar
+import 'package:google_nav_bar/google_nav_bar.dart';
 
 class HomePage extends StatefulWidget {
   final String? email;
   final String? displayName;
-
   const HomePage({super.key, this.email, this.displayName});
 
   @override
@@ -25,6 +28,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0; // Track the currently selected index
   final AuthServices auth = AuthServices();
+  final UserService userService = UserService();
+  String? userEmail;
+  String? userName;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadUserDetails();
+  }
 
   // GlobalKey for controlling the Scaffold
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -33,8 +45,20 @@ class _HomePageState extends State<HomePage> {
     const HomeScreen(), // Home Page
     const RentalScreen(), // Rentals Page
     const NotificationsScreen(),
-    const AllTrips(),
+    const HistoryScreen(),
   ];
+  Future<void> loadUserDetails() async {
+    User? user = auth.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc = await userService.getUserDetails(user.uid);
+      setState(() {
+        userEmail = userDoc['email'];
+        userName = userDoc['displayName'];
+      });
+    } else {
+      // Handle the case when no user is signed in (if needed)
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +79,9 @@ class _HomePageState extends State<HomePage> {
         ),
         child: GNav(
           rippleColor: Colors.grey[300]!,
-          // color: ThemeColors.primaryColor,
+          color: ThemeColors.titleColor,
           gap: 8,
-          //activeColor: ThemeColors.titleColor,
+          activeColor: ThemeColors.textColor,
           tabMargin: const EdgeInsets.all(0),
           tabBorderRadius: 59,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -111,11 +135,14 @@ class _HomePageState extends State<HomePage> {
                 child: UserAccountsDrawerHeader(
                   decoration:
                       const BoxDecoration(color: ThemeColors.primaryColor),
-                  accountName: Padding(
-                    padding: const EdgeInsets.only(top: 17.0),
-                    child: Text(widget.displayName ?? ""),
-                  ),
-                  accountEmail: Text(widget.email ?? ""),
+                  accountName: userName != null && userName!.isNotEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 17.0),
+                          child:
+                              Text(userName!), // Display user name if available
+                        )
+                      : null, // If userName is null or empty, do not display anything
+                  accountEmail: Text(userEmail ?? ""), // Display email
                   currentAccountPicture: const CircleAvatar(
                     backgroundImage: AssetImage(
                         'assets/images/person.jpeg'), // Default image
@@ -133,19 +160,11 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.history),
-                title: const Text("History"),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const HistoryScreen()));
-                },
-              ),
-              ListTile(
                 leading: const Icon(Icons.dark_mode),
                 title: const Text("Theme"),
-                onTap: () {},
+                onTap: () {
+                  context.read<ThemeCubit>().toggleTheme();
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.warning_amber_outlined),
@@ -183,7 +202,7 @@ class _HomePageState extends State<HomePage> {
                       return AlertDialog(
                         title: const Text(
                           "Logout Confirmation",
-                          style: Textstyles.buttonText,
+                          style: Textstyles.gTextdescription,
                         ),
                         content: const Text("Are you sure you want to logout?"),
                         actions: [

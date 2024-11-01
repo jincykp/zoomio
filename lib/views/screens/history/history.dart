@@ -13,36 +13,36 @@ class HistoryScreen extends StatelessWidget {
     return DefaultTabController(
       length: 3, // Number of tabs
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text("History"),
-        ),
-        body: Column(
-          children: [
-            ButtonsTabBar(
-              backgroundColor: ThemeColors.primaryColor,
-              borderWidth: 1,
-              borderColor: Colors.black,
-              labelStyle: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              ButtonsTabBar(
+                backgroundColor: ThemeColors.primaryColor,
+                borderWidth: 1,
+                borderColor: Colors.black,
+                labelStyle: const TextStyle(
+                  color: ThemeColors.titleColor,
+                  fontWeight: FontWeight.bold,
+                ),
+                unselectedLabelStyle: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+                // The tabs
+                tabs: const [
+                  Tab(text: "Upcoming"),
+                  Tab(text: "Completed"),
+                  Tab(text: "Cancelled"),
+                ],
               ),
-              unselectedLabelStyle: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
+              const Expanded(
+                child: TabBarView(
+                  children: [UpcomingTab(), CompletedTab(), CancelledTab()],
+                ),
               ),
-              // The tabs
-              tabs: const [
-                Tab(text: "Upcoming"),
-                Tab(text: "Completed"),
-                Tab(text: "Cancelled"),
-              ],
-            ),
-            const Expanded(
-              child: TabBarView(
-                children: [UpcomingTab(), CompletedTab(), CancelledTab()],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -56,6 +56,7 @@ dependencies:
   animations: ^2.0.11
   smooth_page_indicator: ^1.2.0+3
   shared_preferences: ^2.3.2
+  bloc: ^8.1.4
   
 
 dev_dependencies:

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:zoomer/controllers/authservices.dart';
+
+import 'package:zoomer/services/auth_services.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/custom_widgets/textform.dart';
 
@@ -26,10 +27,8 @@ class _ClickOtpScreenState extends State<ClickOtpScreen> {
           padding: EdgeInsets.all(screenWidth * 0.08),
           child: Column(
             children: [
-              const Text(
-                "Enter email to send you a password reset email",
-                style: Textstyles.titleTextSmall,
-              ),
+              const Text("Enter email to send you a password reset email",
+                  style: Textstyles.signText),
               SizedBox(
                 height: screenWidth * 0.1,
               ),
@@ -38,98 +37,6 @@ class _ClickOtpScreenState extends State<ClickOtpScreen> {
               SizedBox(
                 height: screenWidth * 0.1,
               ),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     SizedBox(
-              //       height: 68,
-              //       width: 64,
-              //       child: TextFormField(
-              //         onChanged: (value) {
-              //           if (value.length == 1) {
-              //             FocusScope.of(context).nextFocus();
-              //           }
-              //         },
-              //         style: Theme.of(context).textTheme.titleLarge,
-              //         keyboardType: TextInputType.number,
-              //         textAlign: TextAlign.center,
-              //         inputFormatters: [
-              //           LengthLimitingTextInputFormatter(1),
-              //           FilteringTextInputFormatter.digitsOnly
-              //         ],
-              //       ),
-              //     ),
-              //     SizedBox(
-              //       height: 68,
-              //       width: 64,
-              //       child: TextField(
-              //         onChanged: (value) {
-              //           if (value.length == 1) {
-              //             FocusScope.of(context).nextFocus();
-              //           }
-              //         },
-              //         style: Theme.of(context).textTheme.titleLarge,
-              //         keyboardType: TextInputType.number,
-              //         textAlign: TextAlign.center,
-              //         inputFormatters: [
-              //           LengthLimitingTextInputFormatter(1),
-              //           FilteringTextInputFormatter.digitsOnly
-              //         ],
-              //       ),
-              //     ),
-              //     SizedBox(
-              //       height: 68,
-              //       width: 64,
-              //       child: TextField(
-              //         onChanged: (value) {
-              //           if (value.length == 1) {
-              //             FocusScope.of(context).nextFocus();
-              //           }
-              //         },
-              //         style: Theme.of(context).textTheme.titleLarge,
-              //         keyboardType: TextInputType.number,
-              //         textAlign: TextAlign.center,
-              //         inputFormatters: [
-              //           LengthLimitingTextInputFormatter(1),
-              //           FilteringTextInputFormatter.digitsOnly
-              //         ],
-              //       ),
-              //     ),
-              //     SizedBox(
-              //       height: 68,
-              //       width: 64,
-              //       child: TextField(
-              //         onChanged: (value) {
-              //           if (value.length == 1) {
-              //             FocusScope.of(context).nextFocus();
-              //           }
-              //         },
-              //         style: Theme.of(context).textTheme.titleLarge,
-              //         keyboardType: TextInputType.number,
-              //         textAlign: TextAlign.center,
-              //         inputFormatters: [
-              //           LengthLimitingTextInputFormatter(1),
-              //           FilteringTextInputFormatter.digitsOnly
-              //         ],
-              //       ),
-              //     )
-              //   ],
-              // ),
-              // Row(
-              //   children: [
-              //     const Text(
-              //       "Didn't receive code?",
-              //       style: Textstyles.smallTexts,
-              //     ),
-              //     TextButton(
-              //         onPressed: () {},
-              //         child: const Text(
-              //           "Resend again",
-              //           style: Textstyles.spclTexts,
-              //         ))
-              //   ],
-              // ),
-
               CustomButtons(
                   text: "Send Email",
                   onPressed: () async {

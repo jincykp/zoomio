@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:zoomer/controllers/authservices.dart';
+import 'package:zoomer/services/auth_services.dart';
+import 'package:zoomer/services/userservices.dart';
 import 'package:zoomer/views/home_page.dart';
 import 'package:zoomer/views/screens/custom_widgets/cus_password.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
@@ -18,6 +20,7 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final formKey = GlobalKey<FormState>();
   final AuthServices auth = AuthServices();
+  final UserService userService = UserService();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passWordController = TextEditingController();
   final TextEditingController confirmPasswordController =
@@ -39,9 +42,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Sign up",
-                    style: Textstyles.bodytext
-                        .copyWith(fontSize: screenWidth * 0.05)),
+                const Text("Sign up", style: Textstyles.signText),
                 SizedBox(height: screenHeight * 0.02),
                 // Email field
                 Textformformfields(
@@ -126,12 +127,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 // Sign Up button
                 CustomButtons(
                   text: "Sign up",
-                  onPressed: () {
+                  onPressed: () async {
                     if (formKey.currentState!.validate() && isChecked == true) {
-                      Navigator.push(
+                      // Create account with email and password
+                      User? user = await auth.createAccountWithEmail(
+                        emailController.text,
+                        passWordController.text,
+                      );
+                      if (user != null) {
+                        // Save user details to Firestore without a display name
+                        await userService.saveUserDetails(
+                          user.uid,
+                          emailController.text,
+                          "", // No display name during email signup
+                        );
+
+                        // Navigate to the HomePage and pass the email
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const HomePage()));
+                            builder: (context) => HomePage(
+                              email: emailController.text, // Pass the email
+                              displayName: null, // No display name
+                            ),
+                          ),
+                        );
+                      }
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -143,19 +164,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       );
                     }
-                    // showDialog(
-                    //   context: context,
-                    //   barrierDismissible: false,
-                    //   builder: (context) =>
-                    //       const Center(child: CircularProgressIndicator()),
-                    // );
                   },
                   backgroundColor: ThemeColors.primaryColor,
                   textColor: ThemeColors.textColor,
                   screenWidth: screenWidth,
                   screenHeight: screenHeight,
                 ),
-
                 // Divider or "or" section
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
