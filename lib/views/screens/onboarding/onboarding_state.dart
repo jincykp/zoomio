@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // Make sure to import this package
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:zoomer/controllers/state/bloc/onboarding_bloc.dart';
+import 'package:zoomer/views/screens/login_screens/welcome.dart';
+import 'package:zoomer/views/screens/onboarding/bloc/onboarding_bloc.dart';
 import 'package:zoomer/views/screens/custom_widgets/onboarding_info.dart';
 import 'package:zoomer/views/screens/login_screens/map_enable.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
@@ -57,7 +58,7 @@ class OnboardingView extends StatelessWidget {
                   SizedBox(height: MediaQuery.of(context).size.height * 0.05),
                   Text(
                     controller.items[index].title,
-                    style: Textstyles.gText,
+                    style: Textstyles.gTitle,
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
@@ -67,30 +68,22 @@ class OnboardingView extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-                  CustomCircleButton(
-                    onTap: () {
-                      final onboardingBloc =
-                          BlocProvider.of<OnboardingBloc>(context);
-                      if (index < controller.items.length - 1) {
-                        // Move to the next page
-                        pageController.nextPage(
-                          duration: const Duration(milliseconds: 600),
-                          curve: Curves.easeIn,
-                        );
-                        onboardingBloc
-                            .add(NextPageEvent()); // Emit the next page event
-                      } else {
+                  // Conditionally render the button
+                  if (index == controller.items.length - 1)
+                    CustomCircleButton(
+                      onTap: () {
+                        final onboardingBloc =
+                            BlocProvider.of<OnboardingBloc>(context);
                         onboardingBloc
                             .add(NextPageEvent()); // Emit the next page event
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const MapenableScreen()),
+                              builder: (context) => const WelcomeScreen()),
                         );
-                      }
-                    },
-                    icon: Icons.arrow_forward,
-                  )
+                      },
+                      icon: Icons.arrow_forward,
+                    ),
                 ],
               ),
             );

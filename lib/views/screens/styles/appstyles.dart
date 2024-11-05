@@ -30,8 +30,9 @@ class Textstyles {
       TextStyle(fontSize: 10, color: Colors.white);
   static const TextStyle spclTexts =
       TextStyle(fontSize: 12, color: Color.fromARGB(255, 238, 100, 90));
-  static const TextStyle gText =
-      TextStyle(fontFamily: "FamilyGuy", fontSize: 16);
+  static const TextStyle gText = TextStyle(fontFamily: "Rowdies", fontSize: 16);
+  static const TextStyle gTitle = TextStyle(
+      fontFamily: "Rowdies", fontSize: 19, fontWeight: FontWeight.bold);
   static const TextStyle gTextdescription = TextStyle(
       fontFamily: "Rowdies", fontWeight: FontWeight.bold, fontSize: 13);
   static const TextStyle uniqueTitiles =

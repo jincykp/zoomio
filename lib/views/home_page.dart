@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zoomer/controllers/state/theme.dart';
+import 'package:zoomer/controllers/theme.dart';
 import 'package:zoomer/services/auth_services.dart';
 import 'package:zoomer/services/userservices.dart';
 import 'package:zoomer/views/screens/bottom_screens/home_screen.dart';

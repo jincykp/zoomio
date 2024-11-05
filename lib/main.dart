@@ -1,9 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zoomer/controllers/state/theme.dart'; // Your ThemeCubit file
+import 'package:zoomer/controllers/theme.dart';
 import 'package:zoomer/firebase_options.dart';
+import 'package:zoomer/services/userservices.dart';
 import 'package:zoomer/views/screens/splash_screen.dart';
+import 'package:zoomer/views/screens/login_screens/bloc/signup_bloc.dart';
+import 'package:zoomer/views/screens/login_screens/bloc/signin_bloc.dart';
+import 'package:zoomer/services/auth_services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,7 +16,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -21,8 +25,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Wrap MaterialApp with BlocProvider to provide ThemeCubit
-    return BlocProvider(
-      create: (context) => ThemeCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => ThemeCubit()),
+
+        BlocProvider(
+            create: (context) =>
+                SigninBloc(authServices: AuthServices())), // Provide SigninBloc
+      ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
           return MaterialApp(
