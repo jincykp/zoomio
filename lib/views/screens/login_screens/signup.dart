@@ -22,6 +22,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final AuthServices auth = AuthServices();
   final UserService userService = UserService();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController passWordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
@@ -44,6 +45,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               children: [
                 const Text("Sign up", style: Textstyles.signText),
                 SizedBox(height: screenHeight * 0.02),
+
                 // Email field
                 Textformformfields(
                   controller: emailController,

@@ -115,8 +115,8 @@ class _HomePageState extends State<HomePage> {
       ),
       endDrawer: ClipRRect(
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(50.0),
-          bottomLeft: Radius.circular(50.0),
+          topLeft: Radius.circular(0),
+          bottomLeft: Radius.circular(0),
         ),
         child: Drawer(
           child: ListView(
@@ -159,6 +159,7 @@ class _HomePageState extends State<HomePage> {
                           builder: (context) => const AddProfileDetails()));
                 },
               ),
+              const Divider(),
               ListTile(
                 leading: const Icon(Icons.dark_mode),
                 title: const Text("Theme"),
@@ -166,6 +167,7 @@ class _HomePageState extends State<HomePage> {
                   context.read<ThemeCubit>().toggleTheme();
                 },
               ),
+              const Divider(),
               ListTile(
                 leading: const Icon(Icons.warning_amber_outlined),
                 title: const Text("Complain"),
@@ -176,21 +178,25 @@ class _HomePageState extends State<HomePage> {
                           builder: (context) => const ComplaintScreen()));
                 },
               ),
+              const Divider(),
               ListTile(
                 leading: const Icon(Icons.info_outline),
                 title: const Text("About us"),
                 onTap: () {},
               ),
+              const Divider(),
               ListTile(
                 leading: const Icon(Icons.settings),
                 title: const Text("Settings"),
                 onTap: () {},
               ),
+              const Divider(),
               ListTile(
                 leading: const Icon(Icons.help_center_outlined),
                 title: const Text("Help and Support"),
                 onTap: () {},
               ),
+              const Divider(),
               ListTile(
                 leading: const Icon(Icons.logout),
                 title: const Text("Logout"),
@@ -230,6 +236,7 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
               ),
+              const Divider(),
             ],
           ),
         ),

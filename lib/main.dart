@@ -1,11 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:zoomer/controllers/theme.dart';
 import 'package:zoomer/firebase_options.dart';
-import 'package:zoomer/services/userservices.dart';
 import 'package:zoomer/views/screens/splash_screen.dart';
-import 'package:zoomer/views/screens/login_screens/bloc/signup_bloc.dart';
 import 'package:zoomer/views/screens/login_screens/bloc/signin_bloc.dart';
 import 'package:zoomer/services/auth_services.dart';
 
@@ -15,7 +14,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  await Permission.locationWhenInUse.isDenied.then((valueOfPermission) {
+    if (valueOfPermission) {
+      Permission.locationWhenInUse.request();
+    }
+  });
   runApp(const MyApp());
 }
 
