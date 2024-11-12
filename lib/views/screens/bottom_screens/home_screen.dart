@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:zoomer/views/screens/where_to_go_screens/where_togo.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,10 +13,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String mapTheme = '';
   final Completer<GoogleMapController> _googleMapCompleterController =
       Completer<GoogleMapController>();
   Position? _currentPositionOfUser;
   late GoogleMapController _controllerGoogleMap;
+
+  // Marker to store current location
+  Set<Marker> _markers = {};
 
   // Initial position (you can set any valid latitude/longitude)
   static const CameraPosition _initialPosition = CameraPosition(
@@ -26,7 +31,18 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    getCurrentLiveLocation(); // Fetch user's current location on init
+    Permission.locationWhenInUse.isDenied.then((valueOfPermission) {
+      if (valueOfPermission) {
+        Permission.locationWhenInUse.request();
+      }
+    });
+    getCurrentLiveLocation();
+    // DefaultAssetBundle.of(context)
+    //     .loadString('assets/map_theme/dark_theme.json')
+    //     .then((value) {
+    //   mapTheme = value;
+    // });
+    // Fetch user's current location on init
   }
 
   @override
@@ -43,9 +59,11 @@ class _HomeScreenState extends State<HomeScreen> {
               myLocationEnabled: true,
               initialCameraPosition: _initialPosition,
               onMapCreated: (GoogleMapController mapController) {
-                _googleMapCompleterController.complete(mapController);
+                mapController.setMapStyle(mapTheme);
+                //  _googleMapCompleterController.complete(mapController);
                 _controllerGoogleMap = mapController;
               },
+              markers: _markers, // Displaying the markers
             ),
             // Search bar at the bottom
             Padding(
@@ -163,6 +181,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
     CameraPosition cameraPosition =
         CameraPosition(target: positionOfUserLatLng, zoom: 15);
+
+    // Create a marker at the user's current location
+    Marker userLocationMarker = Marker(
+      markerId: const MarkerId('userLocation'),
+      position: positionOfUserLatLng,
+      icon: BitmapDescriptor.defaultMarkerWithHue(
+          BitmapDescriptor.hueRed), // Red color for the marker
+    );
+
+    // Add the marker to the set
+    setState(() {
+      _markers.add(userLocationMarker);
+    });
 
     // Ensure the controller is initialized before using it
     if (_controllerGoogleMap != null) {

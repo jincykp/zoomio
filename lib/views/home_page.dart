@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:zoomer/controllers/theme.dart';
@@ -64,7 +65,7 @@ class _HomePageState extends State<HomePage> {
     } else {
       // Handle the case when no user is signed in (if needed)
     }
-  }
+  } // Method to load the map style based on the current theme
 
   @override
   Widget build(BuildContext context) {
