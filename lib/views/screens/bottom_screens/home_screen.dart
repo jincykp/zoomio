@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Initial position (you can set any valid latitude/longitude)
   static const CameraPosition _initialPosition = CameraPosition(
-    target: LatLng(37.7749, -122.4194), // Default position: San Francisco
+    target: LatLng(9.9312, 76.2673), // Coordinates for Kochi, Kerala
     zoom: 14.4746,
   );
 
@@ -32,84 +32,95 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // GoogleMap(
-          //   mapType: MapType.normal,
-          //   myLocationEnabled: true,
-          //   initialCameraPosition: _initialPosition,
-          //   onMapCreated: (GoogleMapController mapController) {
-          //     _googleMapCompleterController.complete(mapController);
-          //     _controllerGoogleMap = mapController;
-          //   },
-          // ),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(19),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.black // Dark theme shadow
-                                  : const Color.fromARGB(
-                                      255, 201, 201, 201), // Light theme shadow
-                              spreadRadius: 1,
-                            ),
-                          ],
-                        ),
-                        child: TextFormField(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                         WhereToGoScreen()));
-                          },
-                          decoration: InputDecoration(
-                            hintText: "Where would you go?",
-                            hintStyle: TextStyle(
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.grey // Dark theme hint color
-                                  : Colors.black54, // Light theme hint color
-                              fontSize: 14,
-                            ),
-                            prefixIcon: Icon(
-                              Icons.search,
-                              size: 25,
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.grey // Dark theme icon color
-                                  : Colors.black54, // Light theme icon color
-                            ),
-                            border: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
-                              borderSide: BorderSide.none, // No border line
+      // Use SafeArea to ensure content doesn't overlap with status bar or notches
+      body: SafeArea(
+        // Stack the GoogleMap and the search bar over each other
+        child: Stack(
+          children: [
+            // Google Map filling the entire screen
+            GoogleMap(
+              mapType: MapType.normal,
+              myLocationEnabled: true,
+              initialCameraPosition: _initialPosition,
+              onMapCreated: (GoogleMapController mapController) {
+                _googleMapCompleterController.complete(mapController);
+                _controllerGoogleMap = mapController;
+              },
+            ),
+            // Search bar at the bottom
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(19),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10, right: 48),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.black // Dark theme shadow
+                                    : const Color.fromARGB(255, 201, 201,
+                                        201), // Light theme shadow
+                                spreadRadius: 1,
+                              ),
+                            ],
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const WhereToGoScreen()));
+                            },
+                            child: TextFormField(
+                              enabled: false,
+                              decoration: InputDecoration(
+                                hintText: "Where would you go?",
+                                hintStyle: TextStyle(
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.grey // Dark theme hint color
+                                      : Colors
+                                          .black54, // Light theme hint color
+                                  fontSize: 14,
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.search,
+                                  size: 25,
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.grey // Dark theme icon color
+                                      : Colors
+                                          .black54, // Light theme icon color
+                                ),
+                                border: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(15)),
+                                  borderSide: BorderSide.none, // No border line
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -139,6 +150,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Position positionUser = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.bestForNavigation);
+
+    if (!mounted)
+      return; // Ensure the widget is still mounted before calling setState()
+
     setState(() {
       _currentPositionOfUser = positionUser;
     });
@@ -149,8 +164,11 @@ class _HomeScreenState extends State<HomeScreen> {
     CameraPosition cameraPosition =
         CameraPosition(target: positionOfUserLatLng, zoom: 15);
 
-    _controllerGoogleMap.animateCamera(
-      CameraUpdate.newCameraPosition(cameraPosition),
-    );
+    // Ensure the controller is initialized before using it
+    if (_controllerGoogleMap != null) {
+      _controllerGoogleMap.animateCamera(
+        CameraUpdate.newCameraPosition(cameraPosition),
+      );
+    }
   }
 }

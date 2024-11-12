@@ -14,11 +14,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await Permission.locationWhenInUse.isDenied.then((valueOfPermission) {
-    if (valueOfPermission) {
-      Permission.locationWhenInUse.request();
-    }
-  });
+
   runApp(const MyApp());
 }
 
@@ -41,8 +37,8 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'zoomio_userSide',
-            theme: ThemeData.light(),
-            darkTheme: ThemeData.dark(),
+            theme: ThemeData.dark(),
+            darkTheme: ThemeData.light(),
             themeMode: themeMode, // Use the ThemeMode from BlocBuilder
             home: const SplashScreen(),
           );

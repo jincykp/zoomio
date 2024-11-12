@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:zoomer/controllers/theme.dart';
 import 'package:zoomer/services/auth_services.dart';
 import 'package:zoomer/services/userservices.dart';
@@ -32,9 +33,14 @@ class _HomePageState extends State<HomePage> {
   String? userEmail;
   String? userName;
   @override
-  void initState() {
+  initState() {
     // TODO: implement initState
     super.initState();
+    Permission.locationWhenInUse.isDenied.then((valueOfPermission) {
+      if (valueOfPermission) {
+        Permission.locationWhenInUse.request();
+      }
+    });
     loadUserDetails();
   }
 
@@ -64,7 +70,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(),
+      //  appBar: AppBar(),
       body: _pages[_currentIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(

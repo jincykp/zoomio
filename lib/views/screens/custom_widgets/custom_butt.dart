@@ -34,4 +34,6 @@ class CustomButtons extends StatelessWidget {
           )),
     );
   }
+
+  copyWith({required double screenWidth}) {}
 }

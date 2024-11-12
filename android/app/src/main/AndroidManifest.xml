@@ -10,6 +10,7 @@
         android:label="zoomer"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyBqeMmbJ5zSYxehgQqCCjmZfBoigaHkGkU"/> <!-- Use your actual Google Maps API key -->
 
         <activity
             android:name=".MainActivity"
@@ -23,10 +24,6 @@
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/NormalTheme" />
-
-            <meta-data 
-                android:name="com.google.android.geo.API_KEY"
-                android:value="AIzaSyBqeMmbJ5zSYxehgQqCCjmZfBoigaHkGkU"/> <!-- Use your actual Google Maps API key -->
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

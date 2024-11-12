@@ -10,16 +10,19 @@ class Textformformfields extends StatelessWidget {
   final bool readOnly;
   final TextInputType? keyBoardType;
   final List<TextInputFormatter>? inputFormatters;
-  Textformformfields(
-      {super.key,
-      required this.controller,
-      this.validator,
-      required this.hintText,
-      this.prefixIcon,
-      this.inputFormatters,
-      this.suffixIcon,
-      this.keyBoardType,
-      this.readOnly = false});
+
+  Textformformfields({
+    super.key,
+    required this.controller,
+    this.validator,
+    required this.hintText,
+    this.prefixIcon,
+    this.inputFormatters,
+    this.suffixIcon,
+    this.keyBoardType,
+    this.readOnly = false,
+    TextStyle? hintstyle,
+  });
 
   @override
   Widget build(BuildContext context) {

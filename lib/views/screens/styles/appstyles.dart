@@ -18,7 +18,7 @@ class Textstyles {
 
   static const TextStyle bodytext = TextStyle(
     fontSize: 16,
-    color: ThemeColors.textColor,
+    color: Color.fromARGB(255, 233, 218, 218),
   );
   static const TextStyle warningText = TextStyle(
     fontSize: 12,

@@ -11,6 +11,7 @@ class CustomLocatiofields extends StatelessWidget {
   final bool readOnly;
   final TextInputType? keyBoardType;
   final List<TextInputFormatter>? inputFormatters;
+  final TextStyle? hintStyle;
   CustomLocatiofields(
       {super.key,
       required this.controller,
@@ -20,10 +21,17 @@ class CustomLocatiofields extends StatelessWidget {
       this.inputFormatters,
       this.suffixIcon,
       this.keyBoardType,
-      this.readOnly = false});
+      this.readOnly = false,
+      this.hintStyle});
 
   @override
   Widget build(BuildContext context) {
-    return Textformformfields(controller: controller, hintText: hintText);
+    return TextFormField(
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: hintStyle,
+        suffixIcon: suffixIcon,
+      ),
+    );
   }
 }

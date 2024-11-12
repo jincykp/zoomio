@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_locatiofields.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 
@@ -14,6 +15,51 @@ class WhereToGoScreen extends StatelessWidget {
     final TextEditingController dropOffController = TextEditingController();
 
     return Scaffold(
+      // body: Column(
+      //   children: [
+      //     Container(
+      //       padding: EdgeInsets.all(screenWidth * 0.10),
+      //       height: screenHeight * 0.2,
+      //       decoration: BoxDecoration(
+      //           color: ThemeColors.primaryColor,
+      //           borderRadius: BorderRadius.only(
+      //               bottomLeft: Radius.circular(32),
+      //               bottomRight: Radius.circular(32)),
+      //           boxShadow: [
+      //             BoxShadow(
+      //                 color: Colors.grey,
+      //                 offset: Offset(0.0, 1.0),
+      //                 blurRadius: 6.0)
+      //           ]),
+      //       child: const Row(
+      //         children: [
+      //           Column(
+      //             children: [
+      //               Icon(
+      //                 Icons.circle,
+      //                 color: ThemeColors.baseColor,
+      //                 size: 22,
+      //               ),
+      //               Icon(
+      //                 Icons.square,
+      //                 color: ThemeColors.successColor,
+      //               )
+      //             ],
+      //           ),
+      //           Column(
+      //             crossAxisAlignment: CrossAxisAlignment.start,
+      //             mainAxisSize: MainAxisSize.min,
+      //             children: [
+      //               Divider(
+      //                 color: ThemeColors.textColor,
+      //               ),
+      //             ],
+      //           )
+      //         ],
+      //       ),
+      //     )
+      //   ],
+      // ),
       body: ListView(
         // Removed top padding, no SafeArea
         children: [
@@ -24,7 +70,7 @@ class WhereToGoScreen extends StatelessWidget {
                 //color: Colors.grey,
               ),
               Container(
-                height: screenHeight * 0.3,
+                height: screenHeight * 0.32,
                 // color: Colors.amber,
                 decoration: const BoxDecoration(
                   color: Colors.amber,
@@ -48,9 +94,15 @@ class WhereToGoScreen extends StatelessWidget {
                           ),
                           Expanded(
                             child: CustomLocatiofields(
-                              controller: pickupController,
-                              hintText: "Pickup location",
-                            ),
+                                controller: pickupController,
+                                hintText: "Pickup location",
+                                hintStyle: Textstyles.bodytext,
+                                suffixIcon: IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.location_searching,
+                                      color: ThemeColors.titleColor,
+                                    ))),
                           ),
                         ],
                       ),
@@ -70,10 +122,29 @@ class WhereToGoScreen extends StatelessWidget {
                             child: CustomLocatiofields(
                               controller: dropOffController,
                               hintText: "Drop-off location",
+                              hintStyle: Textstyles.bodytext,
+                              suffixIcon: const Icon(
+                                Icons.cancel,
+                                color: ThemeColors.titleColor,
+                              ),
                             ),
                           ),
                         ],
                       ),
+                      SizedBox(
+                        height: screenHeight * 0.03,
+                      ),
+                      // SizedBox(
+                      //   width: screenWidth * 0.5,
+                      //   height: screenHeight * 0.06,
+                      //   child: CustomButtons(
+                      //       text: "Search",
+                      //       onPressed: () {},
+                      //       backgroundColor: ThemeColors.titleColor,
+                      //       textColor: ThemeColors.textColor,
+                      //       screenWidth: screenWidth * 0.03,
+                      //       screenHeight: screenHeight * 0.03),
+                      // )
                     ],
                   ),
                 ),
