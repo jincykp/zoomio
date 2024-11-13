@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
@@ -15,11 +17,18 @@ class WhereToGoScreen extends StatefulWidget {
 
 class _WhereToGoScreenState extends State<WhereToGoScreen> {
   late GoogleMapController _mapController;
-  LatLng _currentLocation = LatLng(0, 0);
-  Set<Marker> _markers = {};
-  Set<Polyline> _polylines = {};
-  final TextEditingController _latController = TextEditingController();
-  final TextEditingController _lngController = TextEditingController();
+  LatLng _currentLocation = const LatLng(0, 0);
+  final Set<Marker> _markers = {};
+  final Set<Polyline> _polylines = {};
+  final TextEditingController _pickupController = TextEditingController();
+  final TextEditingController _dropoffController = TextEditingController();
+  List<dynamic> _placeSuggestions = [];
+  bool _isLoading = false;
+  bool _isPickupField = true;
+
+  // Mapbox API Key
+  final String _accessToken =
+      'pk.eyJ1IjoiamluY3lrcCIsImEiOiJjbTNmdmd2ejYwMDFrMmlzZmZya3dxOXJ6In0.65j6783wEmjz7pcehss0eA'; // Replace with your Mapbox API Key
 
   @override
   void initState() {
@@ -51,9 +60,9 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
     setState(() {
       _markers.add(
         Marker(
-          markerId: MarkerId('current_location'),
+          markerId: const MarkerId('current_location'),
           position: position,
-          infoWindow: InfoWindow(title: 'Your Location'),
+          infoWindow: const InfoWindow(title: 'Your Location'),
         ),
       );
     });
@@ -66,31 +75,40 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
     );
   }
 
-  // Add a polyline to the map
-  void _addPolyline(LatLng destination) {
+  // Fetch places from Mapbox Geocoding API
+  // Fetch places from Mapbox Geocoding API
+  Future<void> _fetchPlaces(String query) async {
     setState(() {
-      _polylines.add(
-        Polyline(
-          polylineId: PolylineId('polyline'),
-          points: [_currentLocation, destination],
-          color: Colors.blue,
-          width: 5,
-        ),
-      );
+      _isLoading = true;
     });
+
+    String encodedQuery = Uri.encodeFull(query);
+    final response = await http.get(
+      Uri.parse(
+          'https://api.mapbox.com/geocoding/v5/mapbox.places/$encodedQuery.json?bbox=68.1097,6.4627,97.3953,35.5133&access_token=$_accessToken'), // Bounding box added for India
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      setState(() {
+        _placeSuggestions = data['features'];
+        _isLoading = false;
+      });
+    } else {
+      throw Exception('Failed to load places');
+    }
   }
 
-  // Handle user input for destination location
-  void _onConfirmPressed() {
-    double? lat = double.tryParse(_latController.text);
-    double? lng = double.tryParse(_lngController.text);
-
-    if (lat != null && lng != null) {
-      LatLng destination = LatLng(lat, lng);
-      _addMarker(destination);
-      _addPolyline(destination);
-      _moveCameraToCurrentLocation();
+  // Handle selection of a suggestion
+  void _onPlaceSelected(String placeName) {
+    if (_isPickupField) {
+      _pickupController.text = placeName;
+    } else {
+      _dropoffController.text = placeName;
     }
+    setState(() {
+      _placeSuggestions.clear(); // Clear suggestions after selection
+    });
   }
 
   @override
@@ -99,80 +117,131 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: screenHeight * 0.4,
-              child: GoogleMap(
-                onMapCreated: (controller) {
-                  _mapController = controller;
-                },
-                initialCameraPosition: CameraPosition(
-                  target: _currentLocation,
-                  zoom: 14,
-                ),
-                markers: _markers,
-                polylines: _polylines,
-                myLocationEnabled: true,
-                myLocationButtonEnabled: true,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(screenWidth * 0.06),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      const FaIcon(
-                        FontAwesomeIcons.mapMarkerAlt,
-                        color: ThemeColors.baseColor,
-                      ),
-                      SizedBox(width: screenWidth * 0.04),
-                      Expanded(
-                        child: CustomLocatiofields(
-                          controller: _latController,
-                          hintText: "Pick up location",
-                          hintStyle: Textstyles.bodytext,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: screenHeight * 0.03),
-                  Row(
-                    children: [
-                      const FaIcon(
-                          FontAwesomeIcons.mapPin,
-                          color: ThemeColors.successColor,
-                          size:25),
-                      SizedBox(width: screenWidth * 0.04),
-                      Expanded(
-                        child: CustomLocatiofields(
-                          controller: _lngController,
-                          hintText: "Drop off location",
-                          hintStyle: Textstyles.bodytext,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: screenHeight * 0.03),
-                  SizedBox(
-                    width: screenWidth * 0.5,
-                    height: screenHeight * 0.06,
-                    child: CustomButtons(
-                      text: "Confirm",
-                      onPressed: _onConfirmPressed,
-                      backgroundColor: ThemeColors.primaryColor,
-                      textColor: ThemeColors.textColor,
-                      screenWidth: screenWidth,
-                      screenHeight: screenHeight * 0.03,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  height: screenHeight * 0.4,
+                  child: GoogleMap(
+                    onMapCreated: (controller) {
+                      _mapController = controller;
+                    },
+                    initialCameraPosition: CameraPosition(
+                      target: _currentLocation,
+                      zoom: 14,
                     ),
+                    markers: _markers,
+                    polylines: _polylines,
+                    myLocationEnabled: true,
+                    myLocationButtonEnabled: true,
                   ),
-                ],
+                ),
+                Padding(
+                  padding: EdgeInsets.all(screenWidth * 0.06),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          const FaIcon(
+                            FontAwesomeIcons.mapMarkerAlt,
+                            color: ThemeColors.successColor,
+                          ),
+                          SizedBox(width: screenWidth * 0.04),
+                          Expanded(
+                            child: CustomLocatiofields(
+                              controller: _pickupController,
+                              hintText: "Pick up location",
+                              hintStyle: Textstyles.bodytext.copyWith(
+                                  color:
+                                      const Color.fromARGB(255, 163, 143, 81)),
+                              suffixIcon: IconButton(
+                                  onPressed: () {
+                                    _pickupController.clear();
+                                  },
+                                  icon: const Icon(Icons.cancel)),
+                              onChanged: (text) {
+                                _isPickupField = true; // Set to pickup mode
+                                if (text.isNotEmpty) {
+                                  _fetchPlaces(
+                                      text); // Fetch places on text change
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: screenHeight * 0.03),
+                      Row(
+                        children: [
+                          const FaIcon(FontAwesomeIcons.mapPin,
+                              color: ThemeColors.alertColor, size: 25),
+                          SizedBox(width: screenWidth * 0.04),
+                          Expanded(
+                            child: CustomLocatiofields(
+                              controller: _dropoffController,
+                              hintText: "Drop off location",
+                              hintStyle: Textstyles.bodytext.copyWith(
+                                  color:
+                                      const Color.fromARGB(255, 163, 143, 81)),
+                              onChanged: (text) {
+                                _isPickupField = false; // Set to dropoff mode
+                                if (text.isNotEmpty) {
+                                  _fetchPlaces(text);
+                                }
+                              },
+                              suffixIcon: IconButton(
+                                  onPressed: () {
+                                    _dropoffController.clear();
+                                  },
+                                  icon: const Icon(Icons.cancel)),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: screenHeight * 0.03),
+                      SizedBox(
+                        width: screenWidth * 0.5,
+                        height: screenHeight * 0.06,
+                        child: CustomButtons(
+                          text: "Confirm",
+                          onPressed: () {
+                            // Handle confirm action
+                          },
+                          backgroundColor: ThemeColors.primaryColor,
+                          textColor: ThemeColors.textColor,
+                          screenWidth: screenWidth,
+                          screenHeight: screenHeight * 0.03,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (_placeSuggestions.isNotEmpty)
+            Positioned(
+              top: screenHeight * 0.45,
+              left: screenWidth * 0.06,
+              right: screenWidth * 0.06,
+              child: Material(
+                elevation: 5,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _placeSuggestions.length,
+                  itemBuilder: (context, index) {
+                    var place = _placeSuggestions[index];
+                    return ListTile(
+                      title: Text(place['place_name']),
+                      onTap: () => _onPlaceSelected(place['place_name']),
+                    );
+                  },
+                ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

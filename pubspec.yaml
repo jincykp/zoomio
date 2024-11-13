@@ -50,7 +50,6 @@ dependencies:
   persistent_bottom_nav_bar: ^6.2.1
   random_string: ^2.3.1
   provider: ^6.1.2
-  flutter_svg: ^2.0.10+1
   flutter_bloc: ^8.1.6
   google_nav_bar: ^5.0.6
   animations: ^2.0.11
@@ -64,6 +63,7 @@ dependencies:
   permission_handler: ^11.3.1
   location: ^7.0.1
   flutter_polyline_points: ^2.1.0
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:
