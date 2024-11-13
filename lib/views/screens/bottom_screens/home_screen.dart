@@ -98,8 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          const WhereToGoScreen()));
+                                      builder: (context) => WhereToGoScreen()));
                             },
                             child: TextFormField(
                               enabled: false,

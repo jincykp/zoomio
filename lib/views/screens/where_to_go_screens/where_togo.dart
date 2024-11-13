@@ -223,21 +223,30 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
           ),
           if (_placeSuggestions.isNotEmpty)
             Positioned(
-              top: screenHeight * 0.45,
+              top: screenHeight * 0.55,
               left: screenWidth * 0.06,
-              right: screenWidth * 0.06,
+              right: screenWidth * 0.09,
               child: Material(
                 elevation: 5,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: _placeSuggestions.length,
-                  itemBuilder: (context, index) {
-                    var place = _placeSuggestions[index];
-                    return ListTile(
-                      title: Text(place['place_name']),
-                      onTap: () => _onPlaceSelected(place['place_name']),
-                    );
-                  },
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: screenHeight *
+                        0.5, // Set max height to control expansion
+                  ),
+                  child: ListView.separated(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: _placeSuggestions.length,
+                    itemBuilder: (context, index) {
+                      var place = _placeSuggestions[index];
+                      return ListTile(
+                        title: Text(place['place_name']),
+                        onTap: () => _onPlaceSelected(place['place_name']),
+                      );
+                    },
+                    separatorBuilder: (context, index) =>
+                        const Divider(), // Adds a divider between items
+                  ),
                 ),
               ),
             ),
