@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:zoomer/global/global_variable.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_locatiofields.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
@@ -18,6 +20,8 @@ class WhereToGoScreen extends StatefulWidget {
 class _WhereToGoScreenState extends State<WhereToGoScreen> {
   late GoogleMapController _mapController;
   LatLng _currentLocation = const LatLng(0, 0);
+  LatLng? _pickupLocation;
+  LatLng? _dropoffLocation;
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
   final TextEditingController _pickupController = TextEditingController();
@@ -25,6 +29,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
   List<dynamic> _placeSuggestions = [];
   bool _isLoading = false;
   bool _isPickupField = true;
+  Map<PolylineId, Polyline> _polylinesMap = {};
 
   // Mapbox API Key
   final String _accessToken =
@@ -51,18 +56,18 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
     setState(() {
       _currentLocation = LatLng(position.latitude, position.longitude);
     });
-    _addMarker(_currentLocation);
+    _addMarker(_currentLocation, "Your Location");
     _moveCameraToCurrentLocation();
   }
 
   // Add a marker on the map
-  void _addMarker(LatLng position) {
+  void _addMarker(LatLng position, String title) {
     setState(() {
       _markers.add(
         Marker(
-          markerId: const MarkerId('current_location'),
+          markerId: MarkerId(title),
           position: position,
-          infoWindow: const InfoWindow(title: 'Your Location'),
+          infoWindow: InfoWindow(title: title),
         ),
       );
     });
@@ -75,7 +80,6 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
     );
   }
 
-  // Fetch places from Mapbox Geocoding API
   // Fetch places from Mapbox Geocoding API
   Future<void> _fetchPlaces(String query) async {
     setState(() {
@@ -100,14 +104,73 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
   }
 
   // Handle selection of a suggestion
-  void _onPlaceSelected(String placeName) {
+  void _onPlaceSelected(String placeName, LatLng coordinates) {
     if (_isPickupField) {
       _pickupController.text = placeName;
+      _pickupLocation = coordinates;
+      _addMarker(coordinates, "Pickup Location");
     } else {
       _dropoffController.text = placeName;
+      _dropoffLocation = coordinates;
+      _addMarker(coordinates, "Dropoff Location");
     }
     setState(() {
-      _placeSuggestions.clear(); // Clear suggestions after selection
+      _placeSuggestions.clear();
+    });
+
+    if (_pickupLocation != null && _dropoffLocation != null) {
+      _getPolylinePoints();
+    }
+  }
+
+  // Generate polyline between pickup and dropoff locations
+  Future<void> _getPolylinePoints() async {
+    List<LatLng> polylineCoordinates = [];
+    PolylinePoints polylinePoints = PolylinePoints();
+
+    // Create the PolylineRequest object
+    PolylineRequest polylineRequest = PolylineRequest(
+      origin:
+          PointLatLng(_pickupLocation!.latitude, _pickupLocation!.longitude),
+      destination:
+          PointLatLng(_dropoffLocation!.latitude, _dropoffLocation!.longitude),
+      mode:
+          TravelMode.driving, // You can change this to walking, bicycling, etc.
+      avoidHighways: false, // Set to true if you want to avoid highways
+      avoidTolls: false, // Set to true if you want to avoid tolls
+      optimizeWaypoints: true, // Set this if you want to optimize waypoints
+    );
+
+    // Get the Uri for the API request
+    Uri uri = polylineRequest.toUri(apiKey: googleMapKey);
+
+    // Fetch the polyline data using the generated URI
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      request: polylineRequest,
+    );
+
+    // Process the result
+    if (result.points.isNotEmpty) {
+      for (var point in result.points) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      }
+
+      _addPolyline(polylineCoordinates); // Add the polyline to your map
+    }
+  }
+
+  // Add polyline to the map
+  void _addPolyline(List<LatLng> polylineCoordinates) {
+    final PolylineId polylineId = PolylineId('polyline');
+    final Polyline polyline = Polyline(
+      polylineId: polylineId,
+      color: Colors.blue, // Ensure the color is visible on your map
+      points: polylineCoordinates,
+      width: 6,
+    );
+
+    setState(() {
+      _polylinesMap[polylineId] = polyline;
     });
   }
 
@@ -123,21 +186,21 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
             child: Column(
               children: [
                 Container(
-                  height: screenHeight * 0.4,
-                  child: GoogleMap(
-                    onMapCreated: (controller) {
-                      _mapController = controller;
-                    },
-                    initialCameraPosition: CameraPosition(
-                      target: _currentLocation,
-                      zoom: 14,
-                    ),
-                    markers: _markers,
-                    polylines: _polylines,
-                    myLocationEnabled: true,
-                    myLocationButtonEnabled: true,
-                  ),
-                ),
+                    height: screenHeight * 0.4,
+                    child: GoogleMap(
+                      onMapCreated: (controller) {
+                        _mapController = controller;
+                      },
+                      initialCameraPosition: CameraPosition(
+                        target: _currentLocation,
+                        zoom: 14,
+                      ),
+                      markers: _markers,
+                      polylines: _polylinesMap.values
+                          .toSet(), // Ensure this is not empty
+                      myLocationEnabled: true,
+                      myLocationButtonEnabled: true,
+                    )),
                 Padding(
                   padding: EdgeInsets.all(screenWidth * 0.06),
                   child: Column(
@@ -157,15 +220,15 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                                   color:
                                       const Color.fromARGB(255, 163, 143, 81)),
                               suffixIcon: IconButton(
-                                  onPressed: () {
-                                    _pickupController.clear();
-                                  },
-                                  icon: const Icon(Icons.cancel)),
+                                onPressed: () {
+                                  _pickupController.clear();
+                                },
+                                icon: const Icon(Icons.my_location),
+                              ),
                               onChanged: (text) {
-                                _isPickupField = true; // Set to pickup mode
+                                _isPickupField = true;
                                 if (text.isNotEmpty) {
-                                  _fetchPlaces(
-                                      text); // Fetch places on text change
+                                  _fetchPlaces(text);
                                 }
                               },
                             ),
@@ -185,17 +248,18 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                               hintStyle: Textstyles.bodytext.copyWith(
                                   color:
                                       const Color.fromARGB(255, 163, 143, 81)),
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  _dropoffController.clear();
+                                },
+                                icon: const Icon(Icons.cancel),
+                              ),
                               onChanged: (text) {
-                                _isPickupField = false; // Set to dropoff mode
+                                _isPickupField = false;
                                 if (text.isNotEmpty) {
                                   _fetchPlaces(text);
                                 }
                               },
-                              suffixIcon: IconButton(
-                                  onPressed: () {
-                                    _dropoffController.clear();
-                                  },
-                                  icon: const Icon(Icons.cancel)),
                             ),
                           ),
                         ],
@@ -229,23 +293,22 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
               child: Material(
                 elevation: 5,
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: screenHeight *
-                        0.5, // Set max height to control expansion
-                  ),
-                  child: ListView.separated(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
+                  constraints: BoxConstraints(maxHeight: screenHeight * 0.3),
+                  child: ListView.builder(
                     itemCount: _placeSuggestions.length,
                     itemBuilder: (context, index) {
                       var place = _placeSuggestions[index];
                       return ListTile(
                         title: Text(place['place_name']),
-                        onTap: () => _onPlaceSelected(place['place_name']),
+                        onTap: () {
+                          var coordinates = place['geometry']['coordinates'];
+                          _onPlaceSelected(
+                            place['place_name'],
+                            LatLng(coordinates[1], coordinates[0]),
+                          );
+                        },
                       );
                     },
-                    separatorBuilder: (context, index) =>
-                        const Divider(), // Adds a divider between items
                   ),
                 ),
               ),
