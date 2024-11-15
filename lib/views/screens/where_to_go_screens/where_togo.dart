@@ -53,11 +53,39 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
+    LatLng currentLatLng = LatLng(position.latitude, position.longitude);
+
     setState(() {
-      _currentLocation = LatLng(position.latitude, position.longitude);
+      _currentLocation = currentLatLng;
     });
+
+    // Update the map and add a marker for current location
     _addMarker(_currentLocation, "Your Location");
     _moveCameraToCurrentLocation();
+
+    // Reverse geocode to get the actual place name
+    await _reverseGeocode(_currentLocation);
+  }
+
+  // Reverse geocode the coordinates to get the place name
+  Future<void> _reverseGeocode(LatLng coordinates) async {
+    final String reverseGeocodeUrl =
+        'https://api.mapbox.com/geocoding/v5/mapbox.places/${coordinates.longitude},${coordinates.latitude}.json?access_token=$_accessToken';
+
+    final response = await http.get(Uri.parse(reverseGeocodeUrl));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final placeName = data['features'][0]['place_name'];
+
+      setState(() {
+        // Update the pickup field with the real place name
+        _pickupController.text = placeName;
+        _pickupLocation = coordinates; // Store the coordinates for future use
+      });
+    } else {
+      throw Exception('Failed to reverse geocode');
+    }
   }
 
   // Add a marker on the map
@@ -125,48 +153,52 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
 
   // Generate polyline between pickup and dropoff locations
   Future<void> _getPolylinePoints() async {
-    List<LatLng> polylineCoordinates = [];
-    PolylinePoints polylinePoints = PolylinePoints();
+    if (_pickupLocation == null || _dropoffLocation == null) {
+      return; // Ensure both pickup and dropoff are selected before generating polyline
+    }
 
-    // Create the PolylineRequest object
-    PolylineRequest polylineRequest = PolylineRequest(
+    // Create a PolylineRequest object
+    PolylineRequest request = PolylineRequest(
       origin:
           PointLatLng(_pickupLocation!.latitude, _pickupLocation!.longitude),
       destination:
           PointLatLng(_dropoffLocation!.latitude, _dropoffLocation!.longitude),
       mode:
-          TravelMode.driving, // You can change this to walking, bicycling, etc.
-      avoidHighways: false, // Set to true if you want to avoid highways
-      avoidTolls: false, // Set to true if you want to avoid tolls
-      optimizeWaypoints: true, // Set this if you want to optimize waypoints
+          TravelMode.driving, // Corrected parameter: mode instead of travelMode
     );
 
-    // Get the Uri for the API request
-    Uri uri = polylineRequest.toUri(apiKey: googleMapKey);
+    // Create an instance of PolylinePoints
+    PolylinePoints polylinePoints = PolylinePoints();
 
-    // Fetch the polyline data using the generated URI
+    // Fetch the route using the request object and API key
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      request: polylineRequest,
+      request: request,
+      googleApiKey: googleMapKey, // Your Google Maps API Key
     );
 
-    // Process the result
     if (result.points.isNotEmpty) {
+      List<LatLng> polylineCoordinates = [];
       for (var point in result.points) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       }
 
-      _addPolyline(polylineCoordinates); // Add the polyline to your map
+      _addPolyline(
+          polylineCoordinates); // Call function to add polyline to the map
+    } else {
+      print('Failed to get polyline points: ${result.errorMessage}');
     }
   }
 
   // Add polyline to the map
   void _addPolyline(List<LatLng> polylineCoordinates) {
-    final PolylineId polylineId = PolylineId('polyline');
+    final PolylineId polylineId = PolylineId('route_polyline');
     final Polyline polyline = Polyline(
       polylineId: polylineId,
-      color: Colors.blue, // Ensure the color is visible on your map
+      color: Colors.blue, // Choose a visible color for the polyline
       points: polylineCoordinates,
-      width: 6,
+      width: 5, // Adjust the polyline width
+      startCap: Cap.roundCap,
+      endCap: Cap.roundCap,
     );
 
     setState(() {
@@ -207,11 +239,15 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                     children: [
                       Row(
                         children: [
-                          const FaIcon(
-                            FontAwesomeIcons.mapMarkerAlt,
-                            color: ThemeColors.successColor,
-                          ),
-                          SizedBox(width: screenWidth * 0.04),
+                          IconButton(
+                              onPressed: () async {
+                                await _getCurrentLocation();
+                              },
+                              icon: const Icon(
+                                Icons.my_location,
+                                color: ThemeColors.successColor,
+                              )),
+                          SizedBox(width: screenWidth * 0.01),
                           Expanded(
                             child: CustomLocatiofields(
                               controller: _pickupController,
@@ -223,24 +259,29 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                                 onPressed: () {
                                   _pickupController.clear();
                                 },
-                                icon: const Icon(Icons.my_location),
+                                icon: const Icon(Icons.cancel),
                               ),
                               onChanged: (text) {
-                                _isPickupField = true;
-                                if (text.isNotEmpty) {
-                                  _fetchPlaces(text);
-                                }
+                                _fetchPlaces(text);
+                                setState(() {
+                                  _isPickupField = true;
+                                });
                               },
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: screenHeight * 0.03),
                       Row(
                         children: [
-                          const FaIcon(FontAwesomeIcons.mapPin,
-                              color: ThemeColors.alertColor, size: 25),
-                          SizedBox(width: screenWidth * 0.04),
+                          IconButton(
+                              onPressed: () async {
+                                await _getCurrentLocation();
+                              },
+                              icon: const Icon(
+                                Icons.location_on,
+                                color: ThemeColors.alertColor,
+                              )),
+                          SizedBox(width: screenWidth * 0.01),
                           Expanded(
                             child: CustomLocatiofields(
                               controller: _dropoffController,
@@ -255,10 +296,10 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                                 icon: const Icon(Icons.cancel),
                               ),
                               onChanged: (text) {
-                                _isPickupField = false;
-                                if (text.isNotEmpty) {
-                                  _fetchPlaces(text);
-                                }
+                                _fetchPlaces(text);
+                                setState(() {
+                                  _isPickupField = false;
+                                });
                               },
                             ),
                           ),
@@ -279,40 +320,41 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                           screenHeight: screenHeight * 0.03,
                         ),
                       ),
+                      _isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : _placeSuggestions.isNotEmpty
+                              ? ListView.separated(
+                                  shrinkWrap: true,
+                                  itemCount: _placeSuggestions.length,
+                                  itemBuilder: (context, index) {
+                                    final place = _placeSuggestions[index];
+                                    final placeName = place['place_name'] ?? '';
+                                    final coordinates = place['center'] != null
+                                        ? LatLng(
+                                            place['center'][1],
+                                            place['center'][0],
+                                          )
+                                        : null;
+
+                                    return ListTile(
+                                      leading: const Icon(Icons
+                                          .location_on), // Adds a leading location icon
+                                      title: Text(placeName),
+                                      onTap: () => _onPlaceSelected(
+                                          placeName, coordinates!),
+                                    );
+                                  },
+                                  separatorBuilder: (context, index) {
+                                    return const Divider(); // Adds a separator (Divider) between list items
+                                  },
+                                )
+                              : const SizedBox(),
                     ],
                   ),
                 ),
               ],
             ),
           ),
-          if (_placeSuggestions.isNotEmpty)
-            Positioned(
-              top: screenHeight * 0.55,
-              left: screenWidth * 0.06,
-              right: screenWidth * 0.09,
-              child: Material(
-                elevation: 5,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxHeight: screenHeight * 0.3),
-                  child: ListView.builder(
-                    itemCount: _placeSuggestions.length,
-                    itemBuilder: (context, index) {
-                      var place = _placeSuggestions[index];
-                      return ListTile(
-                        title: Text(place['place_name']),
-                        onTap: () {
-                          var coordinates = place['geometry']['coordinates'];
-                          _onPlaceSelected(
-                            place['place_name'],
-                            LatLng(coordinates[1], coordinates[0]),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
     );
