@@ -24,7 +24,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
   LatLng? _dropoffLocation;
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
-  final TextEditingController _pickupController = TextEditingController();
+  final TextEditingController pickupController = TextEditingController();
   final TextEditingController _dropoffController = TextEditingController();
   List<dynamic> _placeSuggestions = [];
   bool _isLoading = false;
@@ -80,7 +80,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
 
       setState(() {
         // Update the pickup field with the real place name
-        _pickupController.text = placeName;
+        pickupController.text = placeName;
         _pickupLocation = coordinates; // Store the coordinates for future use
       });
     } else {
@@ -134,7 +134,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
   // Handle selection of a suggestion
   void _onPlaceSelected(String placeName, LatLng coordinates) {
     if (_isPickupField) {
-      _pickupController.text = placeName;
+      pickupController.text = placeName;
       _pickupLocation = coordinates;
       _addMarker(coordinates, "Pickup Location");
     } else {
@@ -147,7 +147,8 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
     });
 
     if (_pickupLocation != null && _dropoffLocation != null) {
-      _getPolylinePoints();
+      _getPolylinePoints(); // Generate polyline
+      _calculateDistance(); // Calculate distance
     }
   }
 
@@ -176,6 +177,9 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
       googleApiKey: googleMapKey, // Your Google Maps API Key
     );
 
+    print(result.errorMessage); // Check if there is any error in the response
+    print("points${result.points}"); // Check if points are returned
+
     if (result.points.isNotEmpty) {
       List<LatLng> polylineCoordinates = [];
       for (var point in result.points) {
@@ -202,7 +206,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
     );
 
     setState(() {
-      _polylinesMap[polylineId] = polyline;
+      _polylinesMap[polylineId] = polyline; // Add the polyline to the map
     });
   }
 
@@ -229,7 +233,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                       ),
                       markers: _markers,
                       polylines: _polylinesMap.values
-                          .toSet(), // Ensure this is not empty
+                          .toSet(), // Ensure polyline is passed
                       myLocationEnabled: true,
                       myLocationButtonEnabled: true,
                     )),
@@ -250,14 +254,14 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                           SizedBox(width: screenWidth * 0.01),
                           Expanded(
                             child: CustomLocatiofields(
-                              controller: _pickupController,
+                              controller: pickupController,
                               hintText: "Pick up location",
                               hintStyle: Textstyles.bodytext.copyWith(
                                   color:
                                       const Color.fromARGB(255, 163, 143, 81)),
                               suffixIcon: IconButton(
                                 onPressed: () {
-                                  _pickupController.clear();
+                                  pickupController.clear();
                                 },
                                 icon: const Icon(Icons.cancel),
                               ),
@@ -269,6 +273,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                               },
                             ),
                           ),
+                          SizedBox(height: screenHeight * 0.08),
                         ],
                       ),
                       Row(
@@ -312,7 +317,58 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                         child: CustomButtons(
                           text: "Confirm",
                           onPressed: () {
-                            // Handle confirm action
+                            // Ensure that the bottom sheet is displayed within the Scaffold context
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled:
+                                  true, // Allows better control over the height of the bottom sheet
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20),
+                                ),
+                              ),
+                              builder: (context) {
+                                return Container(
+                                  height: 700, // Set the height here
+                                  decoration: const BoxDecoration(
+                                    color: ThemeColors.primaryColor,
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(
+                                          40), // Set the rounded corners here
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      children: [
+                                        const Text(
+                                          "Recommended for you",
+                                          style: Textstyles.gTextdescription,
+                                        ),
+                                        SizedBox(height: screenHeight * 0.02),
+
+                                        // Expanded is used to allow ListView to fill the remaining space
+                                        Expanded(
+                                          child: ListView.builder(
+                                            itemCount: 9,
+                                            itemBuilder: (context, index) {
+                                              return const Card(
+                                                child: ListTile(
+                                                  title: Text('car'),
+                                                  subtitle: Text('3 Person'),
+                                                  leading: CircleAvatar(),
+                                                  trailing: Text("₹ 777"),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
                           },
                           backgroundColor: ThemeColors.primaryColor,
                           textColor: ThemeColors.textColor,
@@ -358,5 +414,31 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
         ],
       ),
     );
+  }
+
+// Calculate distance between pickup and dropoff locations
+  Future<void> _calculateDistance() async {
+    if (_pickupLocation == null || _dropoffLocation == null) {
+      print("Pickup or Dropoff location is not selected");
+      return;
+    }
+
+    // Calculate the distance in meters
+    double distanceInMeters = Geolocator.distanceBetween(
+      _pickupLocation!.latitude,
+      _pickupLocation!.longitude,
+      _dropoffLocation!.latitude,
+      _dropoffLocation!.longitude,
+    );
+
+    // Convert to kilometers
+    double distanceInKilometers = distanceInMeters / 1000;
+
+    print("Distance: ${distanceInKilometers.toStringAsFixed(2)} km");
+
+    // Show distance in UI or use it further as needed
+    setState(() {
+      // Store or display the distance as needed
+    });
   }
 }
