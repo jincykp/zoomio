@@ -16,6 +16,7 @@ class Vehicle {
   double perKilometerCharge;
   List<String> vehicleImages;
   List<String> documentImages;
+  double? totalPrice; // Add this field
 
   Vehicle({
     this.id,
@@ -33,6 +34,7 @@ class Vehicle {
     required this.perKilometerCharge,
     required this.vehicleImages,
     required this.documentImages,
+    this.totalPrice, // Initialize the new field
   });
 
   // From Firestore

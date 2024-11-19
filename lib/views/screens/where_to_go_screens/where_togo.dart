@@ -6,9 +6,12 @@ import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:zoomer/global/global_variable.dart';
+import 'package:zoomer/model/vehicle_model.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_locatiofields.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
+import 'package:zoomer/views/screens/where_to_go_screens/database_services.dart';
+import 'package:zoomer/views/screens/where_to_go_screens/price_services.dart';
 
 class WhereToGoScreen extends StatefulWidget {
   const WhereToGoScreen({super.key});
@@ -30,6 +33,10 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
   bool _isLoading = false;
   bool _isPickupField = true;
   Map<PolylineId, Polyline> _polylinesMap = {};
+  PriceServices priceServices = PriceServices();
+  String? _totalDistance; // Default value for distance
+  String? _totalPrice;
+  DatabaseServices databaseServices = DatabaseServices();
 
   // Mapbox API Key
   final String _accessToken =
@@ -317,6 +324,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                         child: CustomButtons(
                           text: "Confirm",
                           onPressed: () {
+                            calculateAndDisplayAllVehiclePrices();
                             // Ensure that the bottom sheet is displayed within the Scaffold context
                             showModalBottomSheet(
                               context: context,
@@ -328,44 +336,91 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                                 ),
                               ),
                               builder: (context) {
-                                return Container(
-                                  height: 700, // Set the height here
-                                  decoration: const BoxDecoration(
-                                    color: ThemeColors.primaryColor,
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(
-                                          40), // Set the rounded corners here
-                                    ),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      children: [
-                                        const Text(
-                                          "Recommended for you",
-                                          style: Textstyles.gTextdescription,
-                                        ),
-                                        SizedBox(height: screenHeight * 0.02),
+                                return FutureBuilder<List<Vehicle>>(
+                                  future: databaseServices.getVehicles(),
+                                  // Fetch vehicles here
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      // Show loading indicator while waiting for the data
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    }
 
-                                        // Expanded is used to allow ListView to fill the remaining space
-                                        Expanded(
-                                          child: ListView.builder(
-                                            itemCount: 9,
-                                            itemBuilder: (context, index) {
-                                              return const Card(
-                                                child: ListTile(
-                                                  title: Text('car'),
-                                                  subtitle: Text('3 Person'),
-                                                  leading: CircleAvatar(),
-                                                  trailing: Text("₹ 777"),
-                                                ),
-                                              );
-                                            },
-                                          ),
+                                    if (snapshot.hasError) {
+                                      // Show error message if fetching data failed
+                                      return Center(
+                                          child:
+                                              Text('Error: ${snapshot.error}'));
+                                    }
+
+                                    if (!snapshot.hasData ||
+                                        snapshot.data!.isEmpty) {
+                                      // Show message if no data is available
+                                      return const Center(
+                                          child:
+                                              Text('No vehicles available.'));
+                                    }
+
+                                    // If data is available, build the ListView
+                                    final vehicles = snapshot.data!;
+
+                                    return Container(
+                                      height: 700, // Set the height here
+                                      decoration: const BoxDecoration(
+                                        color: ThemeColors.primaryColor,
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(
+                                              40), // Set the rounded corners here
                                         ),
-                                      ],
-                                    ),
-                                  ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          children: [
+                                            const Text(
+                                              "Recommended for you",
+                                              style:
+                                                  Textstyles.gTextdescription,
+                                            ),
+                                            SizedBox(
+                                                height: screenHeight * 0.02),
+
+                                            // Expanded is used to allow ListView to fill the remaining space
+                                            Expanded(
+                                              child: ListView.builder(
+                                                itemCount: vehicles
+                                                    .length, // Dynamically set the count
+                                                itemBuilder: (context, index) {
+                                                  final vehicle = vehicles[
+                                                      index]; // Access the vehicle at the current index
+                                                  return Card(
+                                                      child: ListTile(
+                                                    title: Text(vehicle
+                                                        .brand), // Display the vehicle model
+                                                    subtitle: Text(
+                                                        '${vehicle.seatingCapacity} Person'), // Display seating capacity
+                                                    leading: const CircleAvatar(
+                                                      child: Icon(Icons
+                                                          .directions_car), // Optionally, set an icon for the vehicle
+                                                    ),
+                                                    // trailing: Text(
+                                                    //   '₹${vehicle['totalPrice'].toStringAsFixed(2)}', // Display the calculated price
+                                                    //   style: const TextStyle(
+                                                    //     fontWeight:
+                                                    //         FontWeight.bold,
+                                                    //     color: Colors.green,
+                                                    //   ),
+                                                    // ),
+                                                  ));
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 );
                               },
                             );
@@ -434,11 +489,37 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
     // Convert to kilometers
     double distanceInKilometers = distanceInMeters / 1000;
 
-    print("Distance: ${distanceInKilometers.toStringAsFixed(2)} km");
+    print("Distance=====: ${distanceInKilometers.toStringAsFixed(2)} km");
 
     // Show distance in UI or use it further as needed
     setState(() {
       // Store or display the distance as needed
     });
+  }
+
+  Future<void> calculateAndDisplayAllVehiclePrices() async {
+    if (_pickupLocation == null || _dropoffLocation == null) {
+      print("Pickup or Dropoff location is not selected");
+      return;
+    }
+
+    // Calculate distance
+    double distanceInMeters = Geolocator.distanceBetween(
+      _pickupLocation!.latitude,
+      _pickupLocation!.longitude,
+      _dropoffLocation!.latitude,
+      _dropoffLocation!.longitude,
+    );
+    double distanceInKilometers = distanceInMeters / 1000;
+
+    // Calculate total price for all vehicles
+    List<Map<String, dynamic>> totalPriceList = await priceServices
+        .calculateTotalPriceForAllVehicles(distanceInKilometers);
+
+    // Display the prices
+    for (var vehicle in totalPriceList) {
+      print("Vehicle Type: ${vehicle['vehicleType']}");
+      print("Total Price: ₹${vehicle['totalPrice']}");
+    }
   }
 }
