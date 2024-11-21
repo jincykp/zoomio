@@ -16,7 +16,7 @@ class Vehicle {
   double perKilometerCharge;
   List<String> vehicleImages;
   List<String> documentImages;
-  double? totalPrice; // Add this field
+  double? totalPrice; // Optional field
 
   Vehicle({
     this.id,
@@ -34,10 +34,10 @@ class Vehicle {
     required this.perKilometerCharge,
     required this.vehicleImages,
     required this.documentImages,
-    this.totalPrice, // Initialize the new field
+    this.totalPrice,
   });
 
-  // From Firestore
+  // Factory method to create a Vehicle instance from Firestore data
   factory Vehicle.fromMap(Map<String, dynamic> map, String id) {
     return Vehicle(
       id: id,
@@ -55,10 +55,13 @@ class Vehicle {
       perKilometerCharge: (map['perKilometerCharge'] ?? 0).toDouble(),
       vehicleImages: List<String>.from(map['vehicleImages'] ?? []),
       documentImages: List<String>.from(map['documentImages'] ?? []),
+      totalPrice: map['totalPrice'] != null
+          ? (map['totalPrice'] as num).toDouble()
+          : null,
     );
   }
 
-  // To Firestore
+  // Method to convert a Vehicle instance to a Firestore-compatible map
   Map<String, dynamic> toMap() {
     return {
       'vehicleType': vehicleType,
@@ -75,6 +78,48 @@ class Vehicle {
       'perKilometerCharge': perKilometerCharge,
       'vehicleImages': vehicleImages,
       'documentImages': documentImages,
+      if (totalPrice != null) 'totalPrice': totalPrice,
     };
+  }
+
+  // Method to create a new instance with updated fields
+  Vehicle copyWith({
+    String? id,
+    String? vehicleType,
+    String? brand,
+    String? registrationNumber,
+    int? seatingCapacity,
+    String? fuelType,
+    String? insurancePolicyNumber,
+    DateTime? insuranceExpiryDate,
+    String? pollutionCertificateNumber,
+    DateTime? pollutionExpiryDate,
+    double? baseFare,
+    double? waitingCharge,
+    double? perKilometerCharge,
+    List<String>? vehicleImages,
+    List<String>? documentImages,
+    double? totalPrice,
+  }) {
+    return Vehicle(
+      id: id ?? this.id,
+      vehicleType: vehicleType ?? this.vehicleType,
+      brand: brand ?? this.brand,
+      registrationNumber: registrationNumber ?? this.registrationNumber,
+      seatingCapacity: seatingCapacity ?? this.seatingCapacity,
+      fuelType: fuelType ?? this.fuelType,
+      insurancePolicyNumber:
+          insurancePolicyNumber ?? this.insurancePolicyNumber,
+      insuranceExpiryDate: insuranceExpiryDate ?? this.insuranceExpiryDate,
+      pollutionCertificateNumber:
+          pollutionCertificateNumber ?? this.pollutionCertificateNumber,
+      pollutionExpiryDate: pollutionExpiryDate ?? this.pollutionExpiryDate,
+      baseFare: baseFare ?? this.baseFare,
+      waitingCharge: waitingCharge ?? this.waitingCharge,
+      perKilometerCharge: perKilometerCharge ?? this.perKilometerCharge,
+      vehicleImages: vehicleImages ?? this.vehicleImages,
+      documentImages: documentImages ?? this.documentImages,
+      totalPrice: totalPrice ?? this.totalPrice,
+    );
   }
 }

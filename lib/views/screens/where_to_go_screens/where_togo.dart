@@ -21,7 +21,7 @@ class WhereToGoScreen extends StatefulWidget {
 }
 
 class _WhereToGoScreenState extends State<WhereToGoScreen> {
-  late GoogleMapController _mapController;
+  late GoogleMapController mapController;
   LatLng _currentLocation = const LatLng(0, 0);
   LatLng? _pickupLocation;
   LatLng? _dropoffLocation;
@@ -67,15 +67,15 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
     });
 
     // Update the map and add a marker for current location
-    _addMarker(_currentLocation, "Your Location");
-    _moveCameraToCurrentLocation();
+    addMarker(_currentLocation, "Your Location");
+    moveCameraToCurrentLocation();
 
     // Reverse geocode to get the actual place name
-    await _reverseGeocode(_currentLocation);
+    await reverseGeocode(_currentLocation);
   }
 
   // Reverse geocode the coordinates to get the place name
-  Future<void> _reverseGeocode(LatLng coordinates) async {
+  Future<void> reverseGeocode(LatLng coordinates) async {
     final String reverseGeocodeUrl =
         'https://api.mapbox.com/geocoding/v5/mapbox.places/${coordinates.longitude},${coordinates.latitude}.json?access_token=$_accessToken';
 
@@ -96,7 +96,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
   }
 
   // Add a marker on the map
-  void _addMarker(LatLng position, String title) {
+  void addMarker(LatLng position, String title) {
     setState(() {
       _markers.add(
         Marker(
@@ -109,8 +109,8 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
   }
 
   // Move camera to the current location
-  void _moveCameraToCurrentLocation() {
-    _mapController.animateCamera(
+  void moveCameraToCurrentLocation() {
+    mapController.animateCamera(
       CameraUpdate.newLatLngZoom(_currentLocation, 14),
     );
   }
@@ -143,11 +143,11 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
     if (_isPickupField) {
       pickupController.text = placeName;
       _pickupLocation = coordinates;
-      _addMarker(coordinates, "Pickup Location");
+      addMarker(coordinates, "Pickup Location");
     } else {
       _dropoffController.text = placeName;
       _dropoffLocation = coordinates;
-      _addMarker(coordinates, "Dropoff Location");
+      addMarker(coordinates, "Dropoff Location");
     }
     setState(() {
       _placeSuggestions.clear();
@@ -232,7 +232,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                     height: screenHeight * 0.4,
                     child: GoogleMap(
                       onMapCreated: (controller) {
-                        _mapController = controller;
+                        mapController = controller;
                       },
                       initialCameraPosition: CameraPosition(
                         target: _currentLocation,
