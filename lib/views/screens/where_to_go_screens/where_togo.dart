@@ -37,7 +37,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
   String? _totalDistance; // Default value for distance
   String? _totalPrice;
   DatabaseServices databaseServices = DatabaseServices();
-
+  double? _calculatedDistance;
   // Mapbox API Key
   final String _accessToken =
       'pk.eyJ1IjoiamluY3lrcCIsImEiOiJjbTNmdmd2ejYwMDFrMmlzZmZya3dxOXJ6In0.65j6783wEmjz7pcehss0eA'; // Replace with your Mapbox API Key
@@ -45,11 +45,11 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    getCurrentLocation();
   }
 
   // Get current location of the user
-  Future<void> _getCurrentLocation() async {
+  Future<void> getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     LocationPermission permission = await Geolocator.checkPermission();
 
@@ -252,7 +252,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                         children: [
                           IconButton(
                               onPressed: () async {
-                                await _getCurrentLocation();
+                                await getCurrentLocation();
                               },
                               icon: const Icon(
                                 Icons.my_location,
@@ -287,7 +287,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                         children: [
                           IconButton(
                               onPressed: () async {
-                                await _getCurrentLocation();
+                                await getCurrentLocation();
                               },
                               icon: const Icon(
                                 Icons.location_on,
@@ -396,23 +396,17 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                                                       index]; // Access the vehicle at the current index
                                                   return Card(
                                                       child: ListTile(
-                                                    title: Text(vehicle
-                                                        .brand), // Display the vehicle model
-                                                    subtitle: Text(
-                                                        '${vehicle.seatingCapacity} Person'), // Display seating capacity
-                                                    leading: const CircleAvatar(
-                                                      child: Icon(Icons
-                                                          .directions_car), // Optionally, set an icon for the vehicle
-                                                    ),
-                                                    // trailing: Text(
-                                                    //   '₹${vehicle['totalPrice'].toStringAsFixed(2)}', // Display the calculated price
-                                                    //   style: const TextStyle(
-                                                    //     fontWeight:
-                                                    //         FontWeight.bold,
-                                                    //     color: Colors.green,
-                                                    //   ),
-                                                    // ),
-                                                  ));
+                                                          title: Text(vehicle
+                                                              .brand), // Display the vehicle model
+                                                          subtitle: Text(
+                                                              '${vehicle.seatingCapacity} Person'), // Display seating capacity
+                                                          leading:
+                                                              const CircleAvatar(
+                                                            child: Icon(Icons
+                                                                .directions_car), // Optionally, set an icon for the vehicle
+                                                          ),
+                                                          trailing: Text(
+                                                              '₹${vehicle.totalPrice?.toStringAsFixed(2)}')));
                                                 },
                                               ),
                                             ),
@@ -489,11 +483,12 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
     // Convert to kilometers
     double distanceInKilometers = distanceInMeters / 1000;
 
-    print("Distance=====: ${distanceInKilometers.toStringAsFixed(2)} km");
+    // Debug: Log the calculated distance
+    print("Calculated Distance: ${distanceInKilometers.toStringAsFixed(2)} km");
 
-    // Show distance in UI or use it further as needed
+    // Store or display the distance as needed
     setState(() {
-      // Store or display the distance as needed
+      _calculatedDistance = distanceInKilometers;
     });
   }
 
@@ -503,7 +498,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
       return;
     }
 
-    // Calculate distance
+    // Calculate the distance
     double distanceInMeters = Geolocator.distanceBetween(
       _pickupLocation!.latitude,
       _pickupLocation!.longitude,
@@ -512,7 +507,10 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
     );
     double distanceInKilometers = distanceInMeters / 1000;
 
-    // Calculate total price for all vehicles
+    // Instantiate the PriceServices class
+    PriceServices priceServices = PriceServices();
+
+    // Calculate total prices for all vehicles
     List<Map<String, dynamic>> totalPriceList = await priceServices
         .calculateTotalPriceForAllVehicles(distanceInKilometers);
 

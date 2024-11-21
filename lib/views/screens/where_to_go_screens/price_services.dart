@@ -1,27 +1,37 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PriceServices {
+  /// Calculate the total price for all vehicles based on distance
   Future<List<Map<String, dynamic>>> calculateTotalPriceForAllVehicles(
       double distanceInKilometers) async {
     try {
       // Fetch all vehicle rates from Firestore
       List<Map<String, dynamic>> allRates = await fetchAllVehicleRates();
 
-      // Calculate total price for each vehicle
+      // Initialize a list to store the total prices for all vehicles
       List<Map<String, dynamic>> totalPriceList = [];
 
       for (var rates in allRates) {
         // Extract rates for each vehicle
-        double baseFare = rates['baseFare'] ?? 0.0;
-        double perKilometerCharge = rates['perKilometerCharge'] ?? 0.0;
-        double waitingCharge = rates['waitingCharge'] ?? 0.0;
+        double baseFare = (rates['baseFare'] ?? 0.0).toDouble();
+        double perKilometerCharge =
+            (rates['perKilometerCharge'] ?? 0.0).toDouble();
+        double waitingCharge = (rates['waitingCharge'] ?? 0.0).toDouble();
 
-        // Calculate the total price for each vehicle
+        // Debug: Log the rates being processed
+        print("Processing Vehicle: ${rates['vehicleType']}");
+        print(
+            "Base Fare: ₹$baseFare, Per KM Charge: ₹$perKilometerCharge, Waiting Charge: ₹$waitingCharge");
+
+        // Calculate the total price for the vehicle
         double totalPrice = baseFare +
             (distanceInKilometers * perKilometerCharge) +
             waitingCharge;
 
-        // Add the calculated total price to the result list
+        // Debug: Log the calculated total price
+        print("Total Price for ${rates['vehicleType']}: ₹$totalPrice");
+
+        // Add the total price and vehicle type to the result list
         totalPriceList.add({
           'vehicleType': rates['vehicleType'],
           'totalPrice': totalPrice,
@@ -35,27 +45,30 @@ class PriceServices {
     }
   }
 
+  /// Fetch all vehicle rates from Firestore
   Future<List<Map<String, dynamic>>> fetchAllVehicleRates() async {
     try {
-      // Query all vehicles in the Firestore collection
-      var snapshot = await FirebaseFirestore.instance
-          .collection('vehicles')
-          .get(); // No filtering by vehicle type, fetching all vehicles
+      // Fetch all documents from the 'vehicles' Firestore collection
+      var snapshot =
+          await FirebaseFirestore.instance.collection('vehicles').get();
 
+      // Check if the snapshot is empty
       if (snapshot.docs.isEmpty) {
         print("No vehicle rates found");
         throw Exception("No vehicle rates found");
       }
 
-      // Extract vehicle data
+      // Convert snapshot documents to a list of maps
       List<Map<String, dynamic>> ratesList = snapshot.docs.map((doc) {
+        // Debug: Log the data fetched from Firestore
+        print("Fetched data: ${doc.data()}");
         return doc.data();
       }).toList();
 
       return ratesList;
     } catch (e) {
       print("Error fetching vehicle rates: $e");
-      rethrow; // Rethrow the error for handling in the calling function
+      rethrow; // Rethrow to propagate the error
     }
   }
 }
