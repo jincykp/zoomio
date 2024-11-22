@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -10,6 +11,7 @@ import 'package:zoomer/model/vehicle_model.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_locatiofields.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
+import 'package:zoomer/views/screens/where_to_go_screens/bloc/vehicle_bloc.dart';
 import 'package:zoomer/views/screens/where_to_go_screens/database_services.dart';
 import 'package:zoomer/views/screens/where_to_go_screens/price_services.dart';
 
@@ -37,6 +39,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
   String? _totalDistance; // Default value for distance
   String? _totalPrice;
   DatabaseServices databaseServices = DatabaseServices();
+  final VehicleBloc _vehicleBloc = VehicleBloc(PriceServices());
   double? _calculatedDistance;
   // Mapbox API Key
   final String _accessToken =
@@ -324,100 +327,116 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                         child: CustomButtons(
                           text: "Confirm",
                           onPressed: () {
-                            calculateAndDisplayAllVehiclePrices();
-                            // Ensure that the bottom sheet is displayed within the Scaffold context
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled:
-                                  true, // Allows better control over the height of the bottom sheet
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(20),
+                            _calculateDistance();
+                            if (_calculatedDistance != null) {
+                              _vehicleBloc.add(
+                                CalculatePricesEvent(_calculatedDistance!),
+                              );
+
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20),
+                                  ),
                                 ),
-                              ),
-                              builder: (context) {
-                                return FutureBuilder<List<Vehicle>>(
-                                  future: databaseServices.getVehicles(),
-                                  // Fetch vehicles here
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      // Show loading indicator while waiting for the data
-                                      return const Center(
-                                          child: CircularProgressIndicator());
-                                    }
-
-                                    if (snapshot.hasError) {
-                                      // Show error message if fetching data failed
-                                      return Center(
-                                          child:
-                                              Text('Error: ${snapshot.error}'));
-                                    }
-
-                                    if (!snapshot.hasData ||
-                                        snapshot.data!.isEmpty) {
-                                      // Show message if no data is available
-                                      return const Center(
-                                          child:
-                                              Text('No vehicles available.'));
-                                    }
-
-                                    // If data is available, build the ListView
-                                    final vehicles = snapshot.data!;
-
-                                    return Container(
-                                      height: 700, // Set the height here
-                                      decoration: const BoxDecoration(
-                                        color: ThemeColors.primaryColor,
-                                        borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(
-                                              40), // Set the rounded corners here
-                                        ),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          children: [
-                                            const Text(
-                                              "Recommended for you",
-                                              style:
-                                                  Textstyles.gTextdescription,
-                                            ),
-                                            SizedBox(
-                                                height: screenHeight * 0.02),
-
-                                            // Expanded is used to allow ListView to fill the remaining space
-                                            Expanded(
-                                              child: ListView.builder(
-                                                itemCount: vehicles
-                                                    .length, // Dynamically set the count
-                                                itemBuilder: (context, index) {
-                                                  final vehicle = vehicles[
-                                                      index]; // Access the vehicle at the current index
-                                                  return Card(
-                                                      child: ListTile(
-                                                          title: Text(vehicle
-                                                              .brand), // Display the vehicle model
-                                                          subtitle: Text(
-                                                              '${vehicle.seatingCapacity} Person'), // Display seating capacity
-                                                          leading:
-                                                              const CircleAvatar(
-                                                            child: Icon(Icons
-                                                                .directions_car), // Optionally, set an icon for the vehicle
-                                                          ),
-                                                          trailing: Text(
-                                                              '₹${vehicle.totalPrice?.toStringAsFixed(2)}')));
-                                                },
+                                builder: (context) {
+                                  return BlocProvider.value(
+                                    value: _vehicleBloc,
+                                    child:
+                                        BlocBuilder<VehicleBloc, VehicleState>(
+                                      builder: (context, state) {
+                                        if (state is VehicleLoadingState) {
+                                          return const Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                        } else if (state
+                                            is VehiclePriceCalculatedState) {
+                                          final vehicles = state.vehiclePrices;
+                                          return Container(
+                                            height: 700,
+                                            decoration: const BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.vertical(
+                                                top: Radius.circular(40),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            );
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Column(
+                                                children: [
+                                                  const Text(
+                                                    "Recommended for you",
+                                                    style: Textstyles
+                                                        .gTextdescription,
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          screenHeight * 0.02),
+                                                  Expanded(
+                                                    child: ListView.builder(
+                                                      itemCount:
+                                                          vehicles.length,
+                                                      itemBuilder:
+                                                          (context, index) {
+                                                        final vehicle =
+                                                            vehicles[index];
+                                                        print(vehicle);
+                                                        return Card(
+                                                          elevation: 18.2,
+                                                          child: ListTile(
+                                                            title: Text(
+                                                              '${vehicle['brand'] ?? 'No Brand'}',
+                                                              style: Textstyles
+                                                                  .gTextdescription,
+                                                            ),
+                                                            subtitle: Text(
+                                                              'for ${vehicle['seatingCapacity'] ?? 'N/A'} Person',
+                                                            ),
+                                                            leading:
+                                                                CircleAvatar(
+                                                              child: Icon(
+                                                                vehicle['vehicleType'] ==
+                                                                        'Bike'
+                                                                    ? Icons
+                                                                        .directions_bike
+                                                                    : Icons
+                                                                        .directions_car,
+                                                              ),
+                                                            ),
+                                                            trailing: Text(
+                                                              '₹${vehicle['totalPrice'].toStringAsFixed(2)}',
+                                                              style: const TextStyle(
+                                                                  color: ThemeColors
+                                                                      .successColor,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        } else if (state is VehicleErrorState) {
+                                          return Center(
+                                            child:
+                                                Text('Error: ${state.error}'),
+                                          );
+                                        }
+                                        return const SizedBox();
+                                      },
+                                    ),
+                                  );
+                                },
+                              );
+                            }
                           },
                           backgroundColor: ThemeColors.primaryColor,
                           textColor: ThemeColors.textColor,

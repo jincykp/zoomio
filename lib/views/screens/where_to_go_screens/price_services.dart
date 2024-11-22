@@ -28,12 +28,12 @@ class PriceServices {
             (distanceInKilometers * perKilometerCharge) +
             waitingCharge;
 
-        // Debug: Log the calculated total price
-        print("Total Price for ${rates['vehicleType']}: ₹$totalPrice");
-
         // Add the total price and vehicle type to the result list
         totalPriceList.add({
           'vehicleType': rates['vehicleType'],
+          'brand': rates['brand'], // Make sure you have 'vehicleBrand'
+          'seatingCapacity': rates[
+              'seatingCapacity'], // Make sure 'seatingCapacity' is available
           'totalPrice': totalPrice,
         });
       }
