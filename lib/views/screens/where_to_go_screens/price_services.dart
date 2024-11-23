@@ -28,13 +28,15 @@ class PriceServices {
             (distanceInKilometers * perKilometerCharge) +
             waitingCharge;
 
-        // Add the total price and vehicle type to the result list
+        // Add the total price and vehicle data to the result list
         totalPriceList.add({
           'vehicleType': rates['vehicleType'],
-          'brand': rates['brand'], // Make sure you have 'vehicleBrand'
-          'seatingCapacity': rates[
-              'seatingCapacity'], // Make sure 'seatingCapacity' is available
-          'totalPrice': totalPrice,
+          'brand': rates['brand'], // Ensure 'brand' exists in Firestore
+          'seatingCapacity':
+              rates['seatingCapacity'], // Ensure 'seatingCapacity' exists
+          'aboutVehicle': rates['aboutVehicle'] ??
+              'No description available', // Add description
+          'totalPrice': totalPrice, // Calculated total price
         });
       }
 

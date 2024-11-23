@@ -37,8 +37,15 @@ class Textstyles {
       fontFamily: "Rowdies", fontSize: 19, fontWeight: FontWeight.bold);
   static const TextStyle gTextdescription = TextStyle(
       fontFamily: "Rowdies", fontWeight: FontWeight.bold, fontSize: 13);
+  static const TextStyle gTextdescriptionSecond = TextStyle(
+      fontFamily: "Rowdies", fontWeight: FontWeight.bold, fontSize: 18);
   static const TextStyle uniqueTitiles =
       TextStyle(fontFamily: "Itim", fontWeight: FontWeight.bold, fontSize: 22);
   static const TextStyle signText = TextStyle(
       fontFamily: "Rowdies", fontWeight: FontWeight.bold, fontSize: 18);
+  static const TextStyle gTextdescriptionWithColor = TextStyle(
+      fontFamily: "Rowdies",
+      fontWeight: FontWeight.bold,
+      fontSize: 13,
+      color: ThemeColors.successColor);
 }

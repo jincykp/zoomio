@@ -8,10 +8,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:zoomer/global/global_variable.dart';
 import 'package:zoomer/model/vehicle_model.dart';
+import 'package:zoomer/views/screens/custom_widgets/custom_alertcard.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_locatiofields.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 import 'package:zoomer/views/screens/where_to_go_screens/bloc/vehicle_bloc.dart';
+import 'package:zoomer/views/screens/where_to_go_screens/cubit/selected_vehicle_cubit.dart';
 import 'package:zoomer/views/screens/where_to_go_screens/database_services.dart';
 import 'package:zoomer/views/screens/where_to_go_screens/price_services.dart';
 
@@ -387,6 +389,29 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                                                         return Card(
                                                           elevation: 18.2,
                                                           child: ListTile(
+                                                            onTap: () {
+                                                              final vehicleCubit =
+                                                                  SelectedVehicleCubit();
+                                                              vehicleCubit
+                                                                  .loadVehicle(
+                                                                      vehicle); // Pass the selected vehicle data
+
+                                                              showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (BuildContext
+                                                                        context) {
+                                                                  return BlocProvider
+                                                                      .value(
+                                                                    value:
+                                                                        vehicleCubit,
+                                                                    child:
+                                                                        const CustomAlertCard(),
+                                                                  );
+                                                                },
+                                                              );
+                                                            },
                                                             title: Text(
                                                               '${vehicle['brand'] ?? 'No Brand'}',
                                                               style: Textstyles

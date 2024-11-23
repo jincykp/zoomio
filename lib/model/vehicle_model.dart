@@ -17,6 +17,7 @@ class Vehicle {
   List<String> vehicleImages;
   List<String> documentImages;
   double? totalPrice; // Optional field
+  String aboutVehicle; // New field
 
   Vehicle({
     this.id,
@@ -35,6 +36,7 @@ class Vehicle {
     required this.vehicleImages,
     required this.documentImages,
     this.totalPrice,
+    required this.aboutVehicle, // Updated constructor
   });
 
   // Factory method to create a Vehicle instance from Firestore data
@@ -58,6 +60,7 @@ class Vehicle {
       totalPrice: map['totalPrice'] != null
           ? (map['totalPrice'] as num).toDouble()
           : null,
+      aboutVehicle: map['aboutVehicle'] ?? '', // Updated fromMap
     );
   }
 
@@ -79,6 +82,7 @@ class Vehicle {
       'vehicleImages': vehicleImages,
       'documentImages': documentImages,
       if (totalPrice != null) 'totalPrice': totalPrice,
+      'aboutVehicle': aboutVehicle, // Updated toMap
     };
   }
 
@@ -100,6 +104,7 @@ class Vehicle {
     List<String>? vehicleImages,
     List<String>? documentImages,
     double? totalPrice,
+    String? aboutVehicle, // New parameter for copyWith
   }) {
     return Vehicle(
       id: id ?? this.id,
@@ -120,6 +125,7 @@ class Vehicle {
       vehicleImages: vehicleImages ?? this.vehicleImages,
       documentImages: documentImages ?? this.documentImages,
       totalPrice: totalPrice ?? this.totalPrice,
+      aboutVehicle: aboutVehicle ?? this.aboutVehicle, // Updated copyWith
     );
   }
 }
