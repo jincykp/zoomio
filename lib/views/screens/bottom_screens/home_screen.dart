@@ -86,7 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               BoxShadow(
                                 color: Theme.of(context).brightness ==
                                         Brightness.dark
-                                    ? Colors.black // Dark theme shadow
+                                    ? const Color.fromARGB(
+                                        255, 46, 44, 44) // Dark theme shadow
                                     : const Color.fromARGB(255, 201, 201,
                                         201), // Light theme shadow
                                 spreadRadius: 1,

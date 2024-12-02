@@ -16,6 +16,7 @@ import 'package:zoomer/views/screens/where_to_go_screens/bloc/vehicle_bloc.dart'
 import 'package:zoomer/views/screens/where_to_go_screens/cubit/selected_vehicle_cubit.dart';
 import 'package:zoomer/views/screens/where_to_go_screens/database_services.dart';
 import 'package:zoomer/views/screens/where_to_go_screens/price_services.dart';
+import 'dart:math';
 
 class WhereToGoScreen extends StatefulWidget {
   const WhereToGoScreen({super.key});
@@ -103,13 +104,16 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
   // Add a marker on the map
   void addMarker(LatLng position, String title) {
     setState(() {
-      _markers.add(
-        Marker(
-          markerId: MarkerId(title),
-          position: position,
-          infoWindow: InfoWindow(title: title),
-        ),
+      final Marker marker = Marker(
+        markerId: MarkerId(title),
+        position: position,
+        infoWindow: InfoWindow(title: title),
+        icon: title == "Your Location"
+            ? BitmapDescriptor.defaultMarkerWithHue(210) // Light blue
+            : BitmapDescriptor.defaultMarker, // Default color for other markers
       );
+
+      _markers.add(marker);
     });
   }
 
@@ -167,42 +171,82 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
   // Generate polyline between pickup and dropoff locations
   Future<void> _getPolylinePoints() async {
     if (_pickupLocation == null || _dropoffLocation == null) {
-      return; // Ensure both pickup and dropoff are selected before generating polyline
+      print('Pickup or dropoff location is null');
+      return;
     }
 
-    // Create a PolylineRequest object
-    PolylineRequest request = PolylineRequest(
-      origin:
-          PointLatLng(_pickupLocation!.latitude, _pickupLocation!.longitude),
-      destination:
-          PointLatLng(_dropoffLocation!.latitude, _dropoffLocation!.longitude),
-      mode:
-          TravelMode.driving, // Corrected parameter: mode instead of travelMode
-    );
+    try {
+      // Use Google Maps Directions API directly instead of PolylinePoints
+      final String directionsUrl =
+          'https://maps.googleapis.com/maps/api/directions/json?'
+          'origin=${_pickupLocation!.latitude},${_pickupLocation!.longitude}'
+          '&destination=${_dropoffLocation!.latitude},${_dropoffLocation!.longitude}'
+          '&key=$googleMapKey';
 
-    // Create an instance of PolylinePoints
-    PolylinePoints polylinePoints = PolylinePoints();
+      final response = await http.get(Uri.parse(directionsUrl));
 
-    // Fetch the route using the request object and API key
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      request: request,
-      googleApiKey: googleMapKey, // Your Google Maps API Key
-    );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseBody = json.decode(response.body);
 
-    print(result.errorMessage); // Check if there is any error in the response
-    print("points${result.points}"); // Check if points are returned
+        if (responseBody['status'] == 'OK') {
+          // Decode the polyline
+          final List<dynamic> routes = responseBody['routes'];
+          if (routes.isNotEmpty) {
+            final String encodedPolyline =
+                routes[0]['overview_polyline']['points'];
 
-    if (result.points.isNotEmpty) {
-      List<LatLng> polylineCoordinates = [];
-      for (var point in result.points) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+            // Decode the polyline points
+            List<PointLatLng> decodedPoints =
+                PolylinePoints().decodePolyline(encodedPolyline);
+
+            // Convert to LatLng
+            List<LatLng> polylineCoordinates = decodedPoints
+                .map((point) => LatLng(point.latitude, point.longitude))
+                .toList();
+
+            // Add polyline to map
+            _addPolyline(polylineCoordinates);
+
+            // Adjust camera to show full route
+            if (polylineCoordinates.isNotEmpty) {
+              LatLngBounds bounds = _calculateBounds(polylineCoordinates);
+              mapController
+                  .animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
+            }
+          } else {
+            print('No routes found');
+          }
+        } else {
+          print('Directions API error: ${responseBody['status']}');
+        }
+      } else {
+        print(
+            'Failed to fetch directions. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
       }
-
-      _addPolyline(
-          polylineCoordinates); // Call function to add polyline to the map
-    } else {
-      print('Failed to get polyline points: ${result.errorMessage}');
+    } catch (e) {
+      print('Exception in getting polyline points: $e');
     }
+  }
+
+// Helper method to calculate bounds of the route
+  LatLngBounds _calculateBounds(List<LatLng> points) {
+    double minLat = points[0].latitude;
+    double maxLat = points[0].latitude;
+    double minLng = points[0].longitude;
+    double maxLng = points[0].longitude;
+
+    for (LatLng point in points) {
+      minLat = min(minLat, point.latitude);
+      maxLat = max(maxLat, point.latitude);
+      minLng = min(minLng, point.longitude);
+      maxLng = max(maxLng, point.longitude);
+    }
+
+    return LatLngBounds(
+      southwest: LatLng(minLat, minLng),
+      northeast: LatLng(maxLat, maxLng),
+    );
   }
 
   // Add polyline to the map
