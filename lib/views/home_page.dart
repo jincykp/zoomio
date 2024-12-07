@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = [
     const HomeScreen(), // Home Page
-    const RentalScreen(), // Rentals Page
+    //const RentalScreen(), // Rentals Page
     const NotificationsScreen(),
     const HistoryScreen(),
   ];
@@ -97,19 +97,15 @@ class _HomePageState extends State<HomePage> {
           tabs: const [
             GButton(
               icon: Icons.home,
-              text: 'Home',
-            ),
-            GButton(
-              icon: Icons.car_rental,
-              text: 'Rentals',
+              // text: 'Home',
             ),
             GButton(
               icon: Icons.notifications_active,
-              text: 'Notifications',
+              // text: 'Notifications',
             ),
             GButton(
               icon: Icons.history,
-              text: 'History',
+              // text: 'History',
             ),
           ],
           selectedIndex: _currentIndex,

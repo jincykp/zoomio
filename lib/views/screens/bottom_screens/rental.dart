@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 
-class RentalScreen extends StatelessWidget {
-  const RentalScreen({super.key});
+// class RentalScreen extends StatelessWidget {
+//   const RentalScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Text(""),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Scaffold(
+//       body: Text(""),
+//     );
+//   }
+// }

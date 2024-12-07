@@ -74,7 +74,7 @@ class WelcomeScreen extends StatelessWidget {
                         padding: EdgeInsets.symmetric(
                             vertical: screenHeight * 0.02)),
                     child: Text(
-                      "Log In",
+                      "Sign In",
                       style: TextStyle(
                           color: ThemeColors.primaryColor,
                           fontSize: screenWidth * 0.03),

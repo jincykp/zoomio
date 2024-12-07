@@ -33,7 +33,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
   final TextEditingController pickupController = TextEditingController();
-  final TextEditingController _dropoffController = TextEditingController();
+  final TextEditingController dropoffController = TextEditingController();
   List<dynamic> _placeSuggestions = [];
   bool _isLoading = false;
   bool _isPickupField = true;
@@ -110,7 +110,11 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
         infoWindow: InfoWindow(title: title),
         icon: title == "Your Location"
             ? BitmapDescriptor.defaultMarkerWithHue(210) // Light blue
-            : BitmapDescriptor.defaultMarker, // Default color for other markers
+            : title == "Pickup Location"
+                ? BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueGreen) // Green
+                : BitmapDescriptor
+                    .defaultMarker, // Default color for other markers
       );
 
       _markers.add(marker);
@@ -154,7 +158,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
       _pickupLocation = coordinates;
       addMarker(coordinates, "Pickup Location");
     } else {
-      _dropoffController.text = placeName;
+      dropoffController.text = placeName;
       _dropoffLocation = coordinates;
       addMarker(coordinates, "Dropoff Location");
     }
@@ -345,14 +349,14 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                           SizedBox(width: screenWidth * 0.01),
                           Expanded(
                             child: CustomLocatiofields(
-                              controller: _dropoffController,
+                              controller: dropoffController,
                               hintText: "Drop off location",
                               hintStyle: Textstyles.bodytext.copyWith(
                                   color:
                                       const Color.fromARGB(255, 163, 143, 81)),
                               suffixIcon: IconButton(
                                 onPressed: () {
-                                  _dropoffController.clear();
+                                  dropoffController.clear();
                                 },
                                 icon: const Icon(Icons.cancel),
                               ),
@@ -373,6 +377,20 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                         child: CustomButtons(
                           text: "Confirm",
                           onPressed: () {
+                            if (pickupController.text.isEmpty ||
+                                dropoffController.text.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    "Please select both pickup and drop-off locations.",
+                                    style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
+                                ),
+                              );
+                              return; // Stop execution if any field is empty
+                            }
                             _calculateDistance();
                             if (_calculatedDistance != null) {
                               _vehicleBloc.add(
@@ -451,7 +469,14 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                                                                     value:
                                                                         vehicleCubit,
                                                                     child:
-                                                                        const CustomAlertCard(),
+                                                                        CustomAlertCard(
+                                                                      pickupText:
+                                                                          pickupController
+                                                                              .text,
+                                                                      dropoffText:
+                                                                          dropoffController
+                                                                              .text,
+                                                                    ),
                                                                   );
                                                                 },
                                                               );

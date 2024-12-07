@@ -15,30 +15,44 @@ class AuthServices {
   // Create account with email and password
   Future<User?> createAccountWithEmail(String email, String password) async {
     try {
-      final cred = await auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+      User? user = userCredential.user;
 
-      // Save user details to Firestore
-      await userService.saveUserDetails(cred.user!.uid, email,
-          ""); // Assuming no display name for email signup
+      if (user != null && !user.emailVerified) {
+        await user.sendEmailVerification();
+      }
 
-      return cred.user;
+      return user;
     } catch (e) {
-      log("Something went wrong: $e");
+      throw Exception(e.toString());
     }
-    return null;
   }
 
-  // Login with email and password
+//emailverification
+  Future<void> sendEmailVerification(User user) async {
+    try {
+      await user.sendEmailVerification();
+    } catch (e) {
+      throw Exception('Failed to send verification email: $e');
+    }
+  }
+
   Future<User?> loginAccountWithEmail(String email, String password) async {
     try {
-      final cred = await auth.signInWithEmailAndPassword(
-          email: email, password: password);
-      return cred.user;
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+
+      User? user = userCredential.user;
+
+      if (user != null && !user.emailVerified) {
+        throw Exception('Email is not verified. Please check your email.');
+      }
+
+      return user;
     } catch (e) {
-      log("Something went wrong: $e");
+      throw Exception(e.toString());
     }
-    return null;
   }
 
   // Sign out

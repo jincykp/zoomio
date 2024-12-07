@@ -1,11 +1,19 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoomer/services/booking_services.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 import 'package:zoomer/views/screens/where_to_go_screens/cubit/selected_vehicle_cubit.dart';
 
 class CustomAlertCard extends StatelessWidget {
-  const CustomAlertCard({super.key});
+  final String pickupText;
+  final String dropoffText;
+  const CustomAlertCard({
+    super.key,
+    required this.pickupText,
+    required this.dropoffText,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +58,7 @@ class CustomAlertCard extends StatelessWidget {
                             children: [
                               TextSpan(
                                   text:
-                                      "₹ ${vehicle['totalPrice']?.toStringAsFixed(2) ?? 'N/A'}",
+                                      "₹${vehicle['totalPrice']?.toStringAsFixed(2) ?? 'N/A'}",
                                   style: Textstyles.gTextdescriptionWithColor)
                             ]))
                         // Text(
@@ -86,8 +94,30 @@ class CustomAlertCard extends StatelessWidget {
                             Expanded(
                               child: CustomButtons(
                                 text: "BOOK NOW",
-                                onPressed: () {
-                                  Navigator.of(context).pop();
+                                onPressed: () async {
+                                  final bookingService = BookingService();
+                                  String userId = FirebaseAuth
+                                          .instance.currentUser?.uid ??
+                                      "unknown_user"; // Fetch current user ID
+                                  String pickupLocation = pickupText;
+                                  String dropOffLocation = dropoffText;
+                                  Map<String, dynamic> vehicleDetails =
+                                      state.vehicle;
+
+                                  await bookingService.saveBooking(
+                                    userId: userId,
+                                    pickupLocation: pickupLocation,
+                                    dropOffLocation: dropOffLocation,
+                                    vehicleDetails: vehicleDetails,
+                                  );
+
+// Confirmation message or navigate to next screen
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          "Booking confirmed successfully!"),
+                                    ),
+                                  );
                                 },
                                 backgroundColor: ThemeColors.primaryColor,
                                 textColor: ThemeColors.textColor,
@@ -105,7 +135,7 @@ class CustomAlertCard extends StatelessWidget {
             ),
           );
         } else {
-          return Center(
+          return const Center(
             child: Text("Error: Unable to load vehicle details."),
           );
         }

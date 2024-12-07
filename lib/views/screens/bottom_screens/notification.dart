@@ -5,8 +5,11 @@ class NotificationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Text(""),
+    return const Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Scaffold(
+        body: Text("noiitittnnj"),
+      ),
     );
   }
 }

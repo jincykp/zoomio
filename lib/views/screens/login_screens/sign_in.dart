@@ -32,133 +32,144 @@ class _SignInScreenState extends State<SignInScreen> {
       body: Padding(
         padding: EdgeInsets.all(screenWidth * 0.05),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const Text(
-                "Sign In",
-                style: Textstyles.signText,
-              ),
-              SizedBox(height: screenHeight * 0.02),
-              Textformformfields(
-                controller: emailController,
-                hintText: 'Enter your email',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email address';
-                  }
-                  final bool isValid =
-                      RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                          .hasMatch(value);
-                  if (!isValid) {
-                    return 'Enter a valid email address';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: screenHeight * 0.01),
-              CustomPasswordTextFormFields(
-                hintText: "Enter your password",
-                controller: passWordController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  } else if (value.length < 6) {
-                    return 'Password must be at least 6 characters';
-                  } else if (value.contains(' ')) {
-                    return 'Password cannot contain whitespace';
-                  }
-                  return null;
-                },
-                inputFormatters: [
-                  FilteringTextInputFormatter.deny(RegExp(r'\s')),
-                  LengthLimitingTextInputFormatter(6)
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ClickOtpScreen()));
-                      },
-                      child: const Text(
-                        "Forget Password?",
-                        style: Textstyles.spclTexts,
-                      )),
-                ],
-              ),
-              CustomButtons(
-                  text: "Sign In",
-                  onPressed: logIn,
-                  backgroundColor: ThemeColors.primaryColor,
-                  textColor: ThemeColors.textColor,
-                  screenWidth: screenWidth,
-                  screenHeight: screenHeight),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Expanded(
-                    child: Divider(
-                      thickness: 1,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Row(
+                  children: [
+                    Text(
+                      "Sign In",
+                      style: Textstyles.signText,
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(screenWidth * 0.01),
-                    child: const Text("or"),
-                  ),
-                  const Expanded(child: Divider()),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      AuthServices().signInWithGoogle(context);
-                    },
-                    child: Container(
-                      width: 50, height: 50,
-                      // width: screenWidth * 0.001,
-                      // height: screenHeight * 0.001,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              width: 1, color: ThemeColors.textColor),
-                          borderRadius: BorderRadius.circular(8)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.asset(
-                          "assets/images/gimage.png",
-                          fit: BoxFit.cover,
-                        ),
+                  ],
+                ),
+                SizedBox(height: screenHeight * 0.02),
+                Textformformfields(
+                  controller: emailController,
+                  hintText: 'Enter your email',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email address';
+                    }
+                    final bool isValid =
+                        RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                            .hasMatch(value);
+                    if (!isValid) {
+                      return 'Enter a valid email address';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: screenHeight * 0.01),
+                CustomPasswordTextFormFields(
+                  hintText: "Enter your password",
+                  controller: passWordController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your password';
+                    } else if (value.length < 6) {
+                      return 'Password must be at least 6 characters';
+                    } else if (value.contains(' ')) {
+                      return 'Password cannot contain whitespace';
+                    }
+                    return null;
+                  },
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                    LengthLimitingTextInputFormatter(6)
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ClickOtpScreen()));
+                        },
+                        child: const Text(
+                          "Forget Password?",
+                          style: Textstyles.spclTexts,
+                        )),
+                  ],
+                ),
+                CustomButtons(
+                    text: "Sign In",
+                    onPressed: logIn,
+                    backgroundColor: ThemeColors.primaryColor,
+                    textColor: ThemeColors.textColor,
+                    screenWidth: screenWidth,
+                    screenHeight: screenHeight),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Expanded(
+                      child: Divider(
+                        thickness: 1,
                       ),
                     ),
-                  )
-                ],
-              ),
-              Row(
-                //  crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Don't have an account?"),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const SignUpScreen()));
+                    Padding(
+                      padding: EdgeInsets.all(screenWidth * 0.01),
+                      child: const Text("or"),
+                    ),
+                    const Expanded(child: Divider()),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        AuthServices().signInWithGoogle(context);
                       },
-                      child: const Text(
-                        "Sign up",
-                        style: TextStyle(color: ThemeColors.primaryColor),
-                      ))
-                ],
-              )
-            ],
+                      child: Container(
+                        width: 50, height: 50,
+                        // width: screenWidth * 0.001,
+                        // height: screenHeight * 0.001,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 1,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? Colors.black // Light theme: border is black
+                                  : Colors.white, // Dark theme: border is white
+                            ),
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset(
+                            "assets/images/gimage.png",
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                Row(
+                  //  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Don't have an account?"),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const SignUpScreen()));
+                        },
+                        child: const Text(
+                          "Sign up",
+                          style: TextStyle(color: ThemeColors.primaryColor),
+                        ))
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
