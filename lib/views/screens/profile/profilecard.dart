@@ -1,130 +1,153 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 
 class ProfileCard extends StatelessWidget {
-  final String documentId; // Document ID for the specific profile
+  final String documentId;
 
   const ProfileCard({super.key, required this.documentId});
 
-  // Fetch the profile data from Firestore
-  Future<Map<String, dynamic>> _getProfileData() async {
-    final DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('profiles')
-        .doc(documentId) // Query using the document ID
-        .get();
-
-    if (doc.exists) {
-      return doc.data() as Map<String, dynamic>;
-    } else {
-      throw Exception('Profile not found');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController phoneController = TextEditingController();
+    final TextEditingController emailController = TextEditingController();
+    final TextEditingController streetController = TextEditingController();
+    final TextEditingController cityController = TextEditingController();
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Edit Profile",
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: ThemeColors.primaryColor,
+      ),
       body: SafeArea(
-        child: FutureBuilder<Map<String, dynamic>>(
-          future: _getProfileData(), // Fetch the profile data
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              // Display loading indicator while waiting for data
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              // Handle errors
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else if (snapshot.hasData) {
-              // If data is available, display the profile
-              final profileData = snapshot.data!;
-              return Center(
-                child: SizedBox(
-                  height: 500,
-                  width: 300,
-                  child: Card(
-                    color: ThemeColors.primaryColor,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        children: [
-                          Stack(
-                            children: [
-                              CircleAvatar(
-                                backgroundColor: ThemeColors.textColor,
-                                radius: 70,
-                                backgroundImage: profileData['imageUrl'] != null
-                                    ? NetworkImage(profileData['imageUrl'])
-                                    : const AssetImage(
-                                            'assets/images/default_profile.png')
-                                        as ImageProvider, // Default image if no URL
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: IconButton(
-                                    onPressed: () {
-                                      // Add functionality if needed to change image
-                                    },
-                                    icon: const Icon(
-                                      Icons.add_a_photo_outlined,
-                                      size: 22,
-                                      color: ThemeColors.titleColor,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Profile Picture Section
+              Center(
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 70,
+                      backgroundColor:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Colors.black
+                              // Dark theme: light background color
+                              : Colors.white,
+                      backgroundImage: const AssetImage(
+                          'assets/images/single-person.png'), // Default image
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          color: ThemeColors.primaryColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            // Add logic to update the profile picture
+                          },
+                          icon: const Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
                           ),
-                          const SizedBox(height: 10),
-                          Text(
-                            "Name: ${profileData['name']}",
-                            style: GoogleFonts.inconsolata(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const Divider(),
-                          Text(
-                            "Street: ${profileData['street']}",
-                            style: GoogleFonts.inconsolata(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const Divider(),
-                          Text(
-                            "City: ${profileData['city']}",
-                            style: GoogleFonts.inconsolata(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const Divider(),
-                          Text(
-                            "District: ${profileData['district']}",
-                            style: GoogleFonts.inconsolata(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              );
-            } else {
-              // If no data is available, show this message
-              return const Center(child: Text('No profile data found'));
-            }
-          },
+              ),
+              const SizedBox(height: 20),
+
+              // Input Fields
+              _buildInputField(
+                label: "Full Name",
+                hintText: "Enter your name",
+                controller: nameController,
+              ),
+              const SizedBox(height: 16),
+              _buildInputField(
+                label: "Phone Number",
+                hintText: "Enter your phone number",
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
+              ),
+
+              const SizedBox(height: 16),
+              _buildInputField(
+                label: "City",
+                hintText: "Enter your city",
+                controller: cityController,
+              ),
+              const SizedBox(height: 20),
+
+              // Save Button
+              SizedBox(
+                width: double.infinity,
+                child: CustomButtons(
+                  onPressed: () {
+                    // Logic to save the profile details
+                  },
+                  text: "Save Changes",
+                  backgroundColor: ThemeColors.primaryColor,
+                  textColor: ThemeColors.textColor,
+                  screenWidth: screenWidth,
+                  screenHeight: screenHeight,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  // Helper method to build input fields
+  Widget _buildInputField({
+    required String label,
+    required String hintText,
+    required TextEditingController controller,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          keyboardType: keyboardType,
+          decoration: InputDecoration(
+            hintText: hintText,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+        ),
+      ],
     );
   }
 }

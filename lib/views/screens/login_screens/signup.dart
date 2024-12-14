@@ -149,10 +149,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             if (user != null) {
                               // Save user details
                               await userService.saveUserDetails(
-                                user.uid,
-                                emailController.text,
-                                "",
-                              );
+                                  user.uid, emailController.text, '');
                               print("User details saved to Firestore.");
 
                               // Navigate to the next screen

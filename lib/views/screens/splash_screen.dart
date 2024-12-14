@@ -1,49 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:zoomer/views/home_page.dart';
-import 'package:zoomer/views/screens/onboarding/onboarding_state.dart';
-// Make sure to import the HomePage screen
+import 'package:zoomer/views/home_page.dart'; // HomePage screen import
+import 'package:zoomer/views/screens/onboarding/onboarding_state.dart'; // Onboarding screen import
 
+/// SplashScreen Widget
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
+/// State for SplashScreen
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    gotoLogin();
+    _navigateToNextScreen();
   }
 
-  Future<void> gotoLogin() async {
-    await Future.delayed(
-        const Duration(seconds: 3)); // Reduced delay for better user experience
+  /// Redirects user to the appropriate screen based on authentication status
+  Future<void> _navigateToNextScreen() async {
+    await Future.delayed(const Duration(seconds: 3));
+
+    // Check Firebase Authentication status
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      // User is not signed in, navigate to Onboarding/Sign-in screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const OnboardingView()),
-      );
+      // Navigate to OnboardingView if user is not signed in
+      _navigateToScreen(const OnboardingView());
     } else {
-      // User is signed in, navigate to Home screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HomePage(email: user.email ?? 'Unknown'),
-        ),
+      // Navigate to HomePage if user is signed in
+      _navigateToScreen(
+        HomePage(email: user.email ?? 'Unknown'),
       );
     }
   }
 
+  /// Navigates to the given screen
+  void _navigateToScreen(Widget screen) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => screen),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Responsive sizing
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 219, 168, 0),

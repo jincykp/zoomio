@@ -56,6 +56,10 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+    }
 }
 
 flutter {
@@ -66,4 +70,7 @@ dependencies {
     // Google Maps and Location dependencies
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.firebase:firebase-messaging:23.1.1'
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.18.0'
+
 }
