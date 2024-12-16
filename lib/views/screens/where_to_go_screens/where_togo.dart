@@ -313,7 +313,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                               )),
                           SizedBox(width: screenWidth * 0.01),
                           Expanded(
-                            child: CustomLocatiofields(
+                            child: CustomLocationFields(
                               controller: pickupController,
                               hintText: "Pick up location",
                               hintStyle: Textstyles.bodytext.copyWith(
@@ -348,7 +348,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                               )),
                           SizedBox(width: screenWidth * 0.01),
                           Expanded(
-                            child: CustomLocatiofields(
+                            child: CustomLocationFields(
                               controller: dropoffController,
                               hintText: "Drop off location",
                               hintStyle: Textstyles.bodytext.copyWith(

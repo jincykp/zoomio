@@ -21,7 +21,6 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 class HomePage extends StatefulWidget {
   final String? email;
   final String? displayName;
-
   const HomePage({super.key, this.email, this.displayName});
 
   @override
@@ -50,7 +49,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _requestLocationPermission();
-    _loadUserDetails();
+    //_loadUserDetails();
   }
 
   // Request location permission
@@ -143,14 +142,11 @@ class _HomePageState extends State<HomePage> {
               icon: Icons.person,
               title: "Edit Profile",
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileCard(
-                      documentId: FirebaseAuth.instance.currentUser!.uid,
-                    ),
-                  ),
-                );
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) =>
+                //             ProfileCard(documentId: documentId)));
               },
             ),
             const Divider(),
@@ -217,23 +213,23 @@ class _HomePageState extends State<HomePage> {
         );
       },
       child: UserAccountsDrawerHeader(
-        decoration: const BoxDecoration(color: ThemeColors.primaryColor),
-        accountName: userName != null && userName!.isNotEmpty
-            ? Padding(
-                padding: const EdgeInsets.only(top: 17.0),
-                child: Text(userName!),
-              )
-            : null,
-        accountEmail: Text(userEmail ?? ""),
-        currentAccountPicture: CircleAvatar(
-          backgroundImage: const AssetImage(
-            'assets/images/single-person.png',
+          decoration: const BoxDecoration(color: ThemeColors.primaryColor),
+          accountName: userName != null && userName!.isNotEmpty
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 17.0),
+                  child: Text(userName!),
+                )
+              : null,
+          accountEmail: Text(userEmail ?? ""),
+          currentAccountPicture: CircleAvatar(
+            backgroundImage: const AssetImage(
+              'assets/images/single-person.png',
+            ),
+            backgroundColor: Theme.of(context).brightness == Brightness.dark
+                ? Colors.black // Dark theme: light background color
+                : Colors.white, // Light theme: dark background color
           ),
-          backgroundColor: Theme.of(context).brightness == Brightness.dark
-              ? Colors.black // Dark theme: light background color
-              : Colors.white, // Light theme: dark background color
-        ),
-      ),
+          ),
     );
   }
 

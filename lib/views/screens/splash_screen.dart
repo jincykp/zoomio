@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
     } else {
       // Navigate to HomePage if user is signed in
       _navigateToScreen(
-        HomePage(email: user.email ?? 'Unknown'),
+        const HomePage(),
       );
     }
   }

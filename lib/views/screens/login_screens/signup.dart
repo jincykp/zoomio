@@ -7,7 +7,7 @@ import 'package:zoomer/views/home_page.dart';
 import 'package:zoomer/views/screens/bottom_screens/home_screen.dart';
 import 'package:zoomer/views/screens/custom_widgets/cus_password.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
-import 'package:zoomer/views/screens/custom_widgets/textform.dart';
+import 'package:zoomer/views/screens/custom_widgets/signup_formfields.dart';
 import 'package:zoomer/views/screens/login_screens/sign_in.dart';
 import 'package:zoomer/views/screens/login_screens/verification.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
@@ -28,6 +28,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController passWordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final TextEditingController contactController = TextEditingController();
   bool? isChecked = false;
 
   @override
@@ -71,6 +72,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                     ),
                     SizedBox(height: screenHeight * 0.012),
+                    // Textformformfields(
+                    //     controller: emailController,
+                    //     hintText: 'Name',
+                    //     validator: (value) {
+                    //       if (value == null || value.isEmpty) {
+                    //         return "Please enter your name";
+                    //       }
+                    //       if (value.length < 3) {
+                    //         return "Name must be at least 3 characters long";
+                    //       }
+                    //       final nameRegex = RegExp(r'^[a-zA-Z\s]+$');
+                    //       if (!nameRegex.hasMatch(value)) {
+                    //         return "Name can only contain letters and spaces";
+                    //       }
+                    //       return null;
+                    //     }),
+                    // SizedBox(height: screenHeight * 0.012),
 
                     // Password field
                     CustomPasswordTextFormFields(
@@ -168,7 +186,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           } catch (e) {
                             print("Error during signup: $e");
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                 content: Text(
                                   'Sign-up failed. Please try again later.',
                                   style: Textstyles.smallTexts,

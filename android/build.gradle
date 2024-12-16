@@ -8,6 +8,8 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.gms:google-services:4.3.10'  // Add this line here
+        classpath 'com.android.tools.build:gradle:7.0.0'
+    // Ensure this matches the latest required version for your Flutter project.
     }
 }
 

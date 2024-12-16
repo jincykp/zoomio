@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoomer/controllers/theme.dart';
 import 'package:zoomer/firebase_options.dart';
-import 'package:zoomer/views/screens/booking/push_notifications.dart';
 import 'package:zoomer/views/screens/splash_screen.dart';
 import 'package:zoomer/views/screens/login_screens/bloc/signin_bloc.dart';
 import 'package:zoomer/services/auth_services.dart';

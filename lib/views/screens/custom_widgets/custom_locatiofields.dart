@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class CustomLocatiofields extends StatelessWidget {
+class CustomLocationFields extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final String? Function(String?)? validator;
@@ -13,7 +13,7 @@ class CustomLocatiofields extends StatelessWidget {
   final TextStyle? hintStyle;
   final void Function(String)? onChanged; // Add this line
 
-  CustomLocatiofields({
+  CustomLocationFields({
     super.key,
     required this.controller,
     this.validator,

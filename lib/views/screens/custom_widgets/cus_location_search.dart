@@ -31,7 +31,7 @@ class CusLocationSearch extends StatelessWidget {
                 ),
                 SizedBox(width: screenWidth * 0.04),
                 Expanded(
-                  child: CustomLocatiofields(
+                  child: CustomLocationFields(
                     controller: _latController,
                     hintText: "Pick up location",
                     hintStyle: const TextStyle(
@@ -51,7 +51,7 @@ class CusLocationSearch extends StatelessWidget {
                 ),
                 SizedBox(width: screenWidth * 0.04),
                 Expanded(
-                  child: CustomLocatiofields(
+                  child: CustomLocationFields(
                     controller: _lngController,
                     hintText: "Drop off location",
                     hintStyle: const TextStyle(

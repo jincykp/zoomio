@@ -52,8 +52,8 @@ class WelcomeScreen extends StatelessWidget {
                     child: Text(
                       "Create an account",
                       style: TextStyle(
-                          color: ThemeColors.textColor,
-                          fontSize: screenWidth * 0.03),
+                        color: ThemeColors.textColor,
+                      ),
                     )),
               ),
               SizedBox(
@@ -76,8 +76,8 @@ class WelcomeScreen extends StatelessWidget {
                     child: Text(
                       "Sign In",
                       style: TextStyle(
-                          color: ThemeColors.primaryColor,
-                          fontSize: screenWidth * 0.03),
+                        color: ThemeColors.primaryColor,
+                      ),
                     )),
               ),
             ],

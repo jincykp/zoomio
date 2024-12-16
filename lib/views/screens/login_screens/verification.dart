@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:zoomer/views/home_page.dart';
+import 'package:zoomer/views/screens/bottom_screens/home_screen.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
+import 'package:zoomer/views/screens/login_screens/profile_creation.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 
 class VerificationScreen extends StatefulWidget {

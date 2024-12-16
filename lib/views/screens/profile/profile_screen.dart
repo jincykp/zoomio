@@ -1,16 +1,80 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 
-class UserProfile extends StatelessWidget {
+class UserProfile extends StatefulWidget {
   const UserProfile({super.key});
+
+  @override
+  _UserProfileState createState() => _UserProfileState();
+}
+
+class _UserProfileState extends State<UserProfile> {
+  String userName = "John Doe"; // Example data (replace with dynamic data)
+  String userEmail =
+      "john.doe@example.com"; // Example data (replace with dynamic data)
+  String userPhone =
+      "+1 234 567 890"; // Example data (replace with dynamic data)
+  String userAddress =
+      "123 Main Street, Cityville"; // Example data (replace with dynamic data)
+  XFile? _profileImage; // To store the selected profile image
+
+  final TextEditingController addressController = TextEditingController();
+
+  // Pick profile image
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedFile =
+        await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = pickedFile;
+      });
+    }
+  }
+
+  // Show a dialog to update the address
+  void _updateAddress() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Update Address'),
+          content: TextFormField(
+            controller: addressController,
+            decoration: const InputDecoration(
+              hintText: 'Enter your address',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  userAddress = addressController.text;
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text('Save'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        //  title: const Text("Profile"),
         centerTitle: true,
-        backgroundColor: ThemeColors.primaryColor, // Apply custom primary color
+        backgroundColor: ThemeColors.primaryColor,
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -25,33 +89,41 @@ class UserProfile extends StatelessWidget {
           children: [
             // Header Section
             Container(
-              color: ThemeColors.primaryColor, // Apply custom primary color
+              color: ThemeColors.primaryColor,
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
               child: Row(
                 children: [
-                  const CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.white,
-                    backgroundImage: AssetImage(
-                        'assets/default_user.png'), // Default user image
+                  GestureDetector(
+                    onTap: _pickImage, // Pick a new profile picture when tapped
+                    child: CircleAvatar(
+                      radius: 40,
+                      backgroundColor: Colors.white,
+                      // backgroundImage: _profileImage != null
+                      //     ? FileImage(
+                      //         _profileImage!.path,
+                      //       )
+                      //     : const AssetImage(
+                      //         'assets/images/single-person.png',
+                      //       ) as ImageProvider,
+                    ),
                   ),
                   const SizedBox(width: 16),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "John Doe",
-                          style: TextStyle(
+                          userName,
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
-                          "+1 234 567 890",
-                          style: TextStyle(
+                          userEmail,
+                          style: const TextStyle(
                             fontSize: 16,
                             color: Colors.white70,
                           ),
@@ -74,15 +146,25 @@ class UserProfile extends StatelessWidget {
               child: ListView(
                 children: [
                   _buildProfileItem(
+                    icon: Icons.phone,
+                    title: "Phone Number",
+                    value: userPhone,
+                    onTap: () {
+                      // Optionally, add functionality to update phone number
+                    },
+                  ),
+                  const Divider(),
+                  _buildProfileItem(
                     icon: Icons.email,
                     title: "Email",
-                    value: "john.doe@example.com",
+                    value: userEmail,
                   ),
                   const Divider(),
                   _buildProfileItem(
                     icon: Icons.location_on,
                     title: "Address",
-                    value: "123 Main Street, Cityville",
+                    value: userAddress,
+                    onTap: _updateAddress, // Open dialog to update address
                   ),
                   const Divider(),
                   _buildProfileItem(
@@ -120,8 +202,7 @@ class UserProfile extends StatelessWidget {
     VoidCallback? onTap,
   }) {
     return ListTile(
-      leading: Icon(icon,
-          color: ThemeColors.primaryColor), // Use custom color for icons
+      leading: Icon(icon, color: ThemeColors.primaryColor),
       title: Text(
         title,
         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

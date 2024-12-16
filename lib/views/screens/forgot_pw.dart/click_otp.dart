@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:zoomer/services/auth_services.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
-import 'package:zoomer/views/screens/custom_widgets/textform.dart';
+import 'package:zoomer/views/screens/custom_widgets/signup_formfields.dart';
 
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 
