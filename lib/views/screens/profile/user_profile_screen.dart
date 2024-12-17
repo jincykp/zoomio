@@ -1,7 +1,11 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:zoomer/services/image_storage_services.dart';
+import 'package:zoomer/services/userservices.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 
 class UserProfile extends StatefulWidget {
@@ -31,17 +35,89 @@ class _UserProfileState extends State<UserProfile> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
+  final ImageStorageService _imageStorageService = ImageStorageService();
+// Pick profile image and upload it to Firebase
+  Future<void> _pickImage() async {
+    final XFile? pickedFile =
+        await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = pickedFile;
+      });
+
+      // Upload the image and get the URL
+      File imageFile = File(pickedFile.path);
+      String fileName = DateTime.now()
+          .millisecondsSinceEpoch
+          .toString(); // Use timestamp as unique file name
+
+      String? downloadUrl =
+          await _imageStorageService.uploadProfileImage(imageFile, fileName);
+
+      if (downloadUrl != null) {
+        setState(() {
+          userPhotoUrl = downloadUrl; // Update the profile photo URL
+        });
+
+        // Optionally, update this URL in the Firestore database
+        // For example: FirebaseFirestore.instance.collection('users').doc(userEmail).update({'photoUrl': downloadUrl});
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     // Initialize variables with widget data
     userName = widget.initialName ?? "Unnamed User";
-    userEmail = widget.email!; // Now userEmail can accept null
+    userEmail = widget.email ?? ""; // Handles potential null email
     userPhotoUrl = widget.photoUrl;
+
+    _loadUserData(); // Always load data to ensure latest updates from Firestore
+
     // If the userName is empty, prompt the user to enter their name
     if (userName == "Unnamed User") {
       _promptForName();
+    }
+  }
+
+// Fetch user data from Firebase
+  Future<void> _loadUserData() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      try {
+        // Fetch user details from Firestore
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUser.uid)
+            .get();
+
+        if (userDoc.exists) {
+          setState(() {
+            userName = userDoc.data().toString().contains('displayName')
+                ? userDoc['displayName']
+                : "Unnamed User";
+            userEmail = userDoc.data().toString().contains('email')
+                ? userDoc['email']
+                : "";
+            userPhone = userDoc.data().toString().contains('phone')
+                ? userDoc['phone']
+                : "";
+            userAddress = userDoc.data().toString().contains('address')
+                ? userDoc['address']
+                : "";
+            userPhotoUrl = userDoc.data().toString().contains('photoUrl')
+                ? userDoc['photoUrl']
+                : null;
+          });
+        }
+      } catch (e) {
+        print("Error loading user data: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error loading data. Please try again.")),
+        );
+      }
     }
   }
 
@@ -76,16 +152,40 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
-  // Pick profile image
-  Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? pickedFile =
-        await picker.pickImage(source: ImageSource.gallery);
+  // Method to update the user's profile on Firebase
+  Future<void> _saveUserProfile() async {
+    // Get the current user's UID
+    User? currentUser = FirebaseAuth.instance.currentUser;
 
-    if (pickedFile != null) {
-      setState(() {
-        _profileImage = pickedFile;
-      });
+    if (currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No user is currently logged in')),
+      );
+      return;
+    }
+
+    // Collect the updated user details
+    Map<String, dynamic> updatedDetails = {
+      'displayName': userName,
+      'email': userEmail,
+      'phone': userPhone,
+      'address': userAddress,
+      'photoUrl': userPhotoUrl,
+    };
+
+    try {
+      // Use the current user's UID, not email
+      await UserService().updateUserDetails(currentUser.uid, updatedDetails);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Profile updated successfully!'),
+          backgroundColor: ThemeColors.successColor,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
   }
 
@@ -214,7 +314,7 @@ class _UserProfileState extends State<UserProfile> {
           IconButton(
             icon: const Icon(Icons.save),
             onPressed: () {
-              // Future feature: Navigate to an edit profile screen
+              _saveUserProfile();
             },
           ),
         ],

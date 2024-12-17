@@ -1,8 +1,16 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:zoomer/services/auth_services.dart';
+import 'package:zoomer/services/userservices.dart';
+import 'package:zoomer/views/screens/custom_widgets/custom_drawer.dart';
+import 'package:zoomer/views/screens/styles/appstyles.dart';
 import 'package:zoomer/views/screens/where_to_go_screens/where_togo.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,6 +21,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   String mapTheme = '';
   final Completer<GoogleMapController> _googleMapCompleterController =
       Completer<GoogleMapController>();
@@ -37,96 +47,102 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
     getCurrentLiveLocation();
-    // DefaultAssetBundle.of(context)
-    //     .loadString('assets/map_theme/dark_theme.json')
-    //     .then((value) {
-    //   mapTheme = value;
-    // });
-    // Fetch user's current location on init
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Use SafeArea to ensure content doesn't overlap with status bar or notches
-      body: SafeArea(
-        // Stack the GoogleMap and the search bar over each other
-        child: Stack(
-          children: [
-            // Google Map filling the entire screen
-            GoogleMap(
-              mapType: MapType.normal,
-              myLocationEnabled: true,
-              initialCameraPosition: _initialPosition,
-              onMapCreated: (GoogleMapController mapController) {
-                mapController.setMapStyle(mapTheme);
-                //  _googleMapCompleterController.complete(mapController);
-                _controllerGoogleMap = mapController;
-              },
-              markers: _markers, // Displaying the markers
+      key: _scaffoldKey,
+      // Stack to layer Google Map and other widgets
+      body: Stack(
+        children: [
+          // Google Map
+          GoogleMap(
+            mapType: MapType.normal,
+            myLocationEnabled: true,
+            initialCameraPosition: _initialPosition,
+            onMapCreated: (GoogleMapController mapController) {
+              mapController.setMapStyle(mapTheme);
+              _controllerGoogleMap = mapController;
+            },
+            markers: _markers,
+          ),
+
+          // Left-side Drawer trigger
+          Align(
+            alignment: Alignment.topLeft,
+            child: SafeArea(
+              child: IconButton(
+                icon: const Icon(
+                  Icons.menu,
+                  size: 34,
+                  color: ThemeColors.titleColor,
+                ),
+                onPressed: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                },
+              ),
             ),
-            // Search bar at the bottom
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(19),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 48),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: [
-                              BoxShadow(
+          ),
+
+          // Search bar at the bottom
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(19),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 48),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? const Color.fromARGB(255, 46, 44, 44)
+                                  : const Color.fromARGB(255, 201, 201, 201),
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const WhereToGoScreen()));
+                          },
+                          child: TextFormField(
+                            enabled: false,
+                            decoration: InputDecoration(
+                              hintText: "Where would you go?",
+                              hintStyle: TextStyle(
                                 color: Theme.of(context).brightness ==
                                         Brightness.dark
-                                    ? const Color.fromARGB(
-                                        255, 46, 44, 44) // Dark theme shadow
-                                    : const Color.fromARGB(255, 201, 201,
-                                        201), // Light theme shadow
-                                spreadRadius: 1,
+                                    ? Colors.grey
+                                    : Colors.black54,
+                                fontSize: 14,
                               ),
-                            ],
-                          ),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => WhereToGoScreen()));
-                            },
-                            child: TextFormField(
-                              enabled: false,
-                              decoration: InputDecoration(
-                                hintText: "Where would you go?",
-                                hintStyle: TextStyle(
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.grey // Dark theme hint color
-                                      : Colors
-                                          .black54, // Light theme hint color
-                                  fontSize: 14,
-                                ),
-                                prefixIcon: Icon(
-                                  Icons.search,
-                                  size: 25,
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.grey // Dark theme icon color
-                                      : Colors
-                                          .black54, // Light theme icon color
-                                ),
-                                border: const OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(15)),
-                                  borderSide: BorderSide.none, // No border line
-                                ),
+                              prefixIcon: Icon(
+                                Icons.search,
+                                size: 25,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.grey
+                                    : Colors.black54,
+                              ),
+                              border: const OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)),
+                                borderSide: BorderSide.none,
                               ),
                             ),
                           ),
@@ -134,11 +150,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
+      // Drawer added
+      drawer: const CustomDrawerawer(
+        userEmail: '',
+        userName: '',
+        photoUrl: null,
       ),
     );
   }

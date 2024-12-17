@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,13 +11,10 @@ import 'package:zoomer/services/auth_services.dart';
 import 'package:zoomer/services/userservices.dart';
 import 'package:zoomer/views/screens/bottom_screens/home_screen.dart';
 import 'package:zoomer/views/screens/bottom_screens/notification.dart';
-import 'package:zoomer/views/screens/bottom_screens/rental.dart';
 import 'package:zoomer/views/screens/complaints/complaints.dart';
 import 'package:zoomer/views/screens/history/history.dart';
 import 'package:zoomer/views/screens/login_screens/sign_in.dart';
-import 'package:zoomer/views/screens/profile/profile_adding_screen.dart';
 import 'package:zoomer/views/screens/profile/user_profile_screen.dart';
-import 'package:zoomer/views/screens/profile/profilecard.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
@@ -158,18 +154,6 @@ class _HomePageState extends State<HomePage> {
           padding: EdgeInsets.zero,
           children: [
             _buildUserHeader(context),
-            _buildDrawerListTile(
-              icon: Icons.person,
-              title: "Edit Profile",
-              onTap: () {
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) =>
-                //             ProfileCard(documentId: documentId)));
-              },
-            ),
-            const Divider(),
             _buildDrawerListTile(
               icon: Icons.dark_mode,
               title: "Theme",
