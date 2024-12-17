@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:zoomer/controllers/theme.dart';
 import 'package:zoomer/services/auth_services.dart';
@@ -13,7 +17,7 @@ import 'package:zoomer/views/screens/complaints/complaints.dart';
 import 'package:zoomer/views/screens/history/history.dart';
 import 'package:zoomer/views/screens/login_screens/sign_in.dart';
 import 'package:zoomer/views/screens/profile/profile_adding_screen.dart';
-import 'package:zoomer/views/screens/profile/profile_screen.dart';
+import 'package:zoomer/views/screens/profile/user_profile_screen.dart';
 import 'package:zoomer/views/screens/profile/profilecard.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -34,7 +38,9 @@ class _HomePageState extends State<HomePage> {
   final UserService userService = UserService();
   String? userEmail;
   String? userName;
-
+  final GoogleSignIn _googleSignIn = GoogleSignIn(); // Google Sign-In instance
+  GoogleSignInAccount? _googleUser; // Google User instance
+  XFile? _profileImage;
   // Pages for the Bottom Navigation Bar
   final List<Widget> _pages = [
     const HomeScreen(), // Home Page
@@ -49,7 +55,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _requestLocationPermission();
-    //_loadUserDetails();
+    _loadUserDetails();
+    _fetchGoogleUser();
   }
 
   // Request location permission
@@ -70,6 +77,19 @@ class _HomePageState extends State<HomePage> {
         userEmail = userDoc['email'];
         userName = userDoc['displayName'];
       });
+    }
+  } // Fetch Google Account Information
+
+  Future<void> _fetchGoogleUser() async {
+    try {
+      GoogleSignInAccount? user = await _googleSignIn.signInSilently();
+      if (user != null) {
+        setState(() {
+          _googleUser = user; // Update the state with Google user
+        });
+      }
+    } catch (e) {
+      print("Error fetching Google user: $e");
     }
   }
 
@@ -208,28 +228,36 @@ class _HomePageState extends State<HomePage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const UserProfile(),
+            builder: (context) => UserProfile(
+              email: userEmail, // Pass email
+              initialName: userName, // Pass name (if available)
+              photoUrl: _googleUser?.photoUrl, // Pass photo URL
+            ),
           ),
         );
       },
       child: UserAccountsDrawerHeader(
-          decoration: const BoxDecoration(color: ThemeColors.primaryColor),
-          accountName: userName != null && userName!.isNotEmpty
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 17.0),
-                  child: Text(userName!),
-                )
-              : null,
-          accountEmail: Text(userEmail ?? ""),
-          currentAccountPicture: CircleAvatar(
-            backgroundImage: const AssetImage(
-              'assets/images/single-person.png',
-            ),
-            backgroundColor: Theme.of(context).brightness == Brightness.dark
-                ? Colors.black // Dark theme: light background color
-                : Colors.white, // Light theme: dark background color
-          ),
-          ),
+        decoration: const BoxDecoration(color: ThemeColors.primaryColor),
+        accountName: userName != null && userName!.isNotEmpty
+            ? Padding(
+                padding: const EdgeInsets.only(top: 17.0),
+                child: Text(userName!),
+              )
+            : null,
+        accountEmail: Text(userEmail ?? ""),
+        currentAccountPicture: CircleAvatar(
+          radius: 40,
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? Colors.black
+              : Colors.white,
+          backgroundImage: _profileImage != null
+              ? FileImage(File(_profileImage!.path))
+              : (_googleUser?.photoUrl != null
+                  ? NetworkImage(_googleUser!.photoUrl!)
+                  : const AssetImage('assets/images/single-person.png')
+                      as ImageProvider),
+        ),
+      ),
     );
   }
 
