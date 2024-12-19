@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoomer/services/booking_services.dart';
-import 'package:zoomer/views/screens/booking/access_token.dart';
+
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 import 'package:zoomer/views/screens/where_to_go_screens/cubit/selected_vehicle_cubit.dart';
@@ -20,7 +20,7 @@ class CustomAlertCard extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    GetAccessToken getAccessToken = GetAccessToken();
+    // GetAccessToken getAccessToken = GetAccessToken();
 
     return BlocBuilder<SelectedVehicleCubit, SelectedVehicleState>(
       builder: (context, state) {
@@ -97,7 +97,7 @@ class CustomAlertCard extends StatelessWidget {
                               child: CustomButtons(
                                 text: "BOOK NOW",
                                 onPressed: () async {
-                                  getAccessToken.sendFCMMessage();
+                                  // getAccessToken.sendFCMMessage();
                                   final bookingService = BookingService();
                                   String userId = FirebaseAuth
                                           .instance.currentUser?.uid ??
