@@ -25,7 +25,7 @@ class CustomAlertCard extends StatelessWidget {
     return BlocBuilder<SelectedVehicleCubit, SelectedVehicleState>(
       builder: (context, state) {
         if (state is VehicleLoading) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (state is VehicleLoaded) {
           final vehicle = state.vehicle;
           print("Vehicle Data: $vehicle");

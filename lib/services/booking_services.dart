@@ -37,6 +37,8 @@ class BookingService {
       // Update the status field for the specific booking
       await _bookingRef.child(bookingId).update({
         'status': newStatus,
+        'statusUpdateTimestamp':
+            DateTime.now().toIso8601String(), // Add timestamp
       });
       print("Booking status updated to: $newStatus");
     } catch (error) {
