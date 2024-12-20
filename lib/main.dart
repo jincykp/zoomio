@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:zoomer/controllers/theme.dart';
 import 'package:zoomer/firebase_options.dart';
 import 'package:zoomer/views/screens/splash_screen.dart';
@@ -12,7 +13,13 @@ import 'package:zoomer/views/screens/where_to_go_screens/price_services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  // try {
+  //   // Load .env file
+  //   await dotenv.load(fileName: ".env");
+  //   print("Environment variables loaded");
+  // } catch (e) {
+  //   print("Failed to load .e nv file: $e");
+  // }
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

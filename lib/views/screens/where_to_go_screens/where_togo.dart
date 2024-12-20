@@ -51,6 +51,11 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
   @override
   void initState() {
     super.initState();
+    if (googleMapKey.isEmpty) {
+      print('Warning: Google Maps API key is empty!');
+    } else {
+      print('Google Maps API key is set: ${googleMapKey.substring(0, 5)}...');
+    }
     getCurrentLocation();
   }
 
@@ -180,6 +185,13 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
     }
 
     try {
+      print(
+          'API Key: ${googleMapKey.substring(0, 5)}...'); // Print first 5 chars for security
+      print(
+          'Pickup: ${_pickupLocation!.latitude},${_pickupLocation!.longitude}');
+      print(
+          'Dropoff: ${_dropoffLocation!.latitude},${_dropoffLocation!.longitude}');
+
       // Use Google Maps Directions API directly instead of PolylinePoints
       final String directionsUrl =
           'https://maps.googleapis.com/maps/api/directions/json?'

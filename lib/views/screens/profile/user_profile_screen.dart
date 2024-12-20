@@ -73,7 +73,6 @@ class _UserProfileState extends State<UserProfile> {
     userName = widget.initialName ?? "Unnamed User";
     userEmail = widget.email ?? ""; // Handles potential null email
     userPhotoUrl = widget.photoUrl;
-
     _loadUserData(); // Always load data to ensure latest updates from Firestore
 
     // If the userName is empty, prompt the user to enter their name
@@ -87,7 +86,6 @@ class _UserProfileState extends State<UserProfile> {
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       try {
-        // Fetch user details from Firestore
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
             .collection('users')
             .doc(currentUser.uid)
@@ -107,9 +105,12 @@ class _UserProfileState extends State<UserProfile> {
             userAddress = userDoc.data().toString().contains('address')
                 ? userDoc['address']
                 : "";
-            userPhotoUrl = userDoc.data().toString().contains('photoUrl')
-                ? userDoc['photoUrl']
-                : null;
+            // Only update photoUrl if there's one in Firestore
+            if (userDoc.data().toString().contains('photoUrl') &&
+                userDoc['photoUrl'] != null) {
+              userPhotoUrl = userDoc['photoUrl'];
+            }
+            // If no Firestore photo URL, keep the Google photo URL from widget.photoUrl
           });
         }
       } catch (e) {
@@ -335,7 +336,10 @@ class _UserProfileState extends State<UserProfile> {
                       backgroundColor: Colors.white,
                       backgroundImage: _profileImage != null
                           ? FileImage(File(_profileImage!.path))
-                          : const AssetImage('assets/images/single-person.png')
+                          : (userPhotoUrl != null
+                                  ? NetworkImage(userPhotoUrl!)
+                                  : const AssetImage(
+                                      'assets/images/single-person.png'))
                               as ImageProvider,
                     ),
                   ),
