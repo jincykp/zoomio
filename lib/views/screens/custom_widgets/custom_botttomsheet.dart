@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 
 class CustomBottomsheet extends StatefulWidget {
@@ -17,6 +18,7 @@ class CustomBottomsheet extends StatefulWidget {
 
 class _CustomBottomsheetState extends State<CustomBottomsheet> {
   late DatabaseReference bookingRef;
+  Map<String, dynamic>? driverDetails; // To retain driver details
 
   @override
   void initState() {
@@ -27,6 +29,9 @@ class _CustomBottomsheetState extends State<CustomBottomsheet> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return StreamBuilder(
       stream: bookingRef.onValue,
       builder: (context, AsyncSnapshot<DatabaseEvent> bookingSnapshot) {
@@ -54,85 +59,97 @@ class _CustomBottomsheetState extends State<CustomBottomsheet> {
         final driverId = bookingData['driverId'];
         final status = bookingData['status'];
 
-        if (status != 'driver_accepted' || driverId == null) {
-          return const Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text('Waiting for driver acceptance...'),
-              ],
-            ),
-          );
-        }
-
-        // Once we have a driver, show their details
-        return StreamBuilder(
-          stream: FirebaseFirestore.instance
+        // Fetch driver details only once and retain them
+        if (driverId != null && driverDetails == null) {
+          FirebaseFirestore.instance
               .collection('driverProfiles')
               .doc(driverId)
-              .snapshots(),
-          builder: (context, AsyncSnapshot<DocumentSnapshot> driverSnapshot) {
-            if (driverSnapshot.hasError) {
-              return const Center(child: Text('Error loading driver details'));
+              .get()
+              .then((doc) {
+            if (doc.exists) {
+              setState(() {
+                driverDetails = doc.data();
+              });
             }
+          });
+        }
 
-            if (!driverSnapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
+        // If driver details are not yet loaded, show a loading indicator
+        if (driverId != null && driverDetails == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-            final driverData =
-                driverSnapshot.data!.data() as Map<String, dynamic>?;
-
-            if (driverData == null) {
-              return const Center(child: Text('Driver details not found'));
-            }
-
-            return Container(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Getting you the quickest ride',
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: ThemeColors.primaryColor),
-                  ),
-                  const SizedBox(height: 16),
-                  // Display driver details
-                  ListTile(
-                    leading: CircleAvatar(
-                     // radius: 50,
-                      backgroundImage: driverData['profileImageUrl'] != null
-                          ? NetworkImage(driverData['profileImageUrl'])
-                          : null,
-                      child: driverData['profileImageUrl'] == null
-                          ? const Icon(Icons.person)
-                          : null,
-                    ),
-                    title: Text(driverData['name'] ?? 'Unknown Driver'),
-                    subtitle:
-                        Text(driverData['contactNumber'] ?? 'No i contact nfo'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(onPressed: () {}, icon: Icon(Icons.call)),
-                        IconButton(onPressed: () {}, icon: Icon(Icons.message)),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  // Add more driver details as needed
-
-                  if (bookingData['estimatedArrival'] != null)
-                    Text('ETA: ${bookingData['estimatedArrival']}'),
-                ],
+        // Display driver details with dynamic updates for status
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Getting you the quickest ride',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: ThemeColors.primaryColor,
+                ),
               ),
-            );
-          },
+              const SizedBox(height: 16),
+              if (driverDetails != null)
+                ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: driverDetails!['profileImageUrl'] != null
+                        ? NetworkImage(driverDetails!['profileImageUrl'])
+                        : null,
+                    child: driverDetails!['profileImageUrl'] == null
+                        ? const Icon(Icons.person)
+                        : null,
+                  ),
+                  title: Text(driverDetails!['name'] ?? 'Unknown Driver'),
+                  subtitle: Text(
+                      driverDetails!['contactNumber'] ?? 'No contact info'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.call,
+                            color: ThemeColors.baseColor,
+                            size: 30,
+                          )),
+                      IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.message,
+                            color: ThemeColors.successColor,
+                            size: 30,
+                          )),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: 16),
+              if (status == 'trip_started')
+                const Text(
+                  'Trip has started. Enjoy your ride!',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: ThemeColors.successColor,
+                  ),
+                ),
+              if (bookingData['estimatedArrival'] != null)
+                Text('ETA: ${bookingData['estimatedArrival']}'),
+              const SizedBox(height: 16),
+              CustomButtons(
+                text: 'Click To Pay Your Amount ',
+                onPressed: () {},
+                backgroundColor: ThemeColors.primaryColor,
+                textColor: ThemeColors.textColor,
+                screenWidth: screenWidth,
+                screenHeight: screenHeight,
+              ),
+            ],
+          ),
         );
       },
     );
