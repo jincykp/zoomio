@@ -18,13 +18,21 @@ class CustomBottomsheet extends StatefulWidget {
 
 class _CustomBottomsheetState extends State<CustomBottomsheet> {
   late DatabaseReference bookingRef;
-  Map<String, dynamic>? driverDetails; // To retain driver details
+  Map<String, dynamic>? driverDetails;
 
   @override
   void initState() {
     super.initState();
     bookingRef =
         FirebaseDatabase.instance.ref().child('bookings/${widget.bookingId}');
+  }
+
+  bool shouldShowPaymentButton(String? status) {
+    // Add debug print to track status
+    print('Current booking status: $status');
+    return status == 'driver_accepted' ||
+        status == 'trip_started' ||
+        status == 'on_trip';
   }
 
   @override
@@ -36,6 +44,7 @@ class _CustomBottomsheetState extends State<CustomBottomsheet> {
       stream: bookingRef.onValue,
       builder: (context, AsyncSnapshot<DatabaseEvent> bookingSnapshot) {
         if (bookingSnapshot.hasError) {
+          print('Error in snapshot: ${bookingSnapshot.error}');
           return const Center(child: Text('Error loading booking details'));
         }
 
@@ -57,7 +66,12 @@ class _CustomBottomsheetState extends State<CustomBottomsheet> {
             bookingSnapshot.data!.snapshot.value as Map);
 
         final driverId = bookingData['driverId'];
-        final status = bookingData['status'];
+        final status = bookingData['status'] as String?;
+
+        // Debug print for booking data
+        print('Booking Data: $bookingData');
+        print('Driver ID: $driverId');
+        print('Status: $status');
 
         // Fetch driver details only once and retain them
         if (driverId != null && driverDetails == null) {
@@ -74,12 +88,10 @@ class _CustomBottomsheetState extends State<CustomBottomsheet> {
           });
         }
 
-        // If driver details are not yet loaded, show a loading indicator
         if (driverId != null && driverDetails == null) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        // Display driver details with dynamic updates for status
         return Container(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -97,10 +109,10 @@ class _CustomBottomsheetState extends State<CustomBottomsheet> {
               if (driverDetails != null)
                 ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: driverDetails!['profileImageUrl'] != null
+                    backgroundImage: driverDetails?['profileImageUrl'] != null
                         ? NetworkImage(driverDetails!['profileImageUrl'])
                         : null,
-                    child: driverDetails!['profileImageUrl'] == null
+                    child: driverDetails?['profileImageUrl'] == null
                         ? const Icon(Icons.person)
                         : null,
                   ),
@@ -111,24 +123,30 @@ class _CustomBottomsheetState extends State<CustomBottomsheet> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.call,
-                            color: ThemeColors.baseColor,
-                            size: 30,
-                          )),
+                        onPressed: () {
+                          // Call driver action
+                        },
+                        icon: const Icon(
+                          Icons.call,
+                          color: ThemeColors.baseColor,
+                          size: 30,
+                        ),
+                      ),
                       IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.message,
-                            color: ThemeColors.successColor,
-                            size: 30,
-                          )),
+                        onPressed: () {
+                          // Message driver action
+                        },
+                        icon: const Icon(
+                          Icons.message,
+                          color: ThemeColors.successColor,
+                          size: 30,
+                        ),
+                      ),
                     ],
                   ),
                 ),
               const SizedBox(height: 16),
-              if (status == 'trip_started')
+              if (status == 'trip_started' || status == 'on_trip')
                 const Text(
                   'Trip has started. Enjoy your ride!',
                   style: TextStyle(
@@ -140,14 +158,18 @@ class _CustomBottomsheetState extends State<CustomBottomsheet> {
               if (bookingData['estimatedArrival'] != null)
                 Text('ETA: ${bookingData['estimatedArrival']}'),
               const SizedBox(height: 16),
-              CustomButtons(
-                text: 'Click To Pay Your Amount ',
-                onPressed: () {},
-                backgroundColor: ThemeColors.primaryColor,
-                textColor: ThemeColors.textColor,
-                screenWidth: screenWidth,
-                screenHeight: screenHeight,
-              ),
+              // Show payment button for all relevant statuses
+              if (shouldShowPaymentButton(status))
+                CustomButtons(
+                  text: 'Click To Pay Your Amount',
+                  onPressed: () {
+                    // Payment action
+                  },
+                  backgroundColor: ThemeColors.primaryColor,
+                  textColor: ThemeColors.textColor,
+                  screenWidth: screenWidth,
+                  screenHeight: screenHeight,
+                ),
             ],
           ),
         );
