@@ -84,7 +84,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-
           // Search bar at the bottom
           Padding(
             padding: const EdgeInsets.all(12.0),

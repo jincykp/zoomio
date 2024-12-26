@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserService {
@@ -6,32 +8,57 @@ class UserService {
   // Save user details to Firestore
   Future<void> saveUserDetails(
       String uid, String email, String displayName) async {
-    await _firestore.collection('users').doc(uid).set({
-      'email': email,
-      'displayName': displayName,
-    });
+    try {
+      // Check if user document already exists
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(uid).get();
+
+      if (!userDoc.exists) {
+        // Create new user document with auth UID
+        await _firestore.collection('users').doc(uid).set({
+          'email': email,
+          'displayName': displayName,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      } else {
+        // Update existing document
+        await _firestore.collection('users').doc(uid).update({
+          'email': email,
+          'displayName': displayName,
+          'lastUpdated': FieldValue.serverTimestamp(),
+        });
+      }
+    } catch (e) {
+      log("Error saving user details: $e");
+      throw Exception('Failed to save user details: $e');
+    }
   }
 
   // Retrieve user details from Firestore
   Future<DocumentSnapshot> getUserDetails(String uid) async {
-    return await _firestore.collection('users').doc(uid).get();
-  } // Update user details with new data
+    try {
+      return await _firestore.collection('users').doc(uid).get();
+    } catch (e) {
+      log("Error getting user details: $e");
+      throw Exception('Failed to get user details: $e');
+    }
+  }
 
   Future<void> updateUserDetails(
       String uid, Map<String, dynamic> newDetails) async {
     try {
-      // Remove any null or empty values to prevent overwriting with invalid data
       newDetails.removeWhere((key, value) => value == null || value == "");
 
       if (newDetails.isNotEmpty) {
+        newDetails['lastUpdated'] = FieldValue.serverTimestamp();
         await _firestore.collection('users').doc(uid).update(newDetails);
-        print('User details updated successfully.');
+        log('User details updated successfully.');
       } else {
-        print('No valid data to update.');
+        log('No valid data to update.');
       }
     } catch (e) {
-      print('Error updating user details: $e');
-      rethrow; // Rethrow for higher-level handling
+      log('Error updating user details: $e');
+      rethrow;
     }
   }
 }

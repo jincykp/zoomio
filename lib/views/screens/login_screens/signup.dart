@@ -160,9 +160,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           try {
                             // Call createAccountWithEmail
                             User? user = await auth.createAccountWithEmail(
-                              emailController.text,
-                              passWordController.text,
-                            );
+                                emailController.text,
+                                passWordController.text,
+                                "");
 
                             if (user != null) {
                               // Save user details

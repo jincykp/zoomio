@@ -14,14 +14,24 @@ class AuthServices {
   final UserService userService = UserService(); // User service instance
 
   // Create account with email and password
-  Future<User?> createAccountWithEmail(String email, String password) async {
+  Future<User?> createAccountWithEmail(
+      String email, String password, String? displayName) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
+      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
       User? user = userCredential.user;
 
-      if (user != null && !user.emailVerified) {
-        await user.sendEmailVerification();
+      if (user != null) {
+        // Immediately save user data to Firestore using the auth UID
+        await userService.saveUserDetails(
+          user.uid, // Using the Firebase Auth UID
+          email,
+          displayName ?? "",
+        );
+
+        if (!user.emailVerified) {
+          await user.sendEmailVerification();
+        }
       }
 
       return user;
@@ -92,29 +102,29 @@ class AuthServices {
         );
 
         // Sign in to Firebase with the Google credentials
-        await auth.signInWithCredential(credential);
+        final UserCredential userCredential =
+            await auth.signInWithCredential(credential);
+        final User? user = userCredential.user;
 
-        // Get user details
-        String email = googleUser.email;
-        String? displayName = googleUser.displayName; // Get the user's name
+        if (user != null) {
+          // Save user details to Firestore using the auth UID
+          await userService.saveUserDetails(
+            user.uid, // Using the Firebase Auth UID
+            googleUser.email,
+            googleUser.displayName ?? "",
+          );
 
-        // Save user details to Firestore
-        await userService.saveUserDetails(
-          auth.currentUser!.uid,
-          email,
-          displayName ?? "", // Save the display name
-        );
-
-        // Navigate to HomePage and pass the email and displayName
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HomePage(
-              email: email, // Pass the user's email
-              displayName: displayName, // Pass the user's display name
+          // Navigate to HomePage
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(
+                email: googleUser.email,
+                displayName: googleUser.displayName,
+              ),
             ),
-          ),
-        );
+          );
+        }
       }
     } catch (e) {
       log("Google Sign-In failed: $e");
@@ -129,7 +139,7 @@ class AuthServices {
     }
   }
 
-  // Getter to retrieve the currently signed-in user
+// Getter to retrieve the currently signed-in user
   User? get currentUser {
     return auth.currentUser;
   }

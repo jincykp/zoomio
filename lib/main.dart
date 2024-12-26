@@ -23,8 +23,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  requestNotificationPermission();
 
   // Initialize PriceServices here
   final priceServices =
@@ -32,23 +30,6 @@ void main() async {
 
   runApp(MyApp());
 }
-
-Future<void> requestNotificationPermission() async {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-  // Request notification permission for iOS
-  NotificationSettings settings = await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    print("Notification permission granted");
-  } else {
-    print("Notification permission denied");
-  }
-} // Pass priceServices to MyApp
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");

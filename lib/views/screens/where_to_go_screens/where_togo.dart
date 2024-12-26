@@ -393,6 +393,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                                 dropoffController.text.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
+                                  backgroundColor: ThemeColors.alertColor,
                                   content: Text(
                                     "Please select both pickup and drop-off locations.",
                                     style: TextStyle(
