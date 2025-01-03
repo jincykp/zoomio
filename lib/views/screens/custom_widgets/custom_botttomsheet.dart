@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:zoomer/views/screens/cancel_ride_screens/cancel_ride.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
+import 'package:zoomer/views/screens/payment_screens/payment.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 
 class CustomBottomsheet extends StatefulWidget {
@@ -16,23 +18,167 @@ class CustomBottomsheet extends StatefulWidget {
   State<CustomBottomsheet> createState() => _CustomBottomsheetState();
 }
 
-class _CustomBottomsheetState extends State<CustomBottomsheet> {
+class _CustomBottomsheetState extends State<CustomBottomsheet>
+    with SingleTickerProviderStateMixin {
   late DatabaseReference bookingRef;
   Map<String, dynamic>? driverDetails;
+  late AnimationController _progressController;
 
   @override
   void initState() {
     super.initState();
     bookingRef =
         FirebaseDatabase.instance.ref().child('bookings/${widget.bookingId}');
+
+    // Initialize animation controller
+    _progressController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+    _progressController.repeat();
   }
 
-  bool shouldShowPaymentButton(String? status) {
-    // Add debug print to track status
-    print('Current booking status: $status');
-    return status == 'driver_accepted' ||
-        status == 'trip_started' ||
-        status == 'on_trip';
+  @override
+  void dispose() {
+    _progressController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildMovingProgressBar() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Driver is on the way',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: ThemeColors.primaryColor,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            width: double.infinity,
+            height: 4,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(2),
+              color: Colors.grey[200],
+            ),
+            child: AnimatedBuilder(
+              animation: _progressController,
+              builder: (context, child) {
+                return ShaderMask(
+                  shaderCallback: (bounds) {
+                    return LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: const [
+                        ThemeColors.primaryColor,
+                        ThemeColors.primaryColor,
+                        Colors.transparent,
+                        ThemeColors.primaryColor,
+                      ],
+                      stops: [
+                        0.0,
+                        _progressController.value,
+                        _progressController.value + 0.1,
+                        1.0,
+                      ],
+                      tileMode: TileMode.mirror,
+                    ).createShader(bounds);
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 4,
+                    color: Colors.white,
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton(
+      String status, double screenWidth, double screenHeight) {
+    if (status == 'driver_accepted') {
+      return Column(
+        children: [
+          _buildMovingProgressBar(),
+          const SizedBox(height: 16),
+          CustomButtons(
+            text: 'Cancel Ride',
+            onPressed: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          CancelRideScreen(bookingId: widget.bookingId)));
+            },
+            backgroundColor: ThemeColors.primaryColor,
+            textColor: ThemeColors.textColor,
+            screenWidth: screenWidth,
+            screenHeight: screenHeight,
+          ),
+        ],
+      );
+    } else if (status == 'trip_started' || status == 'on_trip') {
+      return Column(
+        children: [
+          _buildMovingProgressBar(),
+          const SizedBox(height: 16),
+          CustomButtons(
+            text: 'Click to Pay Your Amount',
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const PaymentScreen()));
+            },
+            backgroundColor: ThemeColors.primaryColor,
+            textColor: ThemeColors.textColor,
+            screenWidth: screenWidth,
+            screenHeight: screenHeight,
+          ),
+        ],
+      );
+    }
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildWaitingIndicator() {
+    return Column(
+      children: [
+        const SizedBox(height: 16),
+        Container(
+          width: double.infinity,
+          height: 4,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(2),
+            color: Colors.grey[200],
+          ),
+          child: LinearProgressIndicator(
+            backgroundColor: Colors.grey[200],
+            valueColor: const AlwaysStoppedAnimation<Color>(
+              ThemeColors.primaryColor,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Connecting you with nearby drivers...',
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 14,
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -50,13 +196,20 @@ class _CustomBottomsheetState extends State<CustomBottomsheet> {
 
         if (!bookingSnapshot.hasData ||
             bookingSnapshot.data?.snapshot.value == null) {
-          return const Center(
+          return Container(
+            padding: const EdgeInsets.all(16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text('Waiting for driver to accept...'),
+                const Text(
+                  'Getting you the quickest ride',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: ThemeColors.primaryColor,
+                  ),
+                ),
+                _buildWaitingIndicator(),
               ],
             ),
           );
@@ -68,12 +221,6 @@ class _CustomBottomsheetState extends State<CustomBottomsheet> {
         final driverId = bookingData['driverId'];
         final status = bookingData['status'] as String?;
 
-        // Debug print for booking data
-        print('Booking Data: $bookingData');
-        print('Driver ID: $driverId');
-        print('Status: $status');
-
-        // Fetch driver details only once and retain them
         if (driverId != null && driverDetails == null) {
           FirebaseFirestore.instance
               .collection('driverProfiles')
@@ -89,7 +236,23 @@ class _CustomBottomsheetState extends State<CustomBottomsheet> {
         }
 
         if (driverId != null && driverDetails == null) {
-          return const Center(child: CircularProgressIndicator());
+          return Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Getting you the quickest ride',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: ThemeColors.primaryColor,
+                  ),
+                ),
+                _buildWaitingIndicator(),
+              ],
+            ),
+          );
         }
 
         return Container(
@@ -105,6 +268,8 @@ class _CustomBottomsheetState extends State<CustomBottomsheet> {
                   color: ThemeColors.primaryColor,
                 ),
               ),
+              // Show progress indicator only when no driver is assigned yet
+              if (driverId == null) _buildWaitingIndicator(),
               const SizedBox(height: 16),
               if (driverDetails != null)
                 ListTile(
@@ -122,24 +287,30 @@ class _CustomBottomsheetState extends State<CustomBottomsheet> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        onPressed: () {
-                          // Call driver action
-                        },
-                        icon: const Icon(
-                          Icons.call,
-                          color: ThemeColors.baseColor,
-                          size: 30,
+                      Card(
+                        elevation: 8,
+                        child: IconButton(
+                          onPressed: () {
+                            // Call driver action
+                          },
+                          icon: const Icon(
+                            Icons.call,
+                            color: ThemeColors.baseColor,
+                            size: 30,
+                          ),
                         ),
                       ),
-                      IconButton(
-                        onPressed: () {
-                          // Message driver action
-                        },
-                        icon: const Icon(
-                          Icons.message,
-                          color: ThemeColors.successColor,
-                          size: 30,
+                      Card(
+                        elevation: 8,
+                        child: IconButton(
+                          onPressed: () {
+                            // Message driver action
+                          },
+                          icon: const Icon(
+                            Icons.message,
+                            color: ThemeColors.successColor,
+                            size: 30,
+                          ),
                         ),
                       ),
                     ],
@@ -158,18 +329,7 @@ class _CustomBottomsheetState extends State<CustomBottomsheet> {
               if (bookingData['estimatedArrival'] != null)
                 Text('ETA: ${bookingData['estimatedArrival']}'),
               const SizedBox(height: 16),
-              // Show payment button for all relevant statuses
-              if (shouldShowPaymentButton(status))
-                CustomButtons(
-                  text: 'Click To Pay Your Amount',
-                  onPressed: () {
-                    // Payment action
-                  },
-                  backgroundColor: ThemeColors.primaryColor,
-                  textColor: ThemeColors.textColor,
-                  screenWidth: screenWidth,
-                  screenHeight: screenHeight,
-                ),
+              _buildActionButton(status ?? '', screenWidth, screenHeight),
             ],
           ),
         );

@@ -10,9 +10,9 @@ class BookingService {
     required String pickupLocation,
     required String dropOffLocation,
     required Map<String, dynamic> vehicleDetails,
+    required double totalPrice, // Add totalPrice parameter
   }) async {
     try {
-      // Use a direct path to bookings without 'adddelete'
       final bookingRef = _bookingRef.push();
       final bookingId = bookingRef.key!;
 
@@ -22,6 +22,7 @@ class BookingService {
         'pickupLocation': pickupLocation,
         'dropOffLocation': dropOffLocation,
         'vehicleDetails': vehicleDetails,
+        'totalPrice': totalPrice, // Store total price
         'status': 'pending',
         'timestamp': DateTime.now().toIso8601String(),
       };

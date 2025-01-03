@@ -181,6 +181,8 @@ class _CustomAlertCardState extends State<CustomAlertCard> {
                                       pickupLocation: pickupLocation,
                                       dropOffLocation: dropOffLocation,
                                       vehicleDetails: vehicleDetails,
+                                      totalPrice:
+                                          vehicleDetails['totalPrice'] ?? 0.0,
                                     );
 
                                     // Show confirmation message
