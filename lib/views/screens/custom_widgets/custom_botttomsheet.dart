@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zoomer/views/screens/cancel_ride_screens/cancel_ride.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/payment_screens/payment.dart';
@@ -294,7 +295,12 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
                         elevation: 8,
                         child: IconButton(
                           onPressed: () {
-                            // Call driver action
+                            if (driverDetails != null &&
+                                driverDetails!['contactNumber'] != null) {
+                              makePhoneCall(driverDetails!['contactNumber']);
+                            } else {
+                              print('No contact information available');
+                            }
                           },
                           icon: const Icon(
                             Icons.call,
@@ -339,5 +345,14 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
         );
       },
     );
+  }
+
+  Future<void> makePhoneCall(String phoneNumber) async {
+    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    } else {
+      throw 'Could not launch $phoneUri';
+    }
   }
 }

@@ -75,6 +75,7 @@ dependencies:
   path: ^1.8.3
   envied: ^1.0.0
   flutter_dotenv: ^5.2.1
+  url_launcher: ^6.3.1
  
 
 
