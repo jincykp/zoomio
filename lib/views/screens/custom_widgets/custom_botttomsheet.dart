@@ -104,48 +104,51 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
     );
   }
 
-  Widget _buildActionButton(
-      String status, double screenWidth, double screenHeight) {
+  Widget _buildActionButton(String status, double screenWidth,
+      double screenHeight, Map<String, dynamic> bookingData) {
     if (status == 'driver_accepted') {
-      return Column(
-        children: [
-          _buildMovingProgressBar(),
-          const SizedBox(height: 16),
-          CustomButtons(
-            text: 'Cancel Ride',
-            onPressed: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          CancelRideScreen(bookingId: widget.bookingId)));
-            },
-            backgroundColor: ThemeColors.primaryColor,
-            textColor: ThemeColors.textColor,
-            screenWidth: screenWidth,
-            screenHeight: screenHeight,
-          ),
-        ],
-      );
+      // ... existing code ...
     } else if (status == 'trip_started' || status == 'on_trip') {
-      return Column(
-        children: [
-          _buildMovingProgressBar(),
-          const SizedBox(height: 16),
-          CustomButtons(
-            text: 'Click to Pay Your Amount',
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const PaymentScreen()));
-            },
-            backgroundColor: ThemeColors.primaryColor,
-            textColor: ThemeColors.textColor,
-            screenWidth: screenWidth,
-            screenHeight: screenHeight,
-          ),
-        ],
+      // Extract vehicle details safely
+      Map<String, dynamic> vehicleDetails = {};
+
+      // Check if vehicleDetails exists in bookingData
+      if (bookingData.containsKey('vehicleDetails')) {
+        vehicleDetails =
+            Map<String, dynamic>.from(bookingData['vehicleDetails']);
+      } else {
+        // If not in vehicleDetails, try to get individual fields
+        vehicleDetails = {
+          'brand': bookingData['vehicleBrand'],
+          'vehicleType': bookingData['vehicleType'],
+          'seatingCapacity': bookingData['seatingCapacity'],
+          'aboutVehicle': bookingData['aboutVehicle'],
+          'totalPrice': bookingData['totalPrice'],
+        };
+      }
+
+      return CustomButtons(
+        text: 'Click to Pay Your Amount',
+        onPressed: () {
+          // Print debug information
+          print('Booking Data: $bookingData');
+          print('Vehicle Details: $vehicleDetails');
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PaymentScreen(
+                vehicleDetails: vehicleDetails,
+                bookingId: widget.bookingId,
+                totalAmount: (bookingData['totalPrice'] ?? 0.0).toDouble(),
+              ),
+            ),
+          );
+        },
+        backgroundColor: ThemeColors.primaryColor,
+        textColor: ThemeColors.textColor,
+        screenWidth: screenWidth,
+        screenHeight: screenHeight,
       );
     }
     return const SizedBox.shrink();
@@ -329,7 +332,8 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
               if (bookingData['estimatedArrival'] != null)
                 Text('ETA: ${bookingData['estimatedArrival']}'),
               const SizedBox(height: 16),
-              _buildActionButton(status ?? '', screenWidth, screenHeight),
+              _buildActionButton(
+                  status ?? '', screenWidth, screenHeight, bookingData),
             ],
           ),
         );

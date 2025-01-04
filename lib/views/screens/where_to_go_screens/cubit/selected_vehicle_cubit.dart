@@ -8,7 +8,7 @@ class SelectedVehicleCubit extends Cubit<SelectedVehicleState> {
   void loadVehicle(Map<String, dynamic> vehicle) {
     emit(VehicleLoading());
     // Simulate a delay for loading (e.g., fetching from a database or API)
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       emit(VehicleLoaded(vehicle));
     });
   }
