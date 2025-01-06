@@ -275,7 +275,8 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
               // Show progress indicator only when no driver is assigned yet
               if (driverId == null) _buildWaitingIndicator(),
               const SizedBox(height: 16),
-              if (driverDetails != null)
+              if (driverDetails != null) ...[
+                // Using spread operator to add multiple widgets
                 ListTile(
                   leading: CircleAvatar(
                     backgroundImage: driverDetails?['profileImageUrl'] != null
@@ -325,6 +326,29 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
                     ],
                   ),
                 ),
+                const SizedBox(height: 16),
+                // Add Cancel Ride button right after driver details
+                if (status != 'trip_started' &&
+                    status !=
+                        'on_trip') // Show cancel button before trip starts
+                  CustomButtons(
+                    text: 'Cancel Ride',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CancelRideScreen(
+                            bookingId: widget.bookingId,
+                          ),
+                        ),
+                      );
+                    },
+                    backgroundColor: ThemeColors.alertColor,
+                    textColor: Colors.white,
+                    screenWidth: screenWidth * 0.8,
+                    screenHeight: screenHeight,
+                  ),
+              ],
               const SizedBox(height: 16),
               if (status == 'trip_started' || status == 'on_trip')
                 const Text(
