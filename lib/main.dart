@@ -3,8 +3,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:zoomer/controllers/theme.dart';
 import 'package:zoomer/firebase_options.dart';
+import 'package:zoomer/global/global_variable.dart';
 import 'package:zoomer/views/screens/splash_screen.dart';
 import 'package:zoomer/views/screens/login_screens/bloc/signin_bloc.dart';
 import 'package:zoomer/services/auth_services.dart';
@@ -13,6 +15,8 @@ import 'package:zoomer/views/screens/where_to_go_screens/price_services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = stripePublishableKey;
+  await Stripe.instance.applySettings();
   // try {
   //   // Load .env file
   //   await dotenv.load(fileName: ".env");

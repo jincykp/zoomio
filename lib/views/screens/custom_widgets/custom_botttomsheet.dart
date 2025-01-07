@@ -343,7 +343,7 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
                         ),
                       );
                     },
-                    backgroundColor: ThemeColors.alertColor,
+                    backgroundColor: ThemeColors.primaryColor,
                     textColor: Colors.white,
                     screenWidth: screenWidth * 0.8,
                     screenHeight: screenHeight,

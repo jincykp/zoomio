@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:zoomer/services/stripe_services.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 
 import '../styles/appstyles.dart';
 
-class PaymentScreen extends StatelessWidget {
+class PaymentScreen extends StatefulWidget {
   final Map<String, dynamic> vehicleDetails;
   final String bookingId;
   final double totalAmount;
@@ -16,14 +19,117 @@ class PaymentScreen extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<PaymentScreen> createState() => _PaymentScreenState();
+}
+
+class _PaymentScreenState extends State<PaymentScreen> {
+  late Razorpay _razorpay;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeRazorpay();
+  }
+
+  void _initializeRazorpay() {
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  void startPayment() async {
+    setState(() => _isLoading = true);
+
+    try {
+      var options = {
+        'key': 'rzp_test_i8191KFpq7S1w1', // Replace with your actual key
+        'amount': (widget.totalAmount * 100)
+            .toInt(), // Amount in smallest currency unit
+        'name': 'Vehicle Booking',
+        'description': 'Booking ID: ${widget.bookingId}',
+        'currency': 'INR', // Changed to INR as you're using ₹
+        'prefill': {
+          'contact': '', // Add user's phone number here
+          'email': '', // Add user's email here
+        },
+        'external': {
+          'wallets': ['paytm']
+        },
+        'theme': {
+          'color': '#2196F3' // Match with your primary color
+        }
+      };
+
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint('Error: $e');
+      _showError('Something went wrong. Please try again.');
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    try {
+      // Here you would typically verify the payment with your backend
+      _showSuccess('Payment Successful!\nPayment ID: ${response.paymentId}');
+
+      // Add your backend API call here to update the booking status
+      // await YourApiService.updateBookingStatus(widget.bookingId, response.paymentId);
+
+      // Navigate back or to a success screen after 2 seconds
+      Future.delayed(const Duration(seconds: 2), () {
+        Navigator.of(context)
+            .pop(true); // Return true to indicate successful payment
+      });
+    } catch (e) {
+      _showError(
+          'Payment verified but could not update booking. Please contact support.');
+    }
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    _showError('Payment Failed: ${response.message ?? 'Something went wrong'}');
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    _showMessage('External Wallet Selected: ${response.walletName}');
+  }
+
+  void _showSuccess(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+    );
+  }
+
+  void _showError(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+    );
+  }
+
+  void _showMessage(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-
-    // Print debug information
-    print('Vehicle Details in PaymentScreen: $vehicleDetails');
-    print('Booking ID: $bookingId');
-    print('Total Amount: $totalAmount');
 
     return Scaffold(
       appBar: AppBar(
@@ -44,7 +150,7 @@ class PaymentScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Vehicle Details',
                         style: Textstyles.gTextdescriptionSecond,
                       ),
@@ -52,7 +158,7 @@ class PaymentScreen extends StatelessWidget {
                       ListTile(
                         leading: CircleAvatar(
                           child: Icon(
-                            vehicleDetails['vehicleType']
+                            widget.vehicleDetails['vehicleType']
                                         ?.toString()
                                         .toLowerCase() ==
                                     'bike'
@@ -61,20 +167,14 @@ class PaymentScreen extends StatelessWidget {
                           ),
                         ),
                         title: Text(
-                          vehicleDetails['brand']?.toString() ?? 'No Brand',
+                          widget.vehicleDetails['brand']?.toString() ??
+                              'No Brand',
                           style: Textstyles.gTextdescription,
                         ),
                         subtitle: Text(
-                          'for ${vehicleDetails['seatingCapacity']?.toString() ?? 'N/A'} Person',
+                          'for ${widget.vehicleDetails['seatingCapacity']?.toString() ?? 'N/A'} Person',
                         ),
                       ),
-                      if (vehicleDetails['aboutVehicle'] != null) ...[
-                        const SizedBox(height: 10),
-                        Text(
-                          vehicleDetails['aboutVehicle'].toString(),
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ],
                     ],
                   ),
                 ),
@@ -90,7 +190,7 @@ class PaymentScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Payment Summary',
                         style: Textstyles.gTextdescriptionSecond,
                       ),
@@ -99,19 +199,19 @@ class PaymentScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text('Trip Fare'),
-                          Text('₹${totalAmount.toStringAsFixed(2)}'),
+                          Text('₹${widget.totalAmount.toStringAsFixed(2)}'),
                         ],
                       ),
                       const Divider(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             'Total Amount',
                             style: Textstyles.gTextdescriptionWithColor,
                           ),
                           Text(
-                            '₹${totalAmount.toStringAsFixed(2)}',
+                            '₹${widget.totalAmount.toStringAsFixed(2)}',
                             style: Textstyles.gTextdescriptionWithColor,
                           ),
                         ],
@@ -122,22 +222,31 @@ class PaymentScreen extends StatelessWidget {
               ),
 
               SizedBox(height: screenHeight * 0.04),
-              const Text("Select Payment method"),
-              SizedBox(height: screenHeight * 0.01),
+
               // Payment Button
               SizedBox(
-                  width: double.infinity,
-                  child: CustomButtons(
-                      text: "Proceed to Payment",
-                      onPressed: () {},
-                      backgroundColor: ThemeColors.primaryColor,
-                      textColor: ThemeColors.textColor,
-                      screenWidth: screenWidth,
-                      screenHeight: screenHeight)),
+                width: double.infinity,
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : CustomButtons(
+                        text: "Proceed to Payment",
+                        onPressed: startPayment,
+                        backgroundColor: ThemeColors.primaryColor,
+                        textColor: ThemeColors.textColor,
+                        screenWidth: screenWidth,
+                        screenHeight: screenHeight,
+                      ),
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _razorpay.clear();
+    super.dispose();
   }
 }
