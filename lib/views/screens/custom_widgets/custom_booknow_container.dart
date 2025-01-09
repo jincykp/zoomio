@@ -10,22 +10,22 @@ import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 import 'package:zoomer/views/screens/where_to_go_screens/cubit/selected_vehicle_cubit.dart';
 
-class CustomAlertCard extends StatefulWidget {
+class CustomBookNowContainer extends StatefulWidget {
   final String pickupText;
   final String dropoffText;
-  const CustomAlertCard({
+  const CustomBookNowContainer({
     super.key,
     required this.pickupText,
     required this.dropoffText,
   });
 
   @override
-  State<CustomAlertCard> createState() => _CustomAlertCardState();
+  State<CustomBookNowContainer> createState() => _CustomBookNowContainerState();
 }
 
 bool isBookingInProgress = false;
 
-class _CustomAlertCardState extends State<CustomAlertCard> {
+class _CustomBookNowContainerState extends State<CustomBookNowContainer> {
   late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>
       bookingSubscription;
 

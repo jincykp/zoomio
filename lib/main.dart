@@ -2,21 +2,22 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:zoomer/controllers/theme.dart';
 import 'package:zoomer/firebase_options.dart';
-import 'package:zoomer/global/global_variable.dart';
+import 'package:zoomer/services/booking_services_now.dart';
+import 'package:zoomer/services/userservices.dart';
+import 'package:zoomer/views/screens/login_screens/bloc/auth_bloc.dart';
 import 'package:zoomer/views/screens/splash_screen.dart';
 import 'package:zoomer/views/screens/login_screens/bloc/signin_bloc.dart';
 import 'package:zoomer/services/auth_services.dart';
 import 'package:zoomer/views/screens/where_to_go_screens/bloc/vehicle_bloc.dart';
+import 'package:zoomer/views/screens/where_to_go_screens/booking/bloc/booking_bloc.dart';
 import 'package:zoomer/views/screens/where_to_go_screens/price_services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Stripe.publishableKey = stripePublishableKey;
-  await Stripe.instance.applySettings();
+  // Stripe.publishableKey = stripePublishableKey;
+  // await Stripe.instance.applySettings();
   // try {
   //   // Load .env file
   //   await dotenv.load(fileName: ".env");
@@ -65,7 +66,16 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => ThemeCubit()),
         BlocProvider(
+          create: (context) => AuthBloc(
+            authServices: AuthServices(),
+            userService: UserService(),
+          ),
+        ),
+        BlocProvider(
             create: (context) => SigninBloc(authServices: AuthServices())),
+        BlocProvider<BookingBloc>(
+          create: (context) => BookingBloc(bookingService: BookingService()),
+        ),
         BlocProvider(
           create: (context) => VehicleBloc(PriceServices()),
         ) // Pass priceServices to VehicleBloc

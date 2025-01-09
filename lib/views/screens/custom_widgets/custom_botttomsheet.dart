@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:zoomer/views/screens/cancel_ride_screens/cancel_ride.dart';
+import 'package:zoomer/views/screens/chat_screens/chat_screen.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/payment_screens/payment.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
@@ -314,7 +315,16 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
                         elevation: 8,
                         child: IconButton(
                           onPressed: () {
-                            // Message driver action
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatScreen(
+                                  receiverUserEmail:
+                                      driverDetails!['email'] ?? 'Driver',
+                                  receiverUserId: driverId,
+                                ),
+                              ),
+                            );
                           },
                           icon: const Icon(
                             Icons.message,

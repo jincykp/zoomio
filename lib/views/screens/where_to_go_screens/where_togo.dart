@@ -8,7 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:zoomer/global/global_variable.dart';
 import 'package:zoomer/model/vehicle_model.dart';
-import 'package:zoomer/views/screens/custom_widgets/custom_alertcard.dart';
+import 'package:zoomer/views/screens/custom_widgets/custom_booknow_container.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_locatiofields.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
@@ -482,7 +482,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                                                                     value:
                                                                         vehicleCubit,
                                                                     child:
-                                                                        CustomAlertCard(
+                                                                        CustomBookNowContainer(
                                                                       pickupText:
                                                                           pickupController
                                                                               .text,
