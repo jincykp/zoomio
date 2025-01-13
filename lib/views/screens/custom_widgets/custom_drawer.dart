@@ -10,6 +10,8 @@ import 'package:zoomer/controllers/theme.dart';
 import 'package:zoomer/services/auth_services.dart';
 import 'package:zoomer/services/userservices.dart';
 import 'package:zoomer/views/screens/complaints/complaints.dart';
+import 'package:zoomer/views/screens/drawer_screens/about_us.dart';
+import 'package:zoomer/views/screens/drawer_screens/help_and_support.dart';
 import 'package:zoomer/views/screens/login_screens/sign_in.dart';
 import 'package:zoomer/views/screens/profile/user_profile_screen.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
@@ -174,22 +176,12 @@ class _CustomDrawerawerState extends State<CustomDrawerawer> {
             ),
             const Divider(),
             _buildDrawerListTile(
-              icon: Icons.warning_amber_outlined,
-              title: "Complain",
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ComplaintScreen(),
-                  ),
-                );
-              },
-            ),
-            const Divider(),
-            _buildDrawerListTile(
               icon: Icons.info_outline,
               title: "About us",
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AboutUsScreen()));
+              },
             ),
             const Divider(),
             _buildDrawerListTile(
@@ -201,7 +193,12 @@ class _CustomDrawerawerState extends State<CustomDrawerawer> {
             _buildDrawerListTile(
               icon: Icons.help_center_outlined,
               title: "Help and Support",
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const HelpAndSupportScreen()));
+              },
             ),
             const Divider(),
             _buildDrawerListTile(
