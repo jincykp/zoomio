@@ -1,14 +1,8 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:zoomer/services/auth_services.dart';
-import 'package:zoomer/services/userservices.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_drawer.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 import 'package:zoomer/views/screens/where_to_go_screens/where_togo.dart';

@@ -2,19 +2,15 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:zoomer/controllers/theme.dart';
 import 'package:zoomer/services/auth_services.dart';
 import 'package:zoomer/services/userservices.dart';
 import 'package:zoomer/views/screens/bottom_screens/home_screen.dart';
 import 'package:zoomer/views/screens/bottom_screens/notification.dart';
-import 'package:zoomer/views/screens/complaints/complaints.dart';
+import 'package:zoomer/views/screens/custom_widgets/custom_drawer.dart';
 import 'package:zoomer/views/screens/history/history.dart';
-import 'package:zoomer/views/screens/login_screens/sign_in.dart';
-import 'package:zoomer/views/screens/profile/user_profile_screen.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
@@ -40,7 +36,6 @@ class _HomePageState extends State<HomePage> {
   // Pages for the Bottom Navigation Bar
   final List<Widget> _pages = [
     const HomeScreen(), // Home Page
-    const NotificationsScreen(), // Notifications Page
     const HistoryScreen(), // History Page
   ];
 
@@ -95,7 +90,11 @@ class _HomePageState extends State<HomePage> {
       key: _scaffoldKey,
       body: _pages[_currentIndex],
       bottomNavigationBar: _buildBottomNavigationBar(),
-      endDrawer: _buildDrawer(context),
+      drawer: const CustomDrawerawer(
+        userEmail: '',
+        userName: '',
+        photoUrl: null,
+      ),
     );
   }
 
@@ -128,166 +127,31 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         tabBackgroundColor: ThemeColors.primaryColor.withOpacity(0.1),
         tabs: const [
-          GButton(icon: Icons.home),
-          GButton(icon: Icons.notifications_active),
-          GButton(icon: Icons.history),
+          GButton(
+            icon: Icons.person,
+            iconSize: 30,
+          ),
+          GButton(icon: Icons.home, iconSize: 30),
+          GButton(icon: Icons.history, iconSize: 30),
         ],
         selectedIndex: _currentIndex,
         onTabChange: (index) {
           setState(() {
-            _currentIndex = index;
+            if (index == 0) {
+              // Profile icon - open drawer
+              _scaffoldKey.currentState?.openDrawer();
+            } else if (index == 1) {
+              // Home icon - show home screen
+              _currentIndex = 0;
+            } else if (index == 2) {
+              // Changed from index == 3 to index == 2
+              // History icon - show history screen
+              _currentIndex =
+                  1; // Changed from 2 to 1 since we have only 2 pages
+            }
           });
         },
       ),
-    );
-  }
-
-  // Drawer for navigation
-  Widget _buildDrawer(BuildContext context) {
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(0),
-        bottomLeft: Radius.circular(0),
-      ),
-      child: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            _buildUserHeader(context),
-            _buildDrawerListTile(
-              icon: Icons.dark_mode,
-              title: "Theme",
-              onTap: () {
-                context.read<ThemeCubit>().toggleTheme();
-              },
-            ),
-            const Divider(),
-            _buildDrawerListTile(
-              icon: Icons.warning_amber_outlined,
-              title: "Complain",
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ComplaintScreen(),
-                  ),
-                );
-              },
-            ),
-            const Divider(),
-            _buildDrawerListTile(
-              icon: Icons.info_outline,
-              title: "About us",
-              onTap: () {},
-            ),
-            const Divider(),
-            _buildDrawerListTile(
-              icon: Icons.settings,
-              title: "Settings",
-              onTap: () {},
-            ),
-            const Divider(),
-            _buildDrawerListTile(
-              icon: Icons.help_center_outlined,
-              title: "Help and Support",
-              onTap: () {},
-            ),
-            const Divider(),
-            _buildDrawerListTile(
-              icon: Icons.logout,
-              title: "Logout",
-              onTap: () async => _handleLogout(context),
-            ),
-            const Divider(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // User Header for the Drawer
-  Widget _buildUserHeader(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => UserProfile(
-              email: userEmail, // Pass email
-              initialName: userName, // Pass name (if available)
-              photoUrl: _googleUser?.photoUrl, // Pass photo URL
-            ),
-          ),
-        );
-      },
-      child: UserAccountsDrawerHeader(
-        decoration: const BoxDecoration(color: ThemeColors.primaryColor),
-        accountName: userName != null && userName!.isNotEmpty
-            ? Padding(
-                padding: const EdgeInsets.only(top: 17.0),
-                child: Text(userName!),
-              )
-            : null,
-        accountEmail: Text(userEmail ?? ""),
-        currentAccountPicture: CircleAvatar(
-          radius: 40,
-          backgroundColor: Theme.of(context).brightness == Brightness.dark
-              ? Colors.black
-              : Colors.white,
-          backgroundImage: _profileImage != null
-              ? FileImage(File(_profileImage!.path))
-              : (_googleUser?.photoUrl != null
-                  ? NetworkImage(_googleUser!.photoUrl!)
-                  : const AssetImage('assets/images/single-person.png')
-                      as ImageProvider),
-        ),
-      ),
-    );
-  }
-
-  // Drawer List Tile Widget
-  Widget _buildDrawerListTile({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      onTap: onTap,
-    );
-  }
-
-  // Logout Handler
-  Future<void> _handleLogout(BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            "Logout Confirmation",
-            style: Textstyles.gTextdescription,
-          ),
-          content: const Text("Are you sure you want to logout?"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await auth.signout();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SignInScreen()),
-                );
-              },
-              child: const Text("Logout"),
-            ),
-          ],
-        );
-      },
     );
   }
 }

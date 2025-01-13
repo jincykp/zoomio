@@ -8,12 +8,12 @@ import 'package:zoomer/views/screens/styles/appstyles.dart';
 
 class ChatScreen extends StatefulWidget {
   final String receiverUserEmail;
-  final String receiverUserId;
+  final String receiverUserId; final String receiverName; 
 
   const ChatScreen({
     super.key,
     required this.receiverUserEmail,
-    required this.receiverUserId,
+    required this.receiverUserId, required this.receiverName, 
   });
 
   @override
@@ -47,7 +47,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.receiverUserEmail),
+       title: Text(widget.receiverName),
         backgroundColor: ThemeColors.primaryColor,
         elevation: 2,
       ),

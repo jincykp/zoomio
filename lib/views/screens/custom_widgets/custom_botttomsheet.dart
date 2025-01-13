@@ -143,6 +143,7 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
                 vehicleDetails: vehicleDetails,
                 bookingId: widget.bookingId,
                 totalAmount: (bookingData['totalPrice'] ?? 0.0).toDouble(),
+                driverId: bookingData['driverId'] ?? '',
               ),
             ),
           );
@@ -322,6 +323,7 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
                                   receiverUserEmail:
                                       driverDetails!['email'] ?? 'Driver',
                                   receiverUserId: driverId,
+                                  receiverName: driverDetails!['displayName'],
                                 ),
                               ),
                             );

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zoomer/services/stripe_services.dart';
+import 'package:zoomer/views/home_page.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
+import 'package:zoomer/views/screens/feedback_screen/feedback_screen.dart';
 
 import '../styles/appstyles.dart';
 
@@ -10,12 +12,14 @@ class PaymentScreen extends StatefulWidget {
   final Map<String, dynamic> vehicleDetails;
   final String bookingId;
   final double totalAmount;
+  final String driverId;
 
   const PaymentScreen({
     Key? key,
     required this.vehicleDetails,
     required this.bookingId,
     required this.totalAmount,
+    required this.driverId,
   }) : super(key: key);
 
   @override
@@ -73,16 +77,25 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     try {
-      // Here you would typically verify the payment with your backend
+      // Display success message
       _showSuccess('Payment Successful!\nPayment ID: ${response.paymentId}');
 
-      // Add your backend API call here to update the booking status
+      // Simulate backend API call to update booking status
       // await YourApiService.updateBookingStatus(widget.bookingId, response.paymentId);
 
-      // Navigate back or to a success screen after 2 seconds
+      // Navigate to the HomeScreen after 2 seconds
       Future.delayed(const Duration(seconds: 2), () {
-        Navigator.of(context)
-            .pop(true); // Return true to indicate successful payment
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => FeedbackScreen(
+                      driverId: widget.driverId,
+                    )));
+        // Navigator.pushAndRemoveUntil(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => const HomePage()),
+        //   (Route<dynamic> route) => false, // Remove all previous routes
+        // );
       });
     } catch (e) {
       _showError(
