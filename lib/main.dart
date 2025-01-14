@@ -6,6 +6,7 @@ import 'package:zoomer/controllers/theme.dart';
 import 'package:zoomer/firebase_options.dart';
 import 'package:zoomer/services/booking_services_now.dart';
 import 'package:zoomer/services/userservices.dart';
+import 'package:zoomer/views/screens/history/bloc/ride_history_bloc.dart';
 import 'package:zoomer/views/screens/login_screens/bloc/auth_bloc.dart';
 import 'package:zoomer/views/screens/splash_screen.dart';
 import 'package:zoomer/views/screens/login_screens/bloc/signin_bloc.dart';
@@ -78,7 +79,8 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => VehicleBloc(PriceServices()),
-        ) // Pass priceServices to VehicleBloc
+        ),
+        BlocProvider(create: (context) => RideHistoryBloc()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {

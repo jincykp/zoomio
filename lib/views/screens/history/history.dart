@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:buttons_tabbar/buttons_tabbar.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoomer/views/screens/history/bloc/ride_history_bloc.dart';
 import 'package:zoomer/views/screens/history/cancelled.dart';
 import 'package:zoomer/views/screens/history/completed.dart';
 import 'package:zoomer/views/screens/history/upcoming.dart';
@@ -10,39 +12,40 @@ class HistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3, // Number of tabs
-      child: Scaffold(
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                ButtonsTabBar(
-                  backgroundColor: ThemeColors.primaryColor,
-                  borderWidth: 1,
-                  borderColor: Colors.black,
-                  labelStyle: const TextStyle(
-                    color: ThemeColors.titleColor,
-                    fontWeight: FontWeight.bold,
+    return BlocProvider(
+      create: (context) => RideHistoryBloc()..add(LoadRideHistory()),
+      child: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  ButtonsTabBar(
+                    backgroundColor: ThemeColors.primaryColor,
+                    borderWidth: 1,
+                    borderColor: Colors.black,
+                    labelStyle: const TextStyle(
+                      color: ThemeColors.titleColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    unselectedLabelStyle: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    tabs: const [
+                      Tab(text: "Completed"),
+                      Tab(text: "Cancelled"),
+                    ],
                   ),
-                  unselectedLabelStyle: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
+                  const Expanded(
+                    child: TabBarView(
+                      children: [CompletedTab(), CancelledTab()],
+                    ),
                   ),
-                  // The tabs
-                  tabs: const [
-                    Tab(text: "Upcoming"),
-                    Tab(text: "Completed"),
-                    Tab(text: "Cancelled"),
-                  ],
-                ),
-                const Expanded(
-                  child: TabBarView(
-                    children: [UpcomingTab(), CompletedTab(), CancelledTab()],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

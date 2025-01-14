@@ -12,6 +12,7 @@ import 'package:zoomer/services/userservices.dart';
 import 'package:zoomer/views/screens/complaints/complaints.dart';
 import 'package:zoomer/views/screens/drawer_screens/about_us.dart';
 import 'package:zoomer/views/screens/drawer_screens/help_and_support.dart';
+import 'package:zoomer/views/screens/drawer_screens/privacy_ppolicy.dart';
 import 'package:zoomer/views/screens/login_screens/sign_in.dart';
 import 'package:zoomer/views/screens/profile/user_profile_screen.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
@@ -176,6 +177,12 @@ class _CustomDrawerawerState extends State<CustomDrawerawer> {
             ),
             const Divider(),
             _buildDrawerListTile(
+              icon: Icons.settings,
+              title: "Settings",
+              onTap: () {},
+            ),
+            const Divider(),
+            _buildDrawerListTile(
               icon: Icons.info_outline,
               title: "About us",
               onTap: () {
@@ -185,9 +192,14 @@ class _CustomDrawerawerState extends State<CustomDrawerawer> {
             ),
             const Divider(),
             _buildDrawerListTile(
-              icon: Icons.settings,
-              title: "Settings",
-              onTap: () {},
+              icon: Icons.privacy_tip,
+              title: "Privacy Policy",
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const PrivacyPolicyScreen()));
+              },
             ),
             const Divider(),
             _buildDrawerListTile(

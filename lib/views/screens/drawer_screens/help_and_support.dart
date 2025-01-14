@@ -7,13 +7,13 @@ class HelpAndSupportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.grey[50],
+      //backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text(
           "Help & Support",
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            //  color: Colors.white,
           ),
         ),
         centerTitle: true,
@@ -49,15 +49,16 @@ class HelpAndSupportScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        //  color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
+        border: Border.all(color: ThemeColors.titleColor),
+        boxShadow: const [
+          // BoxShadow(
+          //   //color: Colors.grey.withOpacity(0.1),
+          //   spreadRadius: 1,
+          //   blurRadius: 5,
+          //   offset: Offset(0, 2),
+          // ),
         ],
       ),
       child: const Column(
@@ -68,7 +69,7 @@ class HelpAndSupportScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              // color: Colors.black,
             ),
           ),
           SizedBox(height: 12),
@@ -76,7 +77,7 @@ class HelpAndSupportScreen extends StatelessWidget {
             "We're here to assist you with any questions or issues you may have. Below you'll find helpful answers to your most common queries, as well as ways to contact us if you need further assistance.",
             style: TextStyle(
               fontSize: 16,
-              color: Colors.black87,
+              // color: Colors.black87,
               height: 1.5,
             ),
           ),
@@ -115,11 +116,11 @@ class HelpAndSupportScreen extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
+      // decoration: BoxDecoration(
+      //   //  color: Colors.grey[50],
+      //   borderRadius: BorderRadius.circular(8),
+      //   border: Border.all(color: ThemeColors.titleColor),
+      // ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -128,15 +129,15 @@ class HelpAndSupportScreen extends StatelessWidget {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              // color: Colors.black87,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             answer,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
-              color: Colors.grey[700],
+              //color: Colors.grey[700],
               height: 1.5,
             ),
           ),
@@ -175,13 +176,13 @@ class HelpAndSupportScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        // color: Colors.white,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: ThemeColors.titleColor),
       ),
       child: Row(
         children: [
-          Icon(icon, color: Colors.blue[600], size: 24),
+          Icon(icon, color: ThemeColors.primaryColor, size: 24),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -192,15 +193,15 @@ class HelpAndSupportScreen extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    //color: Colors.black87,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   info,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
-                    color: Colors.grey[700],
+                    // color: Colors.grey[700],
                   ),
                 ),
               ],
@@ -271,16 +272,17 @@ class HelpAndSupportScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        // color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: ThemeColors.titleColor),
+        // boxShadow: const [
+        //   BoxShadow(
+        //     //color: Colors.grey.withOpacity(0.1),
+        //     spreadRadius: 1,
+        //     blurRadius: 5,
+        //     offset: Offset(0, 2),
+        //   ),
+        // ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -290,7 +292,7 @@ class HelpAndSupportScreen extends StatelessWidget {
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              // color: Colors.black,
             ),
           ),
           const SizedBox(height: 16),
