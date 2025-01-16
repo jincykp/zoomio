@@ -175,12 +175,12 @@ class _CustomDrawerawerState extends State<CustomDrawerawer> {
                 context.read<ThemeCubit>().toggleTheme();
               },
             ),
-            const Divider(),
-            _buildDrawerListTile(
-              icon: Icons.settings,
-              title: "Settings",
-              onTap: () {},
-            ),
+            // const Divider(),
+            // _buildDrawerListTile(
+            //   icon: Icons.settings,
+            //   title: "Settings",
+            //   onTap: () {},
+            // ),
             const Divider(),
             _buildDrawerListTile(
               icon: Icons.info_outline,

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:zoomer/views/home_page.dart';
@@ -7,9 +8,14 @@ import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 
 class FeedbackScreen extends StatefulWidget {
-  final String driverId; // ID to associate the rating with a specific driver
+  final String driverId;
+  final String bookingId;
 
-  const FeedbackScreen({super.key, required this.driverId});
+  const FeedbackScreen({
+    super.key,
+    required this.driverId,
+    required this.bookingId,
+  });
 
   @override
   _FeedbackScreenState createState() => _FeedbackScreenState();
@@ -122,71 +128,49 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
   Future<void> submitFeedback() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Get complaint, feedback, and rating
       String complaint = _complaintController.text.trim();
       String feedback = _feedbackController.text.trim();
+      double rating = _driverRating;
+      String driverId = widget.driverId;
+      String bookingId = widget.bookingId; // Access the bookingId from widget
+
+      DatabaseReference bookingRef =
+          FirebaseDatabase.instance.ref('bookings/$bookingId');
 
       try {
-        // Reference to the specific driver's document in Firestore
-        DocumentReference driverDoc = FirebaseFirestore.instance
-            .collection('drivers')
-            .doc(widget.driverId);
-
-        // Save feedback in the driver's subcollection
-        await driverDoc.collection('feedbacks').add({
-          'complaint': complaint,
-          'feedback': feedback,
-          'rating': _driverRating,
-          'timestamp': FieldValue.serverTimestamp(),
+        await bookingRef.update({
+          'feedback': {
+            'complaint': complaint,
+            'feedback': feedback,
+            'rating': rating,
+            'timestamp': ServerValue.timestamp,
+            'driverId': driverId
+          },
+          'hasCustomerFeedback': true
         });
 
-        // Fetch the driver's current average rating and total ratings
-        DocumentSnapshot driverSnapshot = await driverDoc.get();
-        if (driverSnapshot.exists) {
-          double currentAverageRating =
-              driverSnapshot.get('averageRating') ?? 0.0;
-          int currentTotalRatings = driverSnapshot.get('totalRatings') ?? 0;
+        // Optionally update driver's average rating
+        DatabaseReference driverRef =
+            FirebaseDatabase.instance.ref('drivers/$driverId');
+        // You would need to implement the logic to recalculate average rating
 
-          // Calculate the new average rating
-          double newAverageRating =
-              ((currentAverageRating * currentTotalRatings) + _driverRating) /
-                  (currentTotalRatings + 1);
-
-          // Update the driver's document with the new rating and count
-          await driverDoc.update({
-            'averageRating': newAverageRating,
-            'totalRatings': currentTotalRatings + 1,
-          });
-        } else {
-          // If the driver document doesn't exist, initialize rating data
-          await driverDoc.set({
-            'averageRating': _driverRating,
-            'totalRatings': 1,
-          });
-        }
-
-        // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Your feedback has been submitted.')),
         );
 
-        // Clear the form fields
         _complaintController.clear();
         _feedbackController.clear();
         setState(() {
-          _driverRating = 3.0; // Reset to default
+          _driverRating = 3.0;
         });
 
-        // Navigate to HomeScreen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomePage()),
         );
       } catch (e) {
-        // Show error message if submission fails
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Failed to submit feedback. Try again.')),
+          SnackBar(content: Text('Failed to submit feedback: ${e.toString()}')),
         );
       }
     }

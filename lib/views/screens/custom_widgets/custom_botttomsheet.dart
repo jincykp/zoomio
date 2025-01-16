@@ -235,7 +235,12 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
               .then((doc) {
             if (doc.exists) {
               setState(() {
-                driverDetails = doc.data();
+                driverDetails = {
+                  ...doc.data()!,
+                  'displayName': doc.data()!['name'] ?? 'Unknown Driver',
+                  'email': doc.data()!['email'] ?? 'no-email',
+                  // Add other required fields with default values
+                };
               });
             }
           });
@@ -323,7 +328,8 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
                                   receiverUserEmail:
                                       driverDetails!['email'] ?? 'Driver',
                                   receiverUserId: driverId,
-                                  receiverName: driverDetails!['displayName'],
+                                  receiverName: driverDetails!['name'] ??
+                                      'Unknown Driver', // Add fallback value
                                 ),
                               ),
                             );

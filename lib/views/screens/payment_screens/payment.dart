@@ -90,6 +90,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             MaterialPageRoute(
                 builder: (context) => FeedbackScreen(
                       driverId: widget.driverId,
+                      bookingId: widget.bookingId,
                     )));
         // Navigator.pushAndRemoveUntil(
         //   context,

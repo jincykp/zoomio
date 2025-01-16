@@ -10,7 +10,7 @@ import 'package:zoomer/services/userservices.dart';
 import 'package:zoomer/views/screens/bottom_screens/home_screen.dart';
 import 'package:zoomer/views/screens/bottom_screens/notification.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_drawer.dart';
-import 'package:zoomer/views/screens/history/history.dart';
+import 'package:zoomer/views/screens/history/history_screen.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
