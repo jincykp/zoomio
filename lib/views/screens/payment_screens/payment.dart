@@ -100,7 +100,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       });
     } catch (e) {
       _showError(
-          'Payment verified but could not update booking. Please contact support.');
+          'Payment verified but could not update booking... Please contact support.');
     }
   }
 
