@@ -3,15 +3,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class PriceServices {
   /// Calculate the total price for all vehicles based on distance
   Future<List<Map<String, dynamic>>> calculateTotalPriceForAllVehicles(
-      double distanceInKilometers) async {
+    double distanceInKilometers,
+  ) async {
     try {
-      // Fetch all vehicle rates from Firestore
-      List<Map<String, dynamic>> allRates = await fetchAllVehicleRates();
+      // Fetch only available vehicles from Firestore
+      var snapshot = await FirebaseFirestore.instance
+          .collection('vehicles')
+          .where('status', isEqualTo: 'available')
+          .get();
 
-      // Initialize a list to store the total prices for all vehicles
+      if (snapshot.docs.isEmpty) {
+        print("No available vehicles found");
+        throw Exception("No available vehicles found");
+      }
+
       List<Map<String, dynamic>> totalPriceList = [];
 
-      for (var rates in allRates) {
+      for (var doc in snapshot.docs) {
+        var rates = doc.data();
+
         // Extract rates for each vehicle
         double baseFare = (rates['baseFare'] ?? 0.0).toDouble();
         double perKilometerCharge =
@@ -30,20 +40,20 @@ class PriceServices {
 
         // Add the total price and vehicle data to the result list
         totalPriceList.add({
+          'id': doc.id,
           'vehicleType': rates['vehicleType'],
-          'brand': rates['brand'], // Ensure 'brand' exists in Firestore
-          'seatingCapacity':
-              rates['seatingCapacity'], // Ensure 'seatingCapacity' exists
-          'aboutVehicle': rates['aboutVehicle'] ??
-              'No description available', // Add description
-          'totalPrice': totalPrice, // Calculated total price
+          'brand': rates['brand'],
+          'seatingCapacity': rates['seatingCapacity'],
+          'aboutVehicle': rates['aboutVehicle'] ?? 'No description available',
+          'status': rates['status'],
+          'totalPrice': totalPrice,
         });
       }
 
       return totalPriceList;
     } catch (e) {
       print("Error calculating total price for all vehicles: $e");
-      return [];
+      rethrow;
     }
   }
 

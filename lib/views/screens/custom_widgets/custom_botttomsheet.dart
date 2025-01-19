@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +27,8 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
   late DatabaseReference bookingRef;
   Map<String, dynamic>? driverDetails;
   late AnimationController _progressController;
+  Timer? _timeoutTimer;
+  bool _hasTimedOut = false;
 
   @override
   void initState() {
@@ -38,69 +42,136 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
       duration: const Duration(seconds: 2),
     );
     _progressController.repeat();
+    _startTimeoutTimer();
   }
 
-  @override
-  void dispose() {
-    _progressController.dispose();
-    super.dispose();
+  void _startTimeoutTimer() {
+    _timeoutTimer = Timer(const Duration(minutes: 5), () {
+      if (mounted) {
+        setState(() {
+          _hasTimedOut = true;
+        });
+        _showTimeoutDialog();
+      }
+    });
   }
 
-  Widget _buildMovingProgressBar() {
+  void _showTimeoutDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'No Drivers Available',
+            style: TextStyle(color: ThemeColors.primaryColor),
+          ),
+          content: const Text(
+            'We apologize, but no drivers are currently available in your area. Please try booking again later.',
+            style: TextStyle(fontSize: 16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                try {
+                  // Update booking status in Firebase with more detailed status
+                  await bookingRef.update({
+                    'status': 'cancelled_no_drivers',
+                    'cancellationReason': 'No drivers available in the area',
+                    'cancelledAt': ServerValue.timestamp,
+                    'cancellationType': 'system_timeout',
+                    'bookingState': {
+                      'currentState': 'cancelled',
+                      'previousState': 'searching',
+                      'updateTimestamp': ServerValue.timestamp,
+                    },
+                    // Add any additional status information you want to track
+                    'systemNotes':
+                        'Booking automatically cancelled after 5 minutes of no driver assignment'
+                  });
+
+                  // Optional: Log this event to a separate logging node in Firebase
+                  final logsRef = FirebaseDatabase.instance
+                      .ref()
+                      .child('booking_logs')
+                      .child(widget.bookingId);
+
+                  await logsRef.push().set({
+                    'event': 'booking_timeout',
+                    'timestamp': ServerValue.timestamp,
+                    'status': 'cancelled_no_drivers',
+                    'reason': 'No drivers available after timeout'
+                  });
+
+                  // Close both dialog and bottom sheet
+                  if (mounted) {
+                    Navigator.of(context).pop(); // Close dialog
+                    Navigator.of(context).pop(); // Close bottom sheet
+                  }
+                } catch (e) {
+                  // Handle any errors that occur during the update
+                  print('Error updating booking status: $e');
+
+                  // Show error message to user
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                            'Error updating booking status. Please try again.'),
+                        backgroundColor: ThemeColors.alertColor,
+                      ),
+                    );
+                  }
+                }
+              },
+              child: const Text(
+                'OK',
+                style: TextStyle(color: ThemeColors.primaryColor),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildWaitingContent() {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           const Text(
-            'Driver is on the way',
+            'Looking for Available Drivers',
             style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
               color: ThemeColors.primaryColor,
             ),
           ),
-          const SizedBox(height: 8),
-          Container(
-            width: double.infinity,
-            height: 4,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(2),
-              color: Colors.grey[200],
-            ),
-            child: AnimatedBuilder(
-              animation: _progressController,
-              builder: (context, child) {
-                return ShaderMask(
-                  shaderCallback: (bounds) {
-                    return LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: const [
-                        ThemeColors.primaryColor,
-                        ThemeColors.primaryColor,
-                        Colors.transparent,
-                        ThemeColors.primaryColor,
-                      ],
-                      stops: [
-                        0.0,
-                        _progressController.value,
-                        _progressController.value + 0.1,
-                        1.0,
-                      ],
-                      tileMode: TileMode.mirror,
-                    ).createShader(bounds);
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    height: 4,
-                    color: Colors.white,
-                  ),
-                );
-              },
+          const SizedBox(height: 16),
+          const CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(ThemeColors.primaryColor),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Please wait while we connect you with nearby drivers...',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
             ),
           ),
+          if (_hasTimedOut) ...[
+            const SizedBox(height: 16),
+            const Text(
+              'Taking longer than usual. Please be patient.',
+              style: TextStyle(
+                color: ThemeColors.alertColor,
+                fontSize: 14,
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -109,7 +180,16 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
   Widget _buildActionButton(String status, double screenWidth,
       double screenHeight, Map<String, dynamic> bookingData) {
     if (status == 'driver_accepted') {
-      // ... existing code ...
+      return CustomButtons(
+        text: 'Track Your Ride',
+        onPressed: () {
+          // Add navigation to tracking screen if needed
+        },
+        backgroundColor: ThemeColors.primaryColor,
+        textColor: ThemeColors.textColor,
+        screenWidth: screenWidth,
+        screenHeight: screenHeight,
+      );
     } else if (status == 'trip_started' || status == 'on_trip') {
       // Extract vehicle details safely
       Map<String, dynamic> vehicleDetails = {};
@@ -132,10 +212,6 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
       return CustomButtons(
         text: 'Click to Pay Your Amount',
         onPressed: () {
-          // Print debug information
-          print('Booking Data: $bookingData');
-          print('Vehicle Details: $vehicleDetails');
-
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -188,6 +264,22 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
   }
 
   @override
+  void dispose() {
+    _progressController.dispose();
+    _timeoutTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> makePhoneCall(String phoneNumber) async {
+    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    } else {
+      throw 'Could not launch $phoneUri';
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
@@ -202,28 +294,45 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
 
         if (!bookingSnapshot.hasData ||
             bookingSnapshot.data?.snapshot.value == null) {
-          return Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Getting you the quickest ride',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: ThemeColors.primaryColor,
+          if (_hasTimedOut) {
+            return Container(
+              padding: const EdgeInsets.all(16),
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.timer_off,
+                    size: 48,
+                    color: ThemeColors.alertColor,
                   ),
-                ),
-                _buildWaitingIndicator(),
-              ],
-            ),
-          );
+                  SizedBox(height: 16),
+                  Text(
+                    'Request Timed Out',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: ThemeColors.alertColor,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'No drivers are currently available. Please try again later.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return _buildWaitingContent();
         }
 
         final bookingData = Map<String, dynamic>.from(
             bookingSnapshot.data!.snapshot.value as Map);
-
+        if (bookingData['driverId'] != null && _timeoutTimer != null) {
+          _timeoutTimer!.cancel();
+        }
         final driverId = bookingData['driverId'];
         final status = bookingData['status'] as String?;
 
@@ -239,31 +348,10 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
                   ...doc.data()!,
                   'displayName': doc.data()!['name'] ?? 'Unknown Driver',
                   'email': doc.data()!['email'] ?? 'no-email',
-                  // Add other required fields with default values
                 };
               });
             }
           });
-        }
-
-        if (driverId != null && driverDetails == null) {
-          return Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Getting you the quickest ride',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: ThemeColors.primaryColor,
-                  ),
-                ),
-                _buildWaitingIndicator(),
-              ],
-            ),
-          );
         }
 
         return Container(
@@ -279,11 +367,9 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
                   color: ThemeColors.primaryColor,
                 ),
               ),
-              // Show progress indicator only when no driver is assigned yet
               if (driverId == null) _buildWaitingIndicator(),
               const SizedBox(height: 16),
               if (driverDetails != null) ...[
-                // Using spread operator to add multiple widgets
                 ListTile(
                   leading: CircleAvatar(
                     backgroundImage: driverDetails?['profileImageUrl'] != null
@@ -329,7 +415,7 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
                                       driverDetails!['email'] ?? 'Driver',
                                   receiverUserId: driverId,
                                   receiverName: driverDetails!['name'] ??
-                                      'Unknown Driver', // Add fallback value
+                                      'Unknown Driver',
                                 ),
                               ),
                             );
@@ -345,10 +431,7 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Add Cancel Ride button right after driver details
-                if (status != 'trip_started' &&
-                    status !=
-                        'on_trip') // Show cancel button before trip starts
+                if (status != 'trip_started' && status != 'on_trip')
                   CustomButtons(
                     text: 'Cancel Ride',
                     onPressed: () {
@@ -387,14 +470,5 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
         );
       },
     );
-  }
-
-  Future<void> makePhoneCall(String phoneNumber) async {
-    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
-    if (await canLaunchUrl(phoneUri)) {
-      await launchUrl(phoneUri);
-    } else {
-      throw 'Could not launch $phoneUri';
-    }
   }
 }

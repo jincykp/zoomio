@@ -18,6 +18,15 @@ class VehiclePriceCalculatedState extends VehicleState {
   List<Object> get props => [vehiclePrices];
 }
 
+class VehiclesFetchedState extends VehicleState {
+  final List<Map<String, dynamic>> vehicles;
+
+  const VehiclesFetchedState(this.vehicles);
+
+  @override
+  List<Object> get props => [vehicles];
+}
+
 class VehicleErrorState extends VehicleState {
   final String error;
 
