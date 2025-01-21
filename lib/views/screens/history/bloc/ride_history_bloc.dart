@@ -53,21 +53,31 @@ class RideHistoryBloc extends Bloc<RideHistoryEvent, RideHistoryState> {
     try {
       if (snapshot.value != null) {
         final data = snapshot.value as Map<dynamic, dynamic>;
+        print('Processing ${data.length} bookings'); // Debug print
 
         List<Booking> completedRides = [];
         List<Booking> cancelledRides = [];
 
         data.forEach((key, value) {
           try {
-            final ride =
-                Booking.fromJson(key, Map<String, dynamic>.from(value));
-            final status = ride.status.toLowerCase();
+            final bookingData = Map<String, dynamic>.from(value);
+            print('Processing booking: $key');
+            print('Status: ${bookingData['status']}');
+            print('CompletedAt: ${bookingData['completedAt']}'); // Debug print
 
-            if (status == 'trip completed' || status == 'completed') {
+            final ride = Booking.fromJson(key, bookingData);
+            final status = ride.status
+                .toLowerCase()
+                .trim(); // Added trim() to remove any whitespace
+
+            if (status == 'trip_completed') {
+              print('Adding completed ride: $key');
               completedRides.add(ride);
             } else if (status == 'customer_cancelled' ||
                 status == 'cancelled_by_driver' ||
-                status == 'cancelled') {
+                status == 'cancelled' ||
+                status == 'cancelled_no_drivers') {
+              print('Adding cancelled ride: $key');
               cancelledRides.add(ride);
             }
           } catch (e) {
@@ -75,9 +85,13 @@ class RideHistoryBloc extends Bloc<RideHistoryEvent, RideHistoryState> {
           }
         });
 
-        // Sort rides by timestamp
-        completedRides.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-        cancelledRides.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+        print('Found ${completedRides.length} completed rides');
+        print('Found ${cancelledRides.length} cancelled rides');
+
+        // Sort rides by timestamp (most recent first)
+        completedRides.sort((a, b) => b.completedAt.compareTo(a.completedAt));
+        cancelledRides
+            .sort((a, b) => b.tripStartedAt.compareTo(a.tripStartedAt));
 
         if (!emit.isDone) {
           emit(RideHistoryLoaded(
@@ -85,12 +99,10 @@ class RideHistoryBloc extends Bloc<RideHistoryEvent, RideHistoryState> {
             cancelledRides: cancelledRides,
           ));
         }
-      } else {
-        if (!emit.isDone) {
-          emit(RideHistoryLoaded(completedRides: [], cancelledRides: []));
-        }
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('Error in _processSnapshot: $e');
+      print('Stack trace: $stackTrace');
       if (!emit.isDone) {
         emit(RideHistoryError(e.toString()));
       }

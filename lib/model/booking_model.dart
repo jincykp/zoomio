@@ -1,9 +1,7 @@
-import 'package:zoomer/model/vehicle_model.dart';
-
 class Booking {
   final String bookingId;
   final int acceptedAt;
-  final String completedAt;
+  final int completedAt; // Changed to int since it's a timestamp
   final String driverId;
   final String dropOffLocation;
   final String pickupLocation;
@@ -30,10 +28,24 @@ class Booking {
   });
 
   factory Booking.fromJson(String id, Map<String, dynamic> json) {
+    // Handle integer conversion for completedAt
+    int parseTimestamp(dynamic value) {
+      if (value == null) return 0;
+      if (value is int) return value;
+      if (value is String) {
+        try {
+          return int.parse(value);
+        } catch (e) {
+          return 0;
+        }
+      }
+      return 0;
+    }
+
     return Booking(
       bookingId: id,
       acceptedAt: json['acceptedAt'] ?? 0,
-      completedAt: json['completedAt'] ?? '',
+      completedAt: parseTimestamp(json['completedAt']),
       driverId: json['driverId'] ?? '',
       dropOffLocation: json['dropOffLocation'] ?? '',
       pickupLocation: json['pickupLocation'] ?? '',
@@ -63,45 +75,9 @@ class Booking {
     };
   }
 
-  // Helper method to get minimal vehicle details needed for booking
-  static Map<String, dynamic> getVehicleDetailsForBooking(Vehicle vehicle) {
-    return {
-      'aboutVehicle': vehicle.aboutVehicle,
-      'brand': vehicle.brand,
-      'seatingCapacity': vehicle.seatingCapacity,
-      'totalPrice': vehicle.totalPrice,
-      'vehicleType': vehicle.vehicleType,
-    };
-  }
-
-  // Helper method to create a new instance with updated fields
-  Booking copyWith({
-    String? bookingId,
-    int? acceptedAt,
-    String? completedAt,
-    String? driverId,
-    String? dropOffLocation,
-    String? pickupLocation,
-    String? status,
-    String? timestamp,
-    double? totalPrice,
-    int? tripStartedAt,
-    String? userId,
-    Map<String, dynamic>? vehicleDetails,
-  }) {
-    return Booking(
-      bookingId: bookingId ?? this.bookingId,
-      acceptedAt: acceptedAt ?? this.acceptedAt,
-      completedAt: completedAt ?? this.completedAt,
-      driverId: driverId ?? this.driverId,
-      dropOffLocation: dropOffLocation ?? this.dropOffLocation,
-      pickupLocation: pickupLocation ?? this.pickupLocation,
-      status: status ?? this.status,
-      timestamp: timestamp ?? this.timestamp,
-      totalPrice: totalPrice ?? this.totalPrice,
-      tripStartedAt: tripStartedAt ?? this.tripStartedAt,
-      userId: userId ?? this.userId,
-      vehicleDetails: vehicleDetails ?? this.vehicleDetails,
-    );
+  // Helper method to get the formatted completedAt date
+  String get formattedCompletedAt {
+    if (completedAt == 0) return '';
+    return DateTime.fromMillisecondsSinceEpoch(completedAt).toString();
   }
 }

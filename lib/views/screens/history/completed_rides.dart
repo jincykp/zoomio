@@ -12,9 +12,22 @@ class CompletedTab extends StatefulWidget {
 }
 
 class _CompletedTabState extends State<CompletedTab> {
-  String formatDateTime(String timestamp) {
-    final dateTime = DateTime.parse(timestamp);
-    return DateFormat('dd MMM yyyy, hh:mm a').format(dateTime);
+  String formatDateTime(dynamic timestamp) {
+    if (timestamp is int) {
+      // Handle integer timestamp (milliseconds since epoch)
+      final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+      return DateFormat('dd MMM yyyy, hh:mm a').format(dateTime);
+    } else if (timestamp is String) {
+      // Handle ISO 8601 string timestamp
+      try {
+        final dateTime = DateTime.parse(timestamp);
+        return DateFormat('dd MMM yyyy, hh:mm a').format(dateTime);
+      } catch (e) {
+        print('Error parsing timestamp: $e');
+        return 'Invalid date';
+      }
+    }
+    return 'Invalid date';
   }
 
   String formatPrice(double price) {
@@ -81,8 +94,8 @@ class _CompletedTabState extends State<CompletedTab> {
                         price: formatPrice(ride.totalPrice),
                       ),
                       const Divider(height: 24),
-                      if (ride.vehicleDetails != null) ...[
-                        VehicleInfo(vehicleDetails: ride.vehicleDetails!),
+                      if (ride.vehicleDetails.isNotEmpty) ...[
+                        VehicleInfo(vehicleDetails: ride.vehicleDetails),
                       ],
                     ],
                   ),
@@ -95,6 +108,92 @@ class _CompletedTabState extends State<CompletedTab> {
         }
         return const Center(child: Text('No data available'));
       },
+    );
+  }
+}
+
+// Assuming you have these widget components defined elsewhere
+class LocationInfo extends StatelessWidget {
+  final String pickup;
+  final String dropoff;
+
+  const LocationInfo({
+    Key? key,
+    required this.pickup,
+    required this.dropoff,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.location_on, color: Colors.green),
+            const SizedBox(width: 8),
+            Expanded(child: Text(pickup)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            const Icon(Icons.location_on, color: Colors.red),
+            const SizedBox(width: 8),
+            Expanded(child: Text(dropoff)),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class RideDetails extends StatelessWidget {
+  final String timestamp;
+  final String completedAt;
+  final String price;
+
+  const RideDetails({
+    Key? key,
+    required this.timestamp,
+    required this.completedAt,
+    required this.price,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Started: $timestamp'),
+        const SizedBox(height: 4),
+        Text('Completed: $completedAt'),
+        const SizedBox(height: 4),
+        Text('Total Fare: $price'),
+      ],
+    );
+  }
+}
+
+class VehicleInfo extends StatelessWidget {
+  final Map<String, dynamic> vehicleDetails;
+
+  const VehicleInfo({
+    Key? key,
+    required this.vehicleDetails,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Vehicle: ${vehicleDetails['brand'] ?? 'N/A'}'),
+        if (vehicleDetails['vehicleType'] != null)
+          Text('Type: ${vehicleDetails['vehicleType']}'),
+        if (vehicleDetails['seatingCapacity'] != null)
+          Text('Capacity: ${vehicleDetails['seatingCapacity']} seats'),
+      ],
     );
   }
 }

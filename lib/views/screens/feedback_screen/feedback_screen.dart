@@ -154,9 +154,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             FirebaseDatabase.instance.ref('drivers/$driverId');
         // You would need to implement the logic to recalculate average rating
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Your feedback has been submitted.')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Your feedback has been submitted.'),
+          backgroundColor: ThemeColors.successColor,
+        ));
 
         _complaintController.clear();
         _feedbackController.clear();

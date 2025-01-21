@@ -180,16 +180,16 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
   Widget _buildActionButton(String status, double screenWidth,
       double screenHeight, Map<String, dynamic> bookingData) {
     if (status == 'driver_accepted') {
-      return CustomButtons(
-        text: 'Track Your Ride',
-        onPressed: () {
-          // Add navigation to tracking screen if needed
-        },
-        backgroundColor: ThemeColors.primaryColor,
-        textColor: ThemeColors.textColor,
-        screenWidth: screenWidth,
-        screenHeight: screenHeight,
-      );
+      // return CustomButtons(
+      //   text: 'Track Your Ride',
+      //   onPressed: () {
+      //     // Add navigation to tracking screen if needed
+      //   },
+      //   backgroundColor: ThemeColors.primaryColor,
+      //   textColor: ThemeColors.textColor,
+      //   screenWidth: screenWidth,
+      //   screenHeight: screenHeight,
+      // );
     } else if (status == 'trip_started' || status == 'on_trip') {
       // Extract vehicle details safely
       Map<String, dynamic> vehicleDetails = {};
