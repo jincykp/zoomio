@@ -146,7 +146,7 @@ class _CustomBookNowContainerState extends State<CustomBookNowContainer> {
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                backgroundColor: ThemeColors.primaryColor,
+                                backgroundColor: ThemeColors.alertColor,
                                 textColor: ThemeColors.textColor,
                                 screenWidth: screenWidth,
                                 screenHeight: screenHeight,

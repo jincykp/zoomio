@@ -1,23 +1,36 @@
-import 'package:flutter/material.dart';
-import 'package:zoomer/views/screens/styles/appstyles.dart';
+// import 'package:flutter/material.dart';
+// import 'package:zoomer/views/screens/styles/appstyles.dart';
 
-class ChatBubble extends StatefulWidget {
-  final String message;
-  ChatBubble({super.key, required this.message});
+// enum MessageType { sent, received }
 
-  @override
-  State<ChatBubble> createState() => _ChatBubbleState();
-}
+// class ChatBubble extends StatelessWidget {
+//   final String message;
+//   final MessageType messageType;
 
-class _ChatBubbleState extends State<ChatBubble> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: ThemeColors.primaryColor),
-      child: Text(widget.message, style: TextStyle(fontSize: 16)),
-    );
-  }
-}
+//   const ChatBubble(
+//       {Key? key,
+//       required this.message,
+//       this.messageType = MessageType.received})
+//       : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       margin: const EdgeInsets.symmetric(vertical: 4),
+//       padding: const EdgeInsets.all(12),
+//       decoration: BoxDecoration(
+//         color: messageType == MessageType.sent
+//             ? ThemeColors.primaryColor.withOpacity(0.8)
+//             : Colors.grey[300],
+//         borderRadius: BorderRadius.circular(12),
+//       ),
+//       child: Text(
+//         message,
+//         style: TextStyle(
+//           color: messageType == MessageType.sent ? Colors.white : Colors.black,
+//           fontSize: 16,
+//         ),
+//       ),
+//     );
+//   }
+// }

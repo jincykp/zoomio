@@ -411,11 +411,11 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ChatScreen(
-                                  receiverUserEmail:
-                                      driverDetails!['email'] ?? 'Driver',
                                   receiverUserId: driverId,
                                   receiverName: driverDetails!['name'] ??
                                       'Unknown Driver',
+                                  receiverAvatar: driverDetails![
+                                      'profileImageUrl'], // Pass avatar here
                                 ),
                               ),
                             );

@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import 'package:zoomer/services/auth_services.dart';
 import 'package:zoomer/views/home_page.dart';
@@ -8,6 +9,7 @@ import 'package:zoomer/views/screens/custom_widgets/cus_password.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/custom_widgets/signup_formfields.dart';
 import 'package:zoomer/views/screens/forgot_pw.dart/click_otp.dart';
+import 'package:zoomer/views/screens/login_screens/bloc/auth_bloc.dart';
 import 'package:zoomer/views/screens/login_screens/signup.dart';
 import 'package:zoomer/views/screens/styles/appstyles.dart';
 
@@ -124,7 +126,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        AuthServices().signInWithGoogle(context);
+                        context.read<AuthBloc>().add(SignInWithGoogle());
                       },
                       child: Container(
                         width: 50, height: 50,
