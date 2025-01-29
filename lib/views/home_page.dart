@@ -130,9 +130,18 @@ class _HomePageState extends State<HomePage> {
           GButton(
             icon: Icons.person,
             iconSize: 30,
+            text: 'Profile',
           ),
-          GButton(icon: Icons.home, iconSize: 30),
-          GButton(icon: Icons.history, iconSize: 30),
+          GButton(
+            icon: Icons.home,
+            iconSize: 30,
+            text: 'Home',
+          ),
+          GButton(
+            icon: Icons.history,
+            iconSize: 30,
+            text: 'Ride History',
+          ),
         ],
         selectedIndex: _currentIndex,
         onTabChange: (index) {

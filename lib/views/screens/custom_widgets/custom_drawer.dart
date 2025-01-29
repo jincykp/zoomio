@@ -170,7 +170,7 @@ class _CustomDrawerawerState extends State<CustomDrawerawer> {
             _buildUserHeader(context),
             _buildDrawerListTile(
               icon: Icons.dark_mode,
-              title: "Theme",
+              title: "Light/Dark Mode",
               onTap: () {
                 context.read<ThemeCubit>().toggleTheme();
               },
