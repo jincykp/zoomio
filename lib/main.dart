@@ -17,15 +17,7 @@ import 'package:zoomer/views/screens/where_to_go_screens/price_services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Stripe.publishableKey = stripePublishableKey;
-  // await Stripe.instance.applySettings();
-  // try {
-  //   // Load .env file
-  //   await dotenv.load(fileName: ".env");
-  //   print("Environment variables loaded");
-  // } catch (e) {
-  //   print("Failed to load .e nv file: $e");
-  // }
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -86,9 +78,9 @@ class MyApp extends StatelessWidget {
         builder: (context, themeMode) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'zoomio_userSide',
-            theme: ThemeData.dark(),
-            darkTheme: ThemeData.light(),
+            title: 'zoomio',
+            theme: ThemeData.light(),
+            darkTheme: ThemeData.dark(),
             themeMode: themeMode, // Use the ThemeMode from BlocBuilder
             home: const SplashScreen(),
           );

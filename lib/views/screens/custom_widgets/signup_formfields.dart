@@ -10,6 +10,8 @@ class Textformformfields extends StatelessWidget {
   final bool readOnly;
   final TextInputType? keyBoardType;
   final List<TextInputFormatter>? inputFormatters;
+  final TextInputAction? textInputAction; // Added TextInputAction
+  final ToolbarOptions? toolbarOptions; // Added ToolbarOptions
 
   Textformformfields({
     super.key,
@@ -20,8 +22,9 @@ class Textformformfields extends StatelessWidget {
     this.inputFormatters,
     this.suffixIcon,
     this.keyBoardType,
+    this.textInputAction = TextInputAction.next, // Default value
     this.readOnly = false,
-    TextStyle? hintstyle,
+    this.toolbarOptions, // New optional parameter
   });
 
   @override
@@ -30,6 +33,15 @@ class Textformformfields extends StatelessWidget {
       keyboardType: keyBoardType,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: controller,
+      textInputAction: textInputAction, // Assigning textInputAction here
+      toolbarOptions: toolbarOptions ??
+          const ToolbarOptions(
+            // Assigning default value
+            copy: true,
+            cut: false,
+            paste: false,
+            selectAll: true,
+          ),
       decoration: InputDecoration(
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(19)),

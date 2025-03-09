@@ -20,7 +20,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
-        android:label="zoomer"
+        android:label="Zoomio"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyBqeMmbJ5zSYxehgQqCCjmZfBoigaHkGkU"/> <!-- Use your actual Google Maps API key -->

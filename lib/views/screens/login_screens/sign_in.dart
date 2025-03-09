@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
 import 'package:zoomer/services/auth_services.dart';
 import 'package:zoomer/views/home_page.dart';
 import 'package:zoomer/views/screens/custom_widgets/cus_password.dart';
@@ -22,22 +21,25 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   final auth = AuthServices();
-
   final emailController = TextEditingController();
   final passWordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
         padding: EdgeInsets.all(screenWidth * 0.05),
-        child: SingleChildScrollView(
-          child: Center(
+        child: Center(
+          child: SingleChildScrollView(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(height: screenHeight * 0.05), // Added space at top
                 const Row(
                   children: [
                     Text(
@@ -46,7 +48,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: screenHeight * 0.02),
+                SizedBox(height: screenHeight * 0.04), // Increased spacing
                 Textformformfields(
                   controller: emailController,
                   hintText: 'Enter your email',
@@ -62,8 +64,15 @@ class _SignInScreenState extends State<SignInScreen> {
                     }
                     return null;
                   },
+                  textInputAction: TextInputAction.next,
+                  toolbarOptions: const ToolbarOptions(
+                    copy: true,
+                    cut: true,
+                    paste: false,
+                    selectAll: true,
+                  ),
                 ),
-                SizedBox(height: screenHeight * 0.01),
+                SizedBox(height: screenHeight * 0.02), // Increased spacing
                 CustomPasswordTextFormFields(
                   hintText: "Enter your password",
                   controller: passWordController,
@@ -77,11 +86,19 @@ class _SignInScreenState extends State<SignInScreen> {
                     }
                     return null;
                   },
+                  textInputAction: TextInputAction.next,
+                  toolbarOptions: const ToolbarOptions(
+                    copy: true,
+                    cut: false,
+                    paste: false,
+                    selectAll: true,
+                  ),
                   inputFormatters: [
                     FilteringTextInputFormatter.deny(RegExp(r'\s')),
                     LengthLimitingTextInputFormatter(6)
                   ],
                 ),
+                SizedBox(height: screenHeight * 0.01),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -99,6 +116,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         )),
                   ],
                 ),
+                SizedBox(height: screenHeight * 0.02), // Added spacing
                 CustomButtons(
                     text: "Sign In",
                     onPressed: logIn,
@@ -106,6 +124,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     textColor: ThemeColors.textColor,
                     screenWidth: screenWidth,
                     screenHeight: screenHeight),
+                SizedBox(height: screenHeight * 0.03), // Added spacing
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -121,6 +140,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     const Expanded(child: Divider()),
                   ],
                 ),
+                SizedBox(height: screenHeight * 0.03), // Added spacing
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -129,16 +149,15 @@ class _SignInScreenState extends State<SignInScreen> {
                         context.read<AuthBloc>().add(SignInWithGoogle());
                       },
                       child: Container(
-                        width: 50, height: 50,
-                        // width: screenWidth * 0.001,
-                        // height: screenHeight * 0.001,
+                        width: 50,
+                        height: 50,
                         decoration: BoxDecoration(
                             border: Border.all(
                               width: 1,
                               color: Theme.of(context).brightness ==
                                       Brightness.light
-                                  ? Colors.black // Light theme: border is black
-                                  : Colors.white, // Dark theme: border is white
+                                  ? Colors.black
+                                  : Colors.white,
                             ),
                             borderRadius: BorderRadius.circular(8)),
                         child: Padding(
@@ -152,8 +171,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     )
                   ],
                 ),
+                SizedBox(height: screenHeight * 0.03), // Added spacing
                 Row(
-                  //  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text("Don't have an account?"),
@@ -169,7 +188,8 @@ class _SignInScreenState extends State<SignInScreen> {
                           style: TextStyle(color: ThemeColors.primaryColor),
                         ))
                   ],
-                )
+                ),
+                SizedBox(height: screenHeight * 0.05), // Added bottom spacing
               ],
             ),
           ),
@@ -213,10 +233,8 @@ class _SignInScreenState extends State<SignInScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             backgroundColor: ThemeColors.alertColor,
-            // Change this to your desired color
             content: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: 16.0, vertical: 8.0), // Adjust padding as needed
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Text("Login failed. Please check your email and password.",
                   style: Textstyles.smallTexts),
             ),

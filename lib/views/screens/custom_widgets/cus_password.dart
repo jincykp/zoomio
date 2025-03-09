@@ -7,13 +7,18 @@ class CustomPasswordTextFormFields extends StatefulWidget {
   String hintText;
   final List<TextInputFormatter>? inputFormatters;
   final FormFieldValidator<String>? validator;
+  final TextInputAction? textInputAction; // Added TextInputAction
+  final ToolbarOptions? toolbarOptions; // Added ToolbarOptions
+
   CustomPasswordTextFormFields({
     super.key,
     required this.hintText,
     required this.controller,
     required this.validator,
     this.inputFormatters,
+    this.textInputAction = TextInputAction.next, // Default value
     this.isConfirmPassword = false,
+    this.toolbarOptions, // New optional parameter
   });
 
   @override
@@ -31,18 +36,28 @@ class _CustomPasswordTextFormFieldsState
       autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: widget.controller,
       obscureText: obscureText,
+      textInputAction: widget.textInputAction, // Assigning textInputAction
+      toolbarOptions: widget.toolbarOptions ??
+          const ToolbarOptions(
+            // Assigning default value
+            copy: true,
+            cut: false,
+            paste: false,
+            selectAll: true,
+          ),
       decoration: InputDecoration(
-          hintText: widget.hintText,
-          suffixIcon: IconButton(
-              icon: Icon(obscureText ? Icons.visibility_off : Icons.visibility),
-              onPressed: () {
-                setState(() {
-                  obscureText = !obscureText;
-                });
-              }),
-          border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(19)),
-          )),
+        hintText: widget.hintText,
+        suffixIcon: IconButton(
+            icon: Icon(obscureText ? Icons.visibility_off : Icons.visibility),
+            onPressed: () {
+              setState(() {
+                obscureText = !obscureText;
+              });
+            }),
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(19)),
+        ),
+      ),
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your password ';
