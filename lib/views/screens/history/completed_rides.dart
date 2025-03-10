@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:zoomer/views/screens/history/bloc/ride_history_bloc.dart';
 import 'package:zoomer/views/screens/history/trip_details.dart';
+import 'package:zoomer/views/screens/styles/appstyles.dart';
 
 class CompletedTab extends StatefulWidget {
   const CompletedTab({super.key});
@@ -44,7 +45,10 @@ class _CompletedTabState extends State<CompletedTab> {
       builder: (context, state) {
         print('Current state: $state');
         if (state is RideHistoryLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+              child: CircularProgressIndicator(
+            color: ThemeColors.primaryColor,
+          ));
         } else if (state is RideHistoryLoaded) {
           if (state.completedRides.isEmpty) {
             return const Center(

@@ -2,12 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:zoomer/global/global_variable.dart';
-import 'package:zoomer/model/vehicle_model.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_booknow_container.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_butt.dart';
 import 'package:zoomer/views/screens/custom_widgets/custom_locatiofields.dart';
@@ -426,8 +424,9 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                                       builder: (context, state) {
                                         if (state is VehicleLoadingState) {
                                           return const Center(
-                                              child:
-                                                  CircularProgressIndicator());
+                                              child: CircularProgressIndicator(
+                                            color: ThemeColors.primaryColor,
+                                          ));
                                         } else if (state
                                             is VehiclePriceCalculatedState) {
                                           final vehicles = state.vehiclePrices;
@@ -447,7 +446,7 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                                                   const Text(
                                                     "Recommended for you",
                                                     style: Textstyles
-                                                        .gTextdescription,
+                                                        .recomenedText,
                                                   ),
                                                   SizedBox(
                                                       height:
@@ -462,65 +461,283 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                                                             vehicles[index];
                                                         print(vehicle);
                                                         return Card(
-                                                          elevation: 18.2,
-                                                          child: ListTile(
+                                                          margin: EdgeInsets
+                                                              .symmetric(
+                                                                  vertical: 8.0,
+                                                                  horizontal:
+                                                                      4.0),
+                                                          elevation: 4.0,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .cardColor,
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          12.0)),
+                                                          child: InkWell(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12.0),
+                                                            splashColor:
+                                                                ThemeColors
+                                                                    .primaryColor
+                                                                    .withOpacity(
+                                                                        0.1),
+                                                            highlightColor:
+                                                                ThemeColors
+                                                                    .primaryColor
+                                                                    .withOpacity(
+                                                                        0.05),
                                                             onTap: () {
-                                                              final vehicleCubit =
-                                                                  SelectedVehicleCubit();
-                                                              vehicleCubit
-                                                                  .loadVehicle(
-                                                                      vehicle); // Pass the selected vehicle data
-
+                                                              // Show loading indicator in the card while processing
                                                               showDialog(
                                                                 context:
                                                                     context,
+                                                                barrierDismissible:
+                                                                    false,
                                                                 builder:
                                                                     (BuildContext
                                                                         context) {
-                                                                  return BlocProvider
-                                                                      .value(
-                                                                    value:
-                                                                        vehicleCubit,
+                                                                  return Center(
                                                                     child:
-                                                                        CustomBookNowContainer(
-                                                                      pickupText:
-                                                                          pickupController
-                                                                              .text,
-                                                                      dropoffText:
-                                                                          dropoffController
-                                                                              .text,
+                                                                        Container(
+                                                                      padding:
+                                                                          EdgeInsets.all(
+                                                                              20),
+                                                                      decoration: BoxDecoration(
+                                                                          color: Theme.of(context)
+                                                                              .cardColor,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(16),
+                                                                          boxShadow: [
+                                                                            BoxShadow(
+                                                                              color: Colors.black.withOpacity(0.2),
+                                                                              blurRadius: 10,
+                                                                              spreadRadius: 2,
+                                                                            )
+                                                                          ]),
+                                                                      child:
+                                                                          Column(
+                                                                        mainAxisSize:
+                                                                            MainAxisSize.min,
+                                                                        children: [
+                                                                          CircularProgressIndicator(
+                                                                            valueColor:
+                                                                                AlwaysStoppedAnimation<Color>(ThemeColors.primaryColor),
+                                                                            strokeWidth:
+                                                                                3,
+                                                                          ),
+                                                                          SizedBox(
+                                                                              height: 16),
+                                                                          Text(
+                                                                            "Loading details...",
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontSize: 16,
+                                                                              fontWeight: FontWeight.w500,
+                                                                              color: Theme.of(context).textTheme.bodyLarge?.color,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
                                                                     ),
                                                                   );
                                                                 },
                                                               );
+
+                                                              // Initialize vehicle cubit and proceed with selection
+                                                              final vehicleCubit =
+                                                                  SelectedVehicleCubit();
+                                                              vehicleCubit
+                                                                  .loadVehicle(
+                                                                      vehicle);
+
+                                                              // Close loading dialog and show booking dialog after a short delay
+                                                              Future.delayed(
+                                                                  Duration(
+                                                                      milliseconds:
+                                                                          800),
+                                                                  () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(); // Close loading dialog
+
+                                                                showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return BlocProvider
+                                                                        .value(
+                                                                      value:
+                                                                          vehicleCubit,
+                                                                      child:
+                                                                          CustomBookNowContainer(
+                                                                        pickupText:
+                                                                            pickupController.text,
+                                                                        dropoffText:
+                                                                            dropoffController.text,
+                                                                        seatingCapacity: vehicle['seatingCapacity'] !=
+                                                                                null
+                                                                            ? vehicle['seatingCapacity'].toString()
+                                                                            : 'N/A',
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                );
+                                                              });
                                                             },
-                                                            title: Text(
-                                                              '${vehicle['brand'] ?? 'No Brand'}',
-                                                              style: Textstyles
-                                                                  .gTextdescription,
-                                                            ),
-                                                            subtitle: Text(
-                                                              'for ${vehicle['seatingCapacity'] ?? 'N/A'} Person',
-                                                            ),
-                                                            leading:
-                                                                CircleAvatar(
-                                                              child: Icon(
-                                                                vehicle['vehicleType'] ==
-                                                                        'Bike'
-                                                                    ? Icons
-                                                                        .directions_bike
-                                                                    : Icons
-                                                                        .directions_car,
+                                                            child:
+                                                                AnimatedContainer(
+                                                              duration: Duration(
+                                                                  milliseconds:
+                                                                      200),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            12.0),
+                                                                border:
+                                                                    Border.all(
+                                                                  color: Colors
+                                                                      .transparent,
+                                                                  width: 2,
+                                                                ),
                                                               ),
-                                                            ),
-                                                            trailing: Text(
-                                                              '₹${vehicle['totalPrice'].toStringAsFixed(2)}',
-                                                              style: const TextStyle(
-                                                                  color: ThemeColors
-                                                                      .successColor,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
+                                                              child: Padding(
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        12.0,
+                                                                    horizontal:
+                                                                        8.0),
+                                                                child: Row(
+                                                                  children: [
+                                                                    // Vehicle icon with dark mode-friendly styling
+                                                                    Container(
+                                                                      width: 60,
+                                                                      height:
+                                                                          60,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: ThemeColors
+                                                                            .primaryColor
+                                                                            .withOpacity(0.2),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(12),
+                                                                      ),
+                                                                      child:
+                                                                          Center(
+                                                                        child:
+                                                                            Icon(
+                                                                          vehicle['vehicleType'] == 'Bike'
+                                                                              ? Icons.directions_bike
+                                                                              : Icons.directions_car,
+                                                                          color:
+                                                                              ThemeColors.primaryColor,
+                                                                          size:
+                                                                              32,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            16),
+                                                                    // Vehicle details with dark mode-friendly typography
+                                                                    Expanded(
+                                                                      child:
+                                                                          Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          Text(
+                                                                            '${vehicle['brand'] ?? 'No Brand'}',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontSize: 18,
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: Theme.of(context).textTheme.titleLarge?.color,
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                              height: 4),
+                                                                          Text(
+                                                                            'for ${vehicle['seatingCapacity'] ?? 'N/A'} Person',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                              height: 4),
+                                                                          Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.route,
+                                                                                size: 14,
+                                                                                color: ThemeColors.primaryColor,
+                                                                              ),
+                                                                              SizedBox(width: 4),
+                                                                              Expanded(
+                                                                                child: Text(
+                                                                                  '${_calculatedDistance?.toStringAsFixed(1) ?? "0"} km',
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 14,
+                                                                                    color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                                                                                  ),
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    // Price with dark mode-friendly styling
+                                                                    Container(
+                                                                      padding: EdgeInsets.symmetric(
+                                                                          horizontal:
+                                                                              12,
+                                                                          vertical:
+                                                                              8),
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: ThemeColors
+                                                                            .successColor
+                                                                            .withOpacity(0.15),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(16),
+                                                                        border:
+                                                                            Border.all(
+                                                                          color: ThemeColors
+                                                                              .successColor
+                                                                              .withOpacity(0.3),
+                                                                          width:
+                                                                              1,
+                                                                        ),
+                                                                      ),
+                                                                      child:
+                                                                          Text(
+                                                                        '₹${vehicle['totalPrice'].toStringAsFixed(2)}',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color:
+                                                                              ThemeColors.successColor,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          fontSize:
+                                                                              16,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
                                                             ),
                                                           ),
                                                         );
@@ -552,7 +769,10 @@ class _WhereToGoScreenState extends State<WhereToGoScreen> {
                         ),
                       ),
                       _isLoading
-                          ? const Center(child: CircularProgressIndicator())
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                              color: ThemeColors.primaryColor,
+                            ))
                           : _placeSuggestions.isNotEmpty
                               ? ListView.separated(
                                   shrinkWrap: true,

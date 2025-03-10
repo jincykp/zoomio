@@ -87,7 +87,12 @@ class _CustomDrawerawerState extends State<CustomDrawerawer> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Cancel"),
+              child: const Text(
+                "Cancel",
+                style: TextStyle(
+                  color: ThemeColors.successColor,
+                ),
+              ),
             ),
             TextButton(
               onPressed: () async {
@@ -98,7 +103,9 @@ class _CustomDrawerawerState extends State<CustomDrawerawer> {
                   MaterialPageRoute(builder: (context) => const SignInScreen()),
                 );
               },
-              child: const Text("Logout"),
+              child: const Text("Logout",
+                  style:
+                      TextStyle(color: ThemeColors.alertColor, fontSize: 16)),
             ),
           ],
         );

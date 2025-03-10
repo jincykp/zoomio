@@ -355,82 +355,154 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
         }
 
         return Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
                 'Getting you the quickest ride',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: ThemeColors.primaryColor,
                 ),
               ),
-              if (driverId == null) _buildWaitingIndicator(),
+              if (driverId == null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: _buildWaitingIndicator(),
+                ),
               const SizedBox(height: 16),
               if (driverDetails != null) ...[
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: driverDetails?['profileImageUrl'] != null
-                        ? NetworkImage(driverDetails!['profileImageUrl'])
-                        : null,
-                    child: driverDetails?['profileImageUrl'] == null
-                        ? const Icon(Icons.person)
-                        : null,
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade200),
                   ),
-                  title: Text(driverDetails!['name'] ?? 'Unknown Driver'),
-                  subtitle: Text(
-                      driverDetails!['contactNumber'] ?? 'No contact info'),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Card(
-                        elevation: 8,
-                        child: IconButton(
-                          onPressed: () {
-                            if (driverDetails != null &&
-                                driverDetails!['contactNumber'] != null) {
-                              makePhoneCall(driverDetails!['contactNumber']);
-                            } else {
-                              print('No contact information available');
-                            }
-                          },
-                          icon: const Icon(
-                            Icons.call,
-                            color: ThemeColors.baseColor,
-                            size: 30,
-                          ),
-                        ),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.all(12),
+                    leading: CircleAvatar(
+                      radius: 28,
+                      backgroundColor:
+                          ThemeColors.primaryColor.withOpacity(0.1),
+                      backgroundImage: driverDetails?['profileImageUrl'] != null
+                          ? NetworkImage(driverDetails!['profileImageUrl'])
+                          : null,
+                      child: driverDetails?['profileImageUrl'] == null
+                          ? const Icon(Icons.person,
+                              color: ThemeColors.primaryColor, size: 32)
+                          : null,
+                    ),
+                    title: Text(
+                      driverDetails!['name'] ?? 'Unknown Driver',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
-                      Card(
-                        elevation: 8,
-                        child: IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ChatScreen(
-                                  receiverUserId: driverId,
-                                  receiverName: driverDetails!['name'] ??
-                                      'Unknown Driver',
-                                  receiverAvatar: driverDetails![
-                                      'profileImageUrl'], // Pass avatar here
-                                ),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        driverDetails!['contactNumber'] ?? 'No contact info',
+                        style: TextStyle(color: Colors.grey.shade700),
+                      ),
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Card(
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  ThemeColors.baseColor.withOpacity(0.8),
+                                  ThemeColors.baseColor
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.message,
-                            color: ThemeColors.successColor,
-                            size: 30,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: IconButton(
+                              onPressed: () {
+                                if (driverDetails != null &&
+                                    driverDetails!['contactNumber'] != null) {
+                                  makePhoneCall(
+                                      driverDetails!['contactNumber']);
+                                } else {
+                                  print('No contact information available');
+                                }
+                              },
+                              icon: const Icon(
+                                Icons.call,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        Card(
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  ThemeColors.successColor.withOpacity(0.8),
+                                  ThemeColors.successColor
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ChatScreen(
+                                      receiverUserId: driverId,
+                                      receiverName: driverDetails!['name'] ??
+                                          'Unknown Driver',
+                                      receiverAvatar:
+                                          driverDetails!['profileImageUrl'],
+                                    ),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(
+                                Icons.message,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 if (status != 'trip_started' && status != 'on_trip')
                   CustomButtons(
                     text: 'Cancel Ride',
@@ -452,17 +524,63 @@ class _CustomBottomsheetState extends State<CustomBottomsheet>
               ],
               const SizedBox(height: 16),
               if (status == 'trip_started' || status == 'on_trip')
-                const Text(
-                  'Trip has started. Enjoy your ride!',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: ThemeColors.successColor,
+                Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: ThemeColors.successColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                        color: ThemeColors.successColor.withOpacity(0.3)),
+                  ),
+                  child: const Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    children: [
+                      Icon(Icons.directions_car,
+                          color: ThemeColors.successColor),
+                      Text(
+                        'Trip has started. Enjoy your ride!',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: ThemeColors.successColor,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
               if (bookingData['estimatedArrival'] != null)
-                Text('ETA: ${bookingData['estimatedArrival']}'),
-              const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.access_time,
+                            size: 18, color: Colors.amber),
+                        const SizedBox(width: 8),
+                        Text(
+                          'ETA: ${bookingData['estimatedArrival']}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: Colors.amber,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 24),
               _buildActionButton(
                   status ?? '', screenWidth, screenHeight, bookingData),
             ],

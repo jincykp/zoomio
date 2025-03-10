@@ -214,13 +214,25 @@ class _UserProfileState extends State<UserProfile> {
                 });
                 Navigator.of(context).pop();
               },
-              child: const Text('Save'),
+              child: const Text(
+                'Save',
+                style: TextStyle(
+                    color: ThemeColors.primaryColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18),
+              ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancel'),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                    color: ThemeColors.baseColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18),
+              ),
             ),
           ],
         );
@@ -252,13 +264,23 @@ class _UserProfileState extends State<UserProfile> {
                 });
                 Navigator.of(context).pop();
               },
-              child: const Text('Save'),
+              child: const Text('Save',
+                  style: TextStyle(
+                      color: ThemeColors.primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18)),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancel'),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                    color: ThemeColors.baseColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18),
+              ),
             ),
           ],
         );
@@ -291,13 +313,23 @@ class _UserProfileState extends State<UserProfile> {
                 });
                 Navigator.of(context).pop();
               },
-              child: const Text('Save'),
+              child: const Text(
+                'Save',
+                style: TextStyle(
+                    color: ThemeColors.primaryColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18),
+              ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancel'),
+              child: const Text('Cancel',
+                  style: TextStyle(
+                      color: ThemeColors.baseColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18)),
             ),
           ],
         );
@@ -333,14 +365,26 @@ class _UserProfileState extends State<UserProfile> {
                     onTap: _pickImage, // Pick a new profile picture when tapped
                     child: CircleAvatar(
                       radius: 40,
-                      backgroundColor: Colors.white,
+                      backgroundColor: ThemeColors.primaryColor,
+                      // Only set backgroundImage if we have a photo, otherwise it blocks the child Text
                       backgroundImage: _profileImage != null
                           ? FileImage(File(_profileImage!.path))
                           : (userPhotoUrl != null
-                                  ? NetworkImage(userPhotoUrl!)
-                                  : const AssetImage(
-                                      'assets/images/single-person.png'))
-                              as ImageProvider,
+                              ? NetworkImage(userPhotoUrl!)
+                              : null) as ImageProvider?,
+                      // Display first letter of email when no image is available
+                      child: (userPhotoUrl == null && _profileImage == null)
+                          ? Text(
+                              userEmail.isNotEmpty
+                                  ? userEmail[0].toUpperCase()
+                                  : "?",
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            )
+                          : null,
                     ),
                   ),
                   const SizedBox(width: 16),

@@ -48,4 +48,9 @@ class Textstyles {
       fontWeight: FontWeight.bold,
       fontSize: 13,
       color: ThemeColors.successColor);
+  static const TextStyle recomenedText = TextStyle(
+      fontFamily: "Rowdies",
+      fontWeight: FontWeight.bold,
+      fontSize: 16,
+      color: ThemeColors.primaryColor);
 }

@@ -146,87 +146,200 @@ class _PaymentScreenState extends State<PaymentScreen> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text('Payment Details'),
         backgroundColor: ThemeColors.primaryColor,
+        elevation: 0,
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(screenWidth * 0.04),
+          padding: EdgeInsets.all(screenWidth * 0.05),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Vehicle Details Card
-              Card(
-                elevation: 4,
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      spreadRadius: 2,
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
                 child: Padding(
                   padding: EdgeInsets.all(screenWidth * 0.04),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Vehicle Details',
-                        style: Textstyles.gTextdescriptionSecond,
-                      ),
-                      const SizedBox(height: 10),
-                      ListTile(
-                        leading: CircleAvatar(
-                          child: Icon(
-                            widget.vehicleDetails['vehicleType']
-                                        ?.toString()
-                                        .toLowerCase() ==
-                                    'bike'
-                                ? Icons.directions_bike
-                                : Icons.directions_car,
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.directions_car_filled,
+                            color: ThemeColors.primaryColor,
+                            size: 18,
                           ),
-                        ),
-                        title: Text(
-                          widget.vehicleDetails['brand']?.toString() ??
-                              'No Brand',
-                          style: Textstyles.gTextdescription,
-                        ),
-                        subtitle: Text(
-                          'for ${widget.vehicleDetails['seatingCapacity']?.toString() ?? 'N/A'} Person',
-                        ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Vehicle Details',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: ThemeColors.primaryColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Container(
+                            width: screenWidth * 0.16,
+                            height: screenWidth * 0.16,
+                            decoration: BoxDecoration(
+                              color: ThemeColors.primaryColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Center(
+                              child: Icon(
+                                widget.vehicleDetails['vehicleType']
+                                            ?.toString()
+                                            .toLowerCase() ==
+                                        'bike'
+                                    ? Icons.directions_bike
+                                    : Icons.directions_car,
+                                size: 32,
+                                color: ThemeColors.primaryColor,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.vehicleDetails['brand']?.toString() ??
+                                      'No Brand',
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'for ${widget.vehicleDetails['seatingCapacity']?.toString() ?? 'N/A'} Person',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
               ),
 
-              SizedBox(height: screenHeight * 0.02),
+              SizedBox(height: screenHeight * 0.025),
 
               // Payment Summary Card
-              Card(
-                elevation: 4,
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      spreadRadius: 2,
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
                 child: Padding(
-                  padding: EdgeInsets.all(screenWidth * 0.04),
+                  padding: EdgeInsets.all(screenWidth * 0.05),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Payment Summary',
-                        style: Textstyles.gTextdescriptionSecond,
-                      ),
-                      const SizedBox(height: 15),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('Trip Fare'),
-                          Text('₹${widget.totalAmount.toStringAsFixed(2)}'),
+                          Icon(
+                            Icons.receipt_long,
+                            color: ThemeColors.primaryColor,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Payment Summary',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: ThemeColors.primaryColor,
+                            ),
+                          ),
                         ],
                       ),
-                      const Divider(),
+                      SizedBox(height: screenHeight * 0.02),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: screenWidth * 0.04,
+                          vertical: screenHeight * 0.015,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Trip Fare',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            Text(
+                              '₹${widget.totalAmount.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: screenHeight * 0.015),
+                      Divider(color: Colors.grey[200], thickness: 1),
+                      SizedBox(height: screenHeight * 0.015),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
                             'Total Amount',
-                            style: Textstyles.gTextdescriptionWithColor,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: ThemeColors.primaryColor,
+                            ),
                           ),
                           Text(
                             '₹${widget.totalAmount.toStringAsFixed(2)}',
-                            style: Textstyles.gTextdescriptionWithColor,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: ThemeColors.primaryColor,
+                            ),
                           ),
                         ],
                       ),
@@ -235,20 +348,115 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
               ),
 
-              SizedBox(height: screenHeight * 0.04),
+              SizedBox(height: screenHeight * 0.05),
+
+              // Payment Method Options
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      spreadRadius: 2,
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(screenWidth * 0.04),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.payment,
+                            color: ThemeColors.primaryColor,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Payment Method',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: ThemeColors.primaryColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      // Payment methods list would go here
+                      // This is a placeholder for UPI, cards, etc.
+                      ListTile(
+                        leading: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Image.asset(
+                            'assets/upi_icon.png',
+                            width: 24,
+                            height: 24,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.account_balance_wallet,
+                                    size: 24),
+                          ),
+                        ),
+                        title: const Text('UPI Payment'),
+                        trailing: const Icon(Icons.radio_button_checked,
+                            color: ThemeColors.primaryColor),
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 8),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              SizedBox(height: screenHeight * 0.05),
 
               // Payment Button
-              SizedBox(
+              Container(
                 width: double.infinity,
+                height: screenHeight * 0.06,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ThemeColors.primaryColor.withOpacity(0.3),
+                      spreadRadius: 1,
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
                 child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : CustomButtons(
-                        text: "Proceed to Payment",
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ),
+                      )
+                    : ElevatedButton(
                         onPressed: startPayment,
-                        backgroundColor: ThemeColors.primaryColor,
-                        textColor: ThemeColors.textColor,
-                        screenWidth: screenWidth,
-                        screenHeight: screenHeight,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ThemeColors.primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          "Pay ₹${widget.totalAmount.toStringAsFixed(2)}",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
               ),
             ],
