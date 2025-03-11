@@ -2,6 +2,7 @@
 A Flutter-based cab booking application that allows users to authenticate, fetch their current location, view routes, choose available vehicles, and make payments securely.
 
 📌 Features (Step-by-Step)
+
 1️⃣ Authentication & User Management
 ✔ Email Authentication – Users can sign up or log in using their email.
 ✔ Google Sign-In – Quick authentication via Google.
